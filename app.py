@@ -7,6 +7,7 @@ from sqlalchemy.orm import Session
 
 from models.base import Base
 from models.User import User
+from schemas.user import UserSchema
 
 
 class Config:
@@ -21,7 +22,7 @@ class Config:
 
 def setup_database(config: Config, **kwargs):
     """setup database"""
-    DATABASE_URL = "sqlite:///:memory:"
+    DATABASE_URL = "sqlite:///users.db"
     echo = True
     config.engine = create_engine(DATABASE_URL, echo=echo)
     Base.metadata.create_all(config.engine)
@@ -55,4 +56,13 @@ class NewUser(MethodView):
         return redirect("/")
 
 
+class UserView(MethodView):
+    def get(self):
+        session = Session(config.engine)
+        users = session.query(User).all()
+        users = [UserSchema.model_validate(user) for user in users]
+        return render_template("users.html", users=users)
+
+
 app.add_url_rule("/user/new", view_func=NewUser.as_view("new-user"))
+app.add_url_rule("/user", view_func=UserView.as_view("user"))
