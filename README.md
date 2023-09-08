@@ -15,5 +15,5 @@ Database - SQLite, host in memory.
 Url to database:
 
 ```apacheconf
-sqlite:///:memory:
+sqlite:///users.db
 ```
