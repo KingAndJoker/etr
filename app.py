@@ -1,4 +1,5 @@
 """app file"""
+import requests
 from flask import Flask
 from flask import render_template, redirect, request
 from flask.views import MethodView
@@ -61,6 +62,13 @@ class UserView(MethodView):
         session = Session(config.engine)
         users = session.query(User).all()
         users = [UserSchema.model_validate(user) for user in users]
+        for i, user in enumerate(users):
+            response = requests.get(
+                f"https://codeforces.com/api/user.info?handles={user.handler}"
+            )
+            response_json = response.json()
+            if response_json["status"] == "OK":
+                users[i] = user.model_copy(update=response_json["result"][0])
         return render_template("users.html", users=users)
 
 
