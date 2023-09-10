@@ -1,6 +1,6 @@
 """ User models """
 from sqlalchemy.orm import Mapped, mapped_column
-from models.base import Base
+from codeforces_2BIWY.models.base import Base
 
 
 class User(Base):
