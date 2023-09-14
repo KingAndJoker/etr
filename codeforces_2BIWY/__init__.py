@@ -24,12 +24,10 @@ def create_app() -> Flask:
     db.init_db(app)
 
     # apply the blueprints to the app
-    from codeforces_2BIWY import views
-
-    # app.register_blueprint(views.bp)
-    app.add_url_rule("/user/new", view_func=views.NewUser.as_view("new-user"))
-    app.add_url_rule("/user", view_func=views.UserView.as_view("user"))
-    # app.register_blueprint(blog.bp)
+    from codeforces_2BIWY.views import user
+    from codeforces_2BIWY.views import index
+    app.register_blueprint(user.bp)
+    app.register_blueprint(index.bp)
 
     # make url_for('index') == url_for('blog.index')
     # in another app, you might define a separate main index here with
