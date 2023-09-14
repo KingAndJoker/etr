@@ -14,7 +14,8 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 @bp.route("/new", methods=["GET", "POST"])
 def new_user():
     if request.method == "GET":
-        return render_template("new.html")
+        return render_template("new_user.html")
+
     elif request.method == "POST":
         handler = request.form.get("handler")
         response = requests.get(
