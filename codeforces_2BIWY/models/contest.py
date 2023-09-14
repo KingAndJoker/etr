@@ -1,5 +1,5 @@
 """contest model"""
-from sqlalchemy.orm import Mapper, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column
 
 from codeforces_2BIWY.models.base import Base
 
@@ -7,22 +7,22 @@ from codeforces_2BIWY.models.base import Base
 class Contest(Base):
     """Contest model"""
 
-    __tablename__ == "contests"
+    __tablename__ = "contests"
 
-    id: Mapper[int] = mapped_column(primary_key=True)
-    name: Mapper[str] = mapped_column()
-    type: Mapper[str] = mapped_column(nullable=True)
-    phase: Mapper[str] = mapped_column(nullable=True)
-    frozen: Mapper[bool] = mapped_column(nullable=True)
-    durationSeconds: Mapper[int] = mapped_column(nullable=True)
-    startTimeSeconds: Mapper[int] = mapped_column(nullable=True)
-    relativeTimeSeconds: Mapper[int] = mapped_column(nullable=True)
-    preparedBy: Mapper[str] = mapped_column(nullable=True)
-    websiteUrl: Mapper[str] = mapped_column(nullable=True)
-    description: Mapper[str] = mapped_column(nullable=True)
-    difficulty: Mapper[int] = mapped_column(nullable=True)
-    kind: Mapper[str] = mapped_column(nullable=True)
-    icpcRegion: Mapper[str] = mapped_column(nullable=True)
-    country: Mapper[str] = mapped_column(nullable=True)
-    city: Mapper[str] = mapped_column(nullable=True)
-    season: Mapper[str] = mapped_column(nullable=True)
+    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    name: Mapped[str] = mapped_column()
+    type: Mapped[str] = mapped_column(nullable=True)
+    phase: Mapped[str] = mapped_column(nullable=True)
+    frozen: Mapped[bool] = mapped_column(nullable=True)
+    durationSeconds: Mapped[int] = mapped_column(nullable=True)
+    startTimeSeconds: Mapped[int] = mapped_column(nullable=True)
+    relativeTimeSeconds: Mapped[int] = mapped_column(nullable=True)
+    preparedBy: Mapped[str] = mapped_column(nullable=True)
+    websiteUrl: Mapped[str] = mapped_column(nullable=True)
+    description: Mapped[str] = mapped_column(nullable=True)
+    difficulty: Mapped[int] = mapped_column(nullable=True)
+    kind: Mapped[str] = mapped_column(nullable=True)
+    icpcRegion: Mapped[str] = mapped_column(nullable=True)
+    country: Mapped[str] = mapped_column(nullable=True)
+    city: Mapped[str] = mapped_column(nullable=True)
+    season: Mapped[str] = mapped_column(nullable=True)
