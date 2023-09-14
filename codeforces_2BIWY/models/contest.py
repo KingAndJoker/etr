@@ -5,6 +5,10 @@ from codeforces_2BIWY.models.base import Base
 
 
 class Contest(Base):
+    """Contest model"""
+
+    __tablename__ == "contests"
+
     id: Mapper[int] = mapped_column(primary_key=True)
     name: Mapper[str] = mapped_column()
     type: Mapper[str] = mapped_column(nullable=True)
