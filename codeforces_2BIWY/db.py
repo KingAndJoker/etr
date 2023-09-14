@@ -4,7 +4,8 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
 from codeforces_2BIWY.models.base import Base
-from codeforces_2BIWY.models.User import User
+from codeforces_2BIWY.models.user import User
+from codeforces_2BIWY.models.contest import Contest
 
 
 DATABASE_URL = "sqlite:///users.db"
@@ -14,7 +15,7 @@ engine = None
 
 def init_db(app: Flask) -> None:
     engine = create_engine(DATABASE_URL, echo=ECHO)
-    User.metadata.create_all(engine)
+    Base.metadata.create_all(engine)
 
 
 def get_db() -> Session:
