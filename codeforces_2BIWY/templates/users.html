@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Users</title>
+</head>
+
+<body>
+    <table border="1">
+        <tr>
+            <td>handle</td>
+            <td>email</td>
+            <td>vkId</td>
+            <td>openId</td>
+            <td>firstName</td>
+            <td>lastName</td>
+            <td>country</td>
+            <td>city</td>
+            <td>organization</td>
+            <td>contribution</td>
+            <td>rank</td>
+            <td>rating</td>
+            <td>maxRank</td>
+            <td>maxRating</td>
+            <td>friendOfCount</td>
+        </tr>
+        {% for user in users %}
+        <tr>
+            <td>{{user.handler}}</td>
+            <td>{{user.email}}</td>
+            <td>{{user.vkId}}</td>
+            <td>{{user.openId}}</td>
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+            <td>{{user.country}}</td>
+            <td>{{user.city}}</td>
+            <td>{{user.organization}}</td>
+            <td>{{user.contribution}}</td>
+            <td>{{user.rank}}</td>
+            <td>{{user.rating}}</td>
+            <td>{{user.maxRank}}</td>
+            <td>{{user.maxRating}}</td>
+            <td>{{user.friendOfCount}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+
+</html>

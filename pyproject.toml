@@ -1,0 +1,11 @@
+[project]
+name = "codeforces_2BIWY"
+dependencies = [
+    "flask",
+]
+license = {text = "mit"}
+
+
+[build-system]
+requires = ["flit_core<4"]
+build-backend = "flit_core.buildapi"

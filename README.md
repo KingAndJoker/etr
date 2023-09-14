@@ -5,7 +5,7 @@
 commant prompt:
 
 ```shell
-flask run
+flask --app codeforces_2BIWY run
 ```
 
 ## Database
