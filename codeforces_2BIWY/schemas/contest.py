@@ -2,7 +2,7 @@
 from pydantic import BaseModel, ConfigDict
 
 
-class Contest(BaseModel):
+class ContestSchema(BaseModel):
     """Contest schema"""
     model_config = ConfigDict(from_attributes=True)
 
