@@ -8,18 +8,18 @@ class ContestSchema(BaseModel):
 
     id: int
     name: str
-    type: str = None
-    phase: str = None
-    frozen: bool = None
-    durationSeconds: int = None
-    startTimeSeconds: int = None
-    relativeTimeSeconds: int = None
-    preparedBy: str = None
-    websiteUrl: str = None
-    description: str = None
-    difficulty: int = None
-    kind: str = None
-    icpcRegion: str = None
-    country: str = None
-    city: str = None
-    season: str = None
+    type: str | None = None
+    phase: str | None = None
+    frozen: bool | None = None
+    durationSeconds: int | None = None
+    startTimeSeconds: int | None = None
+    relativeTimeSeconds: int | None = None
+    preparedBy: str | None = None
+    websiteUrl: str | None = None
+    description: str | None = None
+    difficulty: int | None = None
+    kind: str | None = None
+    icpcRegion: str | None = None
+    country: str | None = None
+    city: str | None = None
+    season: str | None = None
