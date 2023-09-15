@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contests list</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+        <th>id</th>
+        <th>name</th>
+        <th>type</th>
+        <th>phase</th>
+        <th>frozen</th>
+        <th>durationSeconds</th>
+        <th>startTimeSeconds</th>
+        <th>relativeTimeSeconds</th>
+        <th>preparedBy</th>
+        <th>websiteUrl</th>
+        <th>description</th>
+        <th>difficulty</th>
+        <th>kind</th>
+        <th>icpcRegion</th>
+        <th>counthy</th>
+        <th>city</th>
+        <th>season</th>
+    </tr>
+        {% for contest in contests %}
+        <tr>
+            <td>{{ contest.id }}</td>
+            <td>{{ contest.name }}</td>
+            <td>{{ contest.type }}</td>
+            <td>{{ contest.phase }}</td>
+            <td>{{ contest.frozen }}</td>
+            <td>{{ contest.durationSeconds }}</td>
+            <td>{{ contest.startTimeSeconds }}</td>
+            <td>{{ contest.relativeTimeSeconds }}</td>
+            <td>{{ contest.preparedBy }}</td>
+            <td>{{ contest.websiteUrl }}</td>
+            <td>{{ contest.description }}</td>
+            <td>{{ contest.difficuly }}</td>
+            <td>{{ contest.kind }}</td>
+            <td>{{ contest.icpcRegion }}</td>
+            <td>{{ contest.country }}</td>
+            <td>{{ contest.city }}</td>
+            <td>{{ contest.season }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

@@ -3,7 +3,7 @@ import requests
 from sqlalchemy.orm import Session
 from flask import render_template, redirect, request, Blueprint
 
-from codeforces_2BIWY.models.User import User
+from codeforces_2BIWY.models.user import User
 from codeforces_2BIWY.schemas.user import UserSchema
 from codeforces_2BIWY.db import get_db
 
@@ -14,7 +14,8 @@ bp = Blueprint("user", __name__, url_prefix="/user")
 @bp.route("/new", methods=["GET", "POST"])
 def new_user():
     if request.method == "GET":
-        return render_template("new.html")
+        return render_template("new_user.html")
+
     elif request.method == "POST":
         handler = request.form.get("handler")
         response = requests.get(

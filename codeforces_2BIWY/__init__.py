@@ -26,8 +26,12 @@ def create_app() -> Flask:
     # apply the blueprints to the app
     from codeforces_2BIWY.views import user
     from codeforces_2BIWY.views import index
+    from codeforces_2BIWY.views import contest
+    from codeforces_2BIWY.views import contest_status
     app.register_blueprint(user.bp)
     app.register_blueprint(index.bp)
+    app.register_blueprint(contest.bp)
+    app.register_blueprint(contest_status.bp)
 
     # make url_for('index') == url_for('blog.index')
     # in another app, you might define a separate main index here with

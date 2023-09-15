@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Status task</title>
+</head>
+<body>
+    <table border="1">
+        <tr>
+            <th>id</th>
+            <th>contestId</th>
+            <th>creationTimeSeconds</th>
+            <th>relativeTimeSeconds</th>
+            <th>problemName</th>
+            <th>problemIndex</th>
+            <th>programmingLanguage</th>
+            <th>verdict</th>
+            <th>passedTestCount</th>
+            <th>timeConsumedMillis</th>
+            <th>memoryConsumedBytes</th>
+            <th>points</th>
+        </tr>
+        {% for status in statuses %}
+        <tr>
+            <td>{{ status.id }}</td>
+            <td>{{ status.contestId }}</td>
+            <td>{{ status.creationTimeSeconds }}</td>
+            <td>{{ status.relativeTimeSeconds }}</td>
+            <td>{{ status.problemName }}</td>
+            <td>{{ status.problemIndex }}</td>
+            <td>{{ status.programmingLanguage }}</td>
+            <td>{{ status.verdict }}</td>
+            <td>{{ status.passedTestCount }}</td>
+            <td>{{ status.timeConsumedMillis }}</td>
+            <td>{{ status.memoryConsumedBytes }}</td>
+            <td>{{ status.points }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>
