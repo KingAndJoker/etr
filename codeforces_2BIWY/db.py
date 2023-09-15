@@ -6,6 +6,7 @@ from sqlalchemy.orm import Session
 from codeforces_2BIWY.models.base import Base
 from codeforces_2BIWY.models.user import User
 from codeforces_2BIWY.models.contest import Contest
+from codeforces_2BIWY.models.submission import Submission
 
 
 DATABASE_URL = "sqlite:///users.db"
