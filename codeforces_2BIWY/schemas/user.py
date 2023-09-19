@@ -7,7 +7,7 @@ class UserSchema(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
     id: int | None = None
-    handler: str
+    handle: str
     email: str | None = None
     vkId: str | None = None
     openId: str | None = None
