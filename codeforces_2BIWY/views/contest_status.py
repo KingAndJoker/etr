@@ -37,8 +37,11 @@ def status():
             response_json = response.json()
 
             if response_json["status"] == "OK":
+                for i, status in enumerate(response_json["result"]):
+                    response_json["result"][i]["author"] = user
+
                 statuses += [
-                    SubmissionSchema(**data, porblemName=data["problem"]["name"], problemIndex=data["problem"]["index"]) for data in response_json["result"]
+                    SubmissionSchema(**data) for data in response_json["result"]
                 ]
 
     return render_template("status.html", statuses=statuses)
