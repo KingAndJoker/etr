@@ -8,6 +8,7 @@ from codeforces_2BIWY.models.user import User
 from codeforces_2BIWY.models.contest import Contest
 from codeforces_2BIWY.models.submission import Submission
 from codeforces_2BIWY.models.problem import Problem
+from codeforces_2BIWY.models.team import Team, teams_users
 
 
 DATABASE_URL = "sqlite:///users.db"
