@@ -16,4 +16,4 @@ class Problem(Base):
     type: Mapped[str] = mapped_column()
     points: Mapped[float] = mapped_column(nullable=True)
     rating: Mapped[int] = mapped_column(nullable=True)
-    tags: Mapped[list[str]] = mapped_column(nullable=True)
+    # tags: Mapped[list[str]] = mapped_column(nullable=True)
