@@ -6,7 +6,7 @@ class UserSchema(BaseModel):
     """User pydantic schema"""
 
     model_config = ConfigDict(from_attributes=True)
-    id: int
+    id: int | None = None
     handler: str
     email: str | None = None
     vkId: str | None = None
