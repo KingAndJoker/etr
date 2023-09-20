@@ -1,4 +1,5 @@
 """submission model"""
+from sqlalchemy import ForeignKey, Column
 from sqlalchemy.orm import Mapped, mapped_column
 
 from codeforces_2BIWY.models.base import Base
@@ -7,11 +8,6 @@ from codeforces_2BIWY.models.base import Base
 class Submission(Base):
     """
     Submission model
-    without field:
-      author
-      testset
-      partial problem
-
     https://codeforces.com/apiHelp/objects#Submission
     """
 
@@ -21,8 +17,9 @@ class Submission(Base):
     contestId: Mapped[int] = mapped_column()
     creationTimeSeconds: Mapped[int] = mapped_column()
     relativeTimeSeconds: Mapped[int] = mapped_column()
-    problemName: Mapped[str] = mapped_column()
-    problemIndex: Mapped[str] = mapped_column()
+    problem_id: Mapped[int] = Column(ForeignKey("problems.id"))
+    author_id: Mapped[int] = Column(ForeignKey("users.id"))
+    team_id: Mapped[int] = Column(ForeignKey("teams.id"))
     programmingLanguage: Mapped[str] = mapped_column()
     verdict: Mapped[str] = mapped_column()
     passedTestCount: Mapped[int] = mapped_column()
