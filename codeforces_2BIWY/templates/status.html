@@ -24,7 +24,20 @@
         {% for status in statuses %}
         <tr>
             <td>{{ status.id }}</td>
-            <td>{{ status.author.handler }}</td>
+            {% if status.author.teamName %}
+                <td>
+                    <a style="color: red;">{{ status.author.teamName }}</a>
+                    <sub>
+                        {% for user in status.author.users %}
+                        {{ user.handle }};
+                        {% endfor %}
+                    </sub>
+                </td>
+            {% else %}
+                <td>
+                    {{ status.author.handle }}
+                </td>
+            {% endif %}
             <td>{{ status.contestId }}</td>
             <td>{{ status.creationTimeSeconds }}</td>
             <td>{{ status.relativeTimeSeconds }}</td>

@@ -7,6 +7,7 @@ from codeforces_2BIWY.models.contest import Contest
 from codeforces_2BIWY.models.user import User
 from codeforces_2BIWY.schemas.contest import ContestSchema
 from codeforces_2BIWY.schemas.user import UserSchema
+from codeforces_2BIWY.schemas.team import TeamSchema
 from codeforces_2BIWY.schemas.submission import SubmissionSchema
 
 
@@ -32,16 +33,26 @@ def status():
             response = requests.get(
                 f"https://codeforces.com/api/contest.status?"
                 f"contestId={contest.id}"
-                f"&handle={user.handler}"
+                f"&handle={user.handle}"
             )
             response_json = response.json()
 
             if response_json["status"] == "OK":
-                for i, status in enumerate(response_json["result"]):
-                    response_json["result"][i]["author"] = user
+                for data in response_json["result"]:
+                    author = None
+                    if "teamId" in data["author"]:
+                        author = TeamSchema(
+                            id=data["author"]["teamId"],
+                            teamName=data["author"]["teamName"],
+                            users=[
+                                UserSchema(**user_data)
+                                for user_data in data["author"]["members"]
+                            ]
+                        )
+                    else:
+                        author = UserSchema(**data["author"]["members"][0])
+                    del data["author"]
 
-                statuses += [
-                    SubmissionSchema(**data) for data in response_json["result"]
-                ]
+                    statuses += [SubmissionSchema(**data, author=author)]
 
     return render_template("status.html", statuses=statuses)
