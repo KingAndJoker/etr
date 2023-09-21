@@ -42,3 +42,10 @@ def get_users():
             if response_json["status"] == "OK":
                 users[i] = user.model_copy(update=response_json["result"][0])
     return render_template("users.html", users=users)
+
+
+@bp.route("/<handle>")
+def get_user(handle: str):
+    """func return template about user"""
+    user = handle
+    return render_template("user.html", user=user)
