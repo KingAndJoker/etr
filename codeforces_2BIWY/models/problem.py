@@ -9,11 +9,11 @@ class Problem(Base):
     __tablename__ = "problems"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    contestId: Mapped[int] = mapped_column()
-    problemsetName: Mapped[str] = mapped_column()
+    contest_id: Mapped[int] = mapped_column(nullable=True)
+    problemset_name: Mapped[str] = mapped_column(nullable=True)
     index: Mapped[str] = mapped_column()
     name: Mapped[str] = mapped_column()
-    type: Mapped[str] = mapped_column()
+    type: Mapped[str] = mapped_column(nullable=True)
     points: Mapped[float] = mapped_column(nullable=True)
     rating: Mapped[int] = mapped_column(nullable=True)
     # tags: Mapped[list[str]] = mapped_column(nullable=True)
