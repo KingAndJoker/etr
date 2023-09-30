@@ -31,3 +31,4 @@ class Team(Base):
     teamName: Mapped[str] = mapped_column()
 
     users: Mapped[list[User]] = relationship(secondary=teams_users)
+    submissions: Mapped[list["Submission"]] = relationship("Submission", back_populates="team")
