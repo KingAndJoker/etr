@@ -32,3 +32,7 @@ class User(Base):
     watch: Mapped[bool] = mapped_column(default=True)  # Update user info?
 
     teams: Mapped[list["Team"]] = relationship(secondary="teams_users")
+    submissions: Mapped[list["Submission"]] = relationship(
+        "Submission",
+        back_populates="author"
+    )
