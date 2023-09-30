@@ -21,4 +21,4 @@ class ProblemSchema(BaseModel):
     type: str | None = None
     points: float | None = None
     rating: int | None = None
-    # tags: list[str] | None = None
+    tags: list[str] | None = None
