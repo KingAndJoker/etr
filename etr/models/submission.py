@@ -2,10 +2,10 @@
 from sqlalchemy import ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from codeforces_2BIWY.models.base import Base
-from codeforces_2BIWY.models.problem import Problem
-from codeforces_2BIWY.models.user import User
-from codeforces_2BIWY.models.team import Team
+from etr.models.base import Base
+from etr.models.problem import Problem
+from etr.models.user import User
+from etr.models.team import Team
 
 
 class Submission(Base):

@@ -1,5 +1,5 @@
 [project]
-name = "codeforces_2BIWY"
+name = "etr"
 dependencies = [
     "flask",
 ]

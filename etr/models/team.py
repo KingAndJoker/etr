@@ -10,8 +10,8 @@ from sqlalchemy.orm import (
     relationship
 )
 
-from codeforces_2BIWY.models.base import Base
-from codeforces_2BIWY.models.user import User
+from etr.models.base import Base
+from etr.models.user import User
 
 
 teams_users = Table(

@@ -3,12 +3,12 @@ from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
 
-from codeforces_2BIWY.models.base import Base
-from codeforces_2BIWY.models.user import User
-from codeforces_2BIWY.models.contest import Contest
-from codeforces_2BIWY.models.submission import Submission
-from codeforces_2BIWY.models.problem import Problem
-from codeforces_2BIWY.models.team import Team, teams_users
+from etr.models.base import Base
+from etr.models.user import User
+from etr.models.contest import Contest
+from etr.models.submission import Submission
+from etr.models.problem import Problem
+from etr.models.team import Team, teams_users
 
 
 DATABASE_URL = "sqlite:///users.db"

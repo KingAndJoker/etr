@@ -5,9 +5,9 @@ from pydantic import (
     Field
 )
 
-from codeforces_2BIWY.schemas.problem import ProblemSchema
-from codeforces_2BIWY.schemas.user import UserSchema
-from codeforces_2BIWY.schemas.team import TeamSchema
+from etr.schemas.problem import ProblemSchema
+from etr.schemas.user import UserSchema
+from etr.schemas.team import TeamSchema
 
 
 class SubmissionSchema(BaseModel):

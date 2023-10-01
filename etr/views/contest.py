@@ -7,9 +7,9 @@ from flask import (
     redirect
 )
 
-from codeforces_2BIWY.db import get_db
-from codeforces_2BIWY.models.contest import Contest
-from codeforces_2BIWY.schemas.contest import ContestSchema
+from etr.db import get_db
+from etr.models.contest import Contest
+from etr.schemas.contest import ContestSchema
 
 
 bp = Blueprint("contest", __name__, url_prefix="/contest")

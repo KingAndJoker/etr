@@ -3,9 +3,9 @@ import requests
 from sqlalchemy.orm import Session
 from flask import render_template, redirect, request, Blueprint
 
-from codeforces_2BIWY.models.user import User
-from codeforces_2BIWY.schemas.user import UserSchema
-from codeforces_2BIWY.db import get_db
+from etr.models.user import User
+from etr.schemas.user import UserSchema
+from etr.db import get_db
 
 
 bp = Blueprint("user", __name__, url_prefix="/user")

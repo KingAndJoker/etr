@@ -1,2 +1,2 @@
 #!/bin/sh
-flask --app codeforces_2BIWY run --host=0.0.0.0
+flask --app etr run --host=0.0.0.0

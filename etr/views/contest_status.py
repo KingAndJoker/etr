@@ -4,13 +4,13 @@ import time
 import requests
 from flask import Blueprint, render_template
 
-from codeforces_2BIWY.db import get_db
-from codeforces_2BIWY.models.contest import Contest
-from codeforces_2BIWY.models.user import User
-from codeforces_2BIWY.schemas.contest import ContestSchema
-from codeforces_2BIWY.schemas.user import UserSchema
-from codeforces_2BIWY.schemas.team import TeamSchema
-from codeforces_2BIWY.schemas.submission import SubmissionSchema
+from etr.db import get_db
+from etr.models.contest import Contest
+from etr.models.user import User
+from etr.schemas.contest import ContestSchema
+from etr.schemas.user import UserSchema
+from etr.schemas.team import TeamSchema
+from etr.schemas.submission import SubmissionSchema
 
 
 bp = Blueprint("contest_status", __name__, url_prefix="/status")

@@ -1,7 +1,7 @@
 """contest model"""
 from sqlalchemy.orm import Mapped, mapped_column
 
-from codeforces_2BIWY.models.base import Base
+from etr.models.base import Base
 
 
 class Contest(Base):

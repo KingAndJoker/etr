@@ -18,16 +18,16 @@ def create_app() -> Flask:
     # app.config.from_file("pyproject.toml")
 
     # register the database commands
-    from codeforces_2BIWY import db
+    from etr import db
 
     # Base.metadata.create_all(app.config["DATABASE_ENGINE"])
     db.init_db(app)
 
     # apply the blueprints to the app
-    from codeforces_2BIWY.views import user
-    from codeforces_2BIWY.views import index
-    from codeforces_2BIWY.views import contest
-    from codeforces_2BIWY.views import contest_status
+    from etr.views import user
+    from etr.views import index
+    from etr.views import contest
+    from etr.views import contest_status
     app.register_blueprint(user.bp)
     app.register_blueprint(index.bp)
     app.register_blueprint(contest.bp)

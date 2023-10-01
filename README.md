@@ -1,11 +1,11 @@
-# codeforces_2BIWY
+# etr
 
 ## Run
 
 commant prompt:
 
 ```shell
-flask --app codeforces_2BIWY run
+flask --app etr run
 ```
 
 ### Docker run

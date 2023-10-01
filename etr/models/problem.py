@@ -1,7 +1,7 @@
 """problem model"""
 from sqlalchemy import Table, Column, ForeignKey, Integer
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from codeforces_2BIWY.models.base import Base
+from etr.models.base import Base
 
 
 # Table of associations between problem and tag
