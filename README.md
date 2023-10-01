@@ -11,8 +11,8 @@ flask --app etr run
 ### Docker run
 
 ```shell
-docker build -t 2biwy:latest .
-docker run --name 2biwy -d -p 8000:5000 --rm 2biwy:latest
+docker build -t etr:latest .
+docker run --name etr -d -p 8000:5000 --rm etr:latest
 ```
 
 ## Database
