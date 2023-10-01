@@ -6,4 +6,4 @@ WORKDIR /codeforces_2BIWY
 COPY . .
 RUN pip3 install --upgrade pip -r requirements.txt
 EXPOSE 5000
-ENTRYPOINT ["./boot.sh"]
+ENTRYPOINT ["sh", "./boot.sh"]
