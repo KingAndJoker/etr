@@ -1,4 +1,6 @@
 """contest status handler"""
+import time
+
 import requests
 from flask import Blueprint, render_template
 
@@ -35,7 +37,14 @@ def status():
                 f"contestId={contest.id}"
                 f"&handle={user.handle}"
             )
-            response_json = response.json()
+            time.sleep(2)
+
+            if response.status_code != 200:
+                return render_template("status.html")
+            try:
+                response_json = response.json()
+            except:
+                response_json = {"status": "zxc"}
 
             if response_json["status"] == "OK":
                 for data in response_json["result"]:
