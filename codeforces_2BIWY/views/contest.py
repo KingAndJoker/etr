@@ -44,7 +44,8 @@ def new_contest():
 
         if response_json['status'] == "OK":
             with get_db() as session:
-                contest = Contest(**response_json["result"]["contest"])
+                contest_schema = ContestSchema(**response_json["result"]["contest"])
+                contest = Contest(**contest_schema.model_dump())
                 session.add(contest)
                 session.commit()
         return redirect("/")
