@@ -8,9 +8,16 @@ commant prompt:
 flask --app codeforces_2BIWY run
 ```
 
+### Docker run
+
+```shell
+docker build -t 2biwy:latest .
+docker run --name 2biwy -d -p 8000:5000 --rm 2biwy:latest
+```
+
 ## Database
 
-Database - SQLite, host in memory.
+Database is SQLite.
 
 Url to database:
 
