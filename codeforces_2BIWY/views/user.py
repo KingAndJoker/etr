@@ -17,14 +17,14 @@ def new_user():
         return render_template("new_user.html")
 
     elif request.method == "POST":
-        handler = request.form.get("handler")
+        handle = request.form.get("handler")
         response = requests.get(
-            f"https://codeforces.com/api/user.info?handles={handler}"
+            f"https://codeforces.com/api/user.info?handles={handle}"
         )
         response_json = response.json()
         if response_json['status'] == "OK":
             with get_db() as session:
-                session.add(User(handler=handler))
+                session.add(User(handle=handle))
                 session.commit()
         return redirect("/")
 
