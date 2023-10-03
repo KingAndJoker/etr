@@ -8,7 +8,7 @@ from etr.schemas.user import UserSchema
 from etr.db import get_db
 
 
-bp = Blueprint("user", __name__, url_prefix="/user")
+bp = Blueprint("user", __name__)
 
 
 @bp.route("/new", methods=["GET", "POST"])

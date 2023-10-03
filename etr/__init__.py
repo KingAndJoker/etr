@@ -3,6 +3,8 @@ import os
 
 from flask import Flask
 from sqlalchemy import create_engine
+from dotenv import load_dotenv
+
 from .models.base import Base
 
 
@@ -10,11 +12,12 @@ def create_app() -> Flask:
     """Create and configure an instance of the Flask application."""
     app = Flask(__name__, instance_relative_config=True)
     
+    load_dotenv()
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
-
     )
+    URL_PREFIX = os.getenv("URL_PREFIX", "")
     # app.config.from_file("pyproject.toml")
 
     # register the database commands
@@ -28,10 +31,10 @@ def create_app() -> Flask:
     from etr.views import index
     from etr.views import contest
     from etr.views import contest_status
-    app.register_blueprint(user.bp)
-    app.register_blueprint(index.bp)
-    app.register_blueprint(contest.bp)
-    app.register_blueprint(contest_status.bp)
+    app.register_blueprint(index.bp, url_prefix=URL_PREFIX)
+    app.register_blueprint(user.bp, url_prefix=URL_PREFIX + "/user")
+    app.register_blueprint(contest.bp, url_prefix=URL_PREFIX + "/contest")
+    app.register_blueprint(contest_status.bp, url_prefix=URL_PREFIX + "/status")
 
     # make url_for('index') == url_for('blog.index')
     # in another app, you might define a separate main index here with

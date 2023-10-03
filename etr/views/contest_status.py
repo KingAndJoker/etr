@@ -13,7 +13,7 @@ from etr.schemas.team import TeamSchema
 from etr.schemas.submission import SubmissionSchema
 
 
-bp = Blueprint("contest_status", __name__, url_prefix="/status")
+bp = Blueprint("contest_status", __name__)
 
 
 @bp.route("/")

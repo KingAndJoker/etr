@@ -12,7 +12,7 @@ from etr.models.contest import Contest
 from etr.schemas.contest import ContestSchema
 
 
-bp = Blueprint("contest", __name__, url_prefix="/contest")
+bp = Blueprint("contest", __name__)
 
 
 @bp.route("/")
