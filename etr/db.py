@@ -1,4 +1,5 @@
 """db utils"""
+import os
 from flask import Flask
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session
@@ -11,7 +12,8 @@ from etr.models.problem import Problem
 from etr.models.team import Team, teams_users
 
 
-DATABASE_URL = "sqlite:///users.db"
+DEFAULT_DATABASE_URL = "sqlite:///storage/users.db"
+DATABASE_URL = os.getenv("URL_DATABASE", DEFAULT_DATABASE_URL)
 ECHO = True
 engine = None
 
