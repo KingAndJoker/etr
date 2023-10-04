@@ -26,7 +26,7 @@ def new_user():
             with get_db() as session:
                 session.add(User(handle=handle))
                 session.commit()
-        return redirect("/")
+        return redirect("/etr")
 
 
 @bp.route("/")

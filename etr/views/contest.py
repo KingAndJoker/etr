@@ -48,4 +48,4 @@ def new_contest():
                 contest = Contest(**contest_schema.model_dump())
                 session.add(contest)
                 session.commit()
-        return redirect("/")
+        return redirect("/etr")
