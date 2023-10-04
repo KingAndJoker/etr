@@ -1,5 +1,5 @@
 """submission model"""
-from sqlalchemy import ForeignKey, Integer
+from sqlalchemy import ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from etr.models.base import Base
@@ -29,9 +29,9 @@ class Submission(Base):
     author: Mapped[User] = relationship("User", back_populates="submissions")
     team_id: Mapped[Team] = mapped_column(Integer, ForeignKey("teams.id"))
     team: Mapped[Team] = relationship("Team", back_populates="submissions")
-    programming_language: Mapped[str] = mapped_column()
-    verdict: Mapped[str] = mapped_column(nullable=True)
-    testset: Mapped[str] = mapped_column(nullable=True)
+    programming_language: Mapped[str] = mapped_column(type_=String(255))
+    verdict: Mapped[str] = mapped_column(nullable=True, type_=String(255))
+    testset: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     passed_test_count: Mapped[int] = mapped_column(nullable=True)
     time_consumed_millis: Mapped[int] = mapped_column(nullable=True)
     memory_consumed_bytes: Mapped[int] = mapped_column(nullable=True)
