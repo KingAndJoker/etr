@@ -17,7 +17,7 @@ def new_user():
         return render_template("new_user.html")
 
     elif request.method == "POST":
-        handle = request.form.get("handler")
+        handle = request.form.get("handle")
         response = requests.get(
             f"https://codeforces.com/api/user.info?handles={handle}"
         )
@@ -36,7 +36,7 @@ def get_users():
         users = [UserSchema.model_validate(user) for user in users]
         for i, user in enumerate(users):
             response = requests.get(
-                f"https://codeforces.com/api/user.info?handles={user.handler}"
+                f"https://codeforces.com/api/user.info?handles={user.handle}"
             )
             response_json = response.json()
             if response_json["status"] == "OK":
