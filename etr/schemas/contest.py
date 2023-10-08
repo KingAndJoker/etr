@@ -1,5 +1,6 @@
 """Contest schema"""
-from pydantic import BaseModel, ConfigDict, Field
+import datetime
+from pydantic import BaseModel, ConfigDict, Field, computed_field
 
 
 class ContestSchema(BaseModel):
@@ -32,3 +33,19 @@ class ContestSchema(BaseModel):
     country: str | None = None
     city: str | None = None
     season: str | None = None
+
+    @computed_field
+    @property
+    def duration_time(self) -> str | None:
+        if self.duration_seconds:
+            return str(datetime.timedelta(seconds=self.duration_seconds))
+        return None
+
+    @computed_field
+    @property
+    def start_datatime(self) -> str | None:
+        if self.start_time_seconds:
+            utc_time = datetime.datetime.fromtimestamp(self.start_time_seconds, datetime.timezone.utc)
+            local_time = utc_time.astimezone()
+            return local_time.strftime("%d %m %Y %H:%M:%S")
+        return None
