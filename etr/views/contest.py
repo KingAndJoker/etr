@@ -49,3 +49,15 @@ def new_contest():
                 session.add(contest)
                 session.commit()
         return redirect("/etr")
+
+
+@bp.route("/<contest_id>")
+def get_contest(contest_id: int):
+    with get_db() as session:
+        contest_db: Contest = session.query(Contest).filter(
+            Contest.id == contest_id).\
+            one_or_none()
+        
+        contest = ContestSchema.model_validate(contest_db)
+
+    return render_template("contest.html", contest=contest)
