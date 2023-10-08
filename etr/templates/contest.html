@@ -9,7 +9,12 @@
 
 <body>
     <h1>{{ contest.name }}</h1>
-    <p>{{ contest.type }}</p>
+    <div>
+        {{ contest.type }}
+        {% if contest.kind %}
+            , {{ contest.kind }}
+        {% endif%}
+    </div>
     <div>
         duration: {{ contest.duration_time }}<br>
         start time: {{ contest.start_datatime }}<br>
