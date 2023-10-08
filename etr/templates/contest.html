@@ -4,11 +4,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contest</title>
+    <title>{{ contest.name }}</title>
 </head>
 
 <body>
-
+    <h1>{{ contest.name }}</h1>
+    <p>{{ contest.type }}</p>
+    <div>
+        duration: {{ contest.duration_time }}<br>
+        start time: {{ contest.start_datatime }}<br>
+    </div>
+    {% if contest.website_url %}
+    <div>
+        <a href="{{ contest.website_url }}">contest site</a>
+    </div>
+    {% endif %}
+    {% if contest.description %}
+    <div>
+        <h2>Description</h2>
+        {{ contest.description }}
+    </div>
+    {% endif %}
 </body>
 
 </html>
