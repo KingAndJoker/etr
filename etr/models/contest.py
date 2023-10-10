@@ -1,6 +1,6 @@
 """contest model"""
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from etr.models.base import Base
 
@@ -27,3 +27,7 @@ class Contest(Base):
     country: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     city: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     season: Mapped[str] = mapped_column(nullable=True, type_=String(255))
+
+    problems: Mapped[list["Problem"]] = relationship(
+        "Problem"
+    )
