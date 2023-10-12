@@ -6,9 +6,13 @@ import requests
 from etr.db import get_db
 from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
+from etr.schemas.submission import SubmissionSchema
+from etr.schemas.user import UserSchema
+from etr.schemas.team import TeamSchema
 
 
 CODEFORCES_API_CONTEST_URL = "https://codeforces.com/api/contest.standings"
+CODEFROCES_API_SUBMISSION_URL = "https://codeforces.com/api/contest.status"
 
 
 def get_contest(contest_id: int, *,
@@ -50,3 +54,57 @@ def get_contest(contest_id: int, *,
             print(exp)
 
     return contest
+
+
+def get_submission(
+        contestId: int, *,
+        as_manager: bool | None = None,
+        handle: str | None = None,
+        from_: int | None = None,
+        count: int | None = None,
+        lang: str = "en") -> list[SubmissionSchema] | None:
+    submission_url = f"{CODEFROCES_API_SUBMISSION_URL}?contestId={contestId}&lang={lang}"
+    if as_manager:
+        submission_url += f"&asManager={as_manager}"
+    if handle:
+        submission_url += f"&handle={handle}"
+    if from_:
+        submission_url += f"&from={from_}"
+    if count:
+        submission_url += f"&{count =}"
+
+    print(submission_url)
+
+    submissions: list[SubmissionSchema] | None = None
+    response = requests.get(submission_url)
+    if response.status_code != 200:
+        return None
+        
+    try:
+        response_json = response.json()
+    except Exception as exp:
+        print(exp)
+        return None
+
+    if response_json["status"] == "OK":
+        for i, submission in enumerate(response_json["result"]):
+            if "teamName" in response_json["result"][i]["author"]:
+                team_users = [
+                    UserSchema(handle=user["handle"])
+                    for user in response_json["result"][i]["author"]["members"]
+                ]
+                response_json["result"][i]["author"] = TeamSchema(
+                    **response_json["result"][i]["author"], users=team_users
+                )
+
+            else:
+                response_json["result"][i]["author"] = UserSchema(
+                    handle=submission["author"]["members"][0]["handle"]
+                )
+
+        submissions = [
+            SubmissionSchema(**submission)
+            for submission in response_json["result"]
+        ]
+
+    return submissions
