@@ -16,7 +16,8 @@ def get_contest(contest_id: int, *,
                 count: int | None = None,
                 handles: list[str] | None = None,
                 # room: int | str | None = None,
-                show_unofficial: bool | None = None) -> ContestSchema | None:
+                show_unofficial: bool | None = None,
+                lang: str = "en") -> ContestSchema | None:
     contest_url = f"{CODEFORCES_API_CONTEST_URL}?contestId={contest_id}"
     if as_manager:
         contest_url += f"&asManager={as_manager}"
@@ -34,15 +35,15 @@ def get_contest(contest_id: int, *,
     try:
         response_json = response.json()
     except requests.exceptions.JSONDecodeError as exp:
-        print(exp.with_traceback())
+        print(exp)
         return None
 
     contest: ContestSchema | None = None
     if response_json["status"] == "OK":
         try:
-            contest = ContestSchema(*response_json["result"])
+            contest = ContestSchema(**response_json["result"]["contest"])
         except Exception as exp:
-            print(exp.with_traceback)
-            return None
+            print(exp)
+        #     return None
 
     return contest
