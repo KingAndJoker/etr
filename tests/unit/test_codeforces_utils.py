@@ -2,7 +2,7 @@ from etr.schemas.contest import ContestSchema
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.user import UserSchema
 from etr.schemas.team import TeamSchema
-from etr.utils.codeforces_utils import get_contest, get_submission
+from etr.utils.codeforces_utils import get_contest, get_submission, get_user, get_users
 
 
 def test_get_contest():
@@ -50,3 +50,29 @@ def test_get_not_exist_submission():
     )
 
     assert submissions is None
+
+
+def test_get_user():
+    user: UserSchema | None = get_user("DmitriyH")
+
+    assert user is not None
+    assert user.registration_time_seconds == 1268570311
+
+
+def test_get_users():
+    handles = [
+        "DmitriyH",
+        "tourist"
+    ]
+    users: list[UserSchema | None] = get_users(handles=handles)
+
+    assert len(users) == 2
+    assert users[0] is not None
+    assert users[1] is not None
+    assert users[1].last_name == "Korotkevich"
+
+
+def test_get_not_exist_user():
+    user: UserSchema | None = get_user("jasdjaksdjaksdjkasjkdsajkadsjkasjksajkasjdaskjdksaj")
+
+    assert user is None

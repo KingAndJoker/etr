@@ -13,6 +13,7 @@ from etr.schemas.team import TeamSchema
 
 CODEFORCES_API_CONTEST_URL = "https://codeforces.com/api/contest.standings"
 CODEFROCES_API_SUBMISSION_URL = "https://codeforces.com/api/contest.status"
+CODEFORCES_API_USER_INFO_URL = "https://codeforces.com/api/user.info"
 
 
 def get_contest(contest_id: int, *,
@@ -108,3 +109,32 @@ def get_submission(
         ]
 
     return submissions
+
+
+def get_user(handle: str, lang: str = "en") -> UserSchema | None:
+    user_url = f"{CODEFORCES_API_USER_INFO_URL}?handles={handle}&lang={lang}"
+
+    response = requests.get(user_url)
+
+    if response.status_code != 200:
+        return None
+    
+    try:
+        response_json = response.json()
+    except requests.exceptions.JSONDecodeError as exp:
+        print(exp)
+        return None
+    
+    user: UserSchema | None = None
+    if response_json["status"] == "OK":
+        user = UserSchema(**response_json["result"][0])
+    return user
+
+
+
+def get_users(handles: list[str], lang: str = "en") -> list[UserSchema | None]:
+    users: list[UserSchema | None] = [
+        get_user(handle, lang=lang)
+        for handle in handles
+    ]
+    return users
