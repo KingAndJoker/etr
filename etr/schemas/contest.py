@@ -2,6 +2,8 @@
 import datetime
 from pydantic import BaseModel, ConfigDict, Field, computed_field
 
+from etr.schemas.problem import ProblemSchema
+
 
 class ContestSchema(BaseModel):
     """Contest schema"""
@@ -33,6 +35,8 @@ class ContestSchema(BaseModel):
     country: str | None = None
     city: str | None = None
     season: str | None = None
+
+    problems: list[ProblemSchema] | None = None
 
     @computed_field
     @property
