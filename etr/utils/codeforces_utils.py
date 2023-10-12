@@ -37,10 +37,12 @@ def get_contest(contest_id: int, *,
         print(exp.with_traceback())
         return None
 
-    try:
-        contest = ContestSchema(*response_json)
-    except Exception as exp:
-        print(exp.with_traceback)
-        return None
+    contest: ContestSchema | None = None
+    if response_json["status"] == "OK":
+        try:
+            contest = ContestSchema(*response_json["result"])
+        except Exception as exp:
+            print(exp.with_traceback)
+            return None
 
     return contest
