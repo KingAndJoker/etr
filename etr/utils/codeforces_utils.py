@@ -5,6 +5,7 @@ import requests
 
 from etr.db import get_db
 from etr.schemas.contest import ContestSchema
+from etr.schemas.problem import ProblemSchema
 
 
 CODEFORCES_API_CONTEST_URL = "https://codeforces.com/api/contest.standings"
@@ -42,8 +43,10 @@ def get_contest(contest_id: int, *,
     if response_json["status"] == "OK":
         try:
             contest = ContestSchema(**response_json["result"]["contest"])
+            contest.problems = [
+                ProblemSchema(**problem) for problem in response_json["result"]["problems"]
+            ]
         except Exception as exp:
             print(exp)
-        #     return None
 
     return contest
