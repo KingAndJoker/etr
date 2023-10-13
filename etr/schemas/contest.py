@@ -36,8 +36,6 @@ class ContestSchema(BaseModel):
     city: str | None = None
     season: str | None = None
 
-    problems: list[ProblemSchema] | None = None
-
     @computed_field
     @property
     def duration_time(self) -> str | None:

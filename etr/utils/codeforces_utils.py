@@ -48,9 +48,6 @@ def get_contest(contest_id: int, *,
     if response_json["status"] == "OK":
         try:
             contest = ContestSchema(**response_json["result"]["contest"])
-            contest.problems = [
-                ProblemSchema(**problem) for problem in response_json["result"]["problems"]
-            ]
         except Exception as exp:
             print(exp)
 
