@@ -18,18 +18,14 @@ def test_get_not_exist_contest():
     assert contest is None
 
 
-def test_get_user_submission(): # TODO: rewrite test
-    submissions: list[SubmissionSchema] | None = get_submission(
-        566,
-        from_=1,
-        count=3
-    )
+def test_get_user_submission():  # TODO: rewrite test
+    submissions: list[SubmissionSchema] | None = get_submission(566)
 
     assert submissions is not None
-    assert submissions[1].id == 227708730
-    assert isinstance(submissions[0].author, UserSchema)
-    assert submissions[2].id == 227705729
-    assert submissions[0].problem.name == "Restructuring Company"
+    assert submissions[-1].id == 12277300
+    assert isinstance(submissions[-1].author, UserSchema)
+    assert submissions[-2].id == 12277309
+    assert submissions[-2].problem.name == "Clique in the Divisibility Graph"
 
 
 def test_get_team_submission():
@@ -76,7 +72,8 @@ def test_get_users():
 
 def test_get_not_exist_user():
     user: UserSchema | None = get_user(
-        "jasdjaksdjaksdjkasjkdsajkadsjkasjksajkasjdaskjdksaj")
+        "jasdjaksdjaksdjkasjkdsajkadsjkasjksajkasjdaskjdksaj"
+    )
 
     assert user is None
 

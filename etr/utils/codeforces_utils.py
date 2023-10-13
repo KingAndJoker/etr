@@ -25,8 +25,8 @@ def get_contest(contest_id: int, *,
                 show_unofficial: bool | None = None,
                 lang: str = "en") -> ContestSchema | None:
     contest_url = f"{CODEFORCES_API_CONTEST_URL}?" \
-        "contestId={contest_id}" \
-        "&lang={lang}"
+        f"contestId={contest_id}" \
+        f"&lang={lang}"
     if as_manager:
         contest_url += f"&asManager={as_manager}"
     if from_:
@@ -39,6 +39,9 @@ def get_contest(contest_id: int, *,
         contest_url += f"&showUnofficial={show_unofficial}"
 
     response = requests.get(contest_url)
+
+    if response.status_code != 200:
+        return None
 
     try:
         response_json = response.json()
