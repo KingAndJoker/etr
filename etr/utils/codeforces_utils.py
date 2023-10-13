@@ -24,13 +24,15 @@ def get_contest(contest_id: int, *,
                 # room: int | str | None = None,
                 show_unofficial: bool | None = None,
                 lang: str = "en") -> ContestSchema | None:
-    contest_url = f"{CODEFORCES_API_CONTEST_URL}?contestId={contest_id}&lang={lang}"
+    contest_url = f"{CODEFORCES_API_CONTEST_URL}?" \
+        "contestId={contest_id}" \
+        "&lang={lang}"
     if as_manager:
         contest_url += f"&asManager={as_manager}"
     if from_:
         contest_url += f"&from={from_}"
     if count:
-        contest_url += f"&{count = }"
+        contest_url += f"&{count =}"
     if handles:
         contest_url += f"&handles={';'.join(handles)}"
     if show_unofficial:
@@ -61,7 +63,9 @@ def get_submission(
         from_: int | None = None,
         count: int | None = None,
         lang: str = "en") -> list[SubmissionSchema] | None:
-    submission_url = f"{CODEFROCES_API_SUBMISSION_URL}?contestId={contestId}&lang={lang}"
+    submission_url = f"{CODEFROCES_API_SUBMISSION_URL}?" \
+        f"contestId={contestId}" \
+        f"&lang={lang}"
     if as_manager:
         submission_url += f"&asManager={as_manager}"
     if handle:
@@ -69,7 +73,7 @@ def get_submission(
     if from_:
         submission_url += f"&from={from_}"
     if count:
-        submission_url += f"&{count =}"
+        submission_url += f"&{count = }"
 
     print(submission_url)
 
@@ -77,7 +81,7 @@ def get_submission(
     response = requests.get(submission_url)
     if response.status_code != 200:
         return None
-        
+
     try:
         response_json = response.json()
     except Exception as exp:
@@ -115,18 +119,17 @@ def get_user(handle: str, lang: str = "en") -> UserSchema | None:
 
     if response.status_code != 200:
         return None
-    
+
     try:
         response_json = response.json()
     except requests.exceptions.JSONDecodeError as exp:
         print(exp)
         return None
-    
+
     user: UserSchema | None = None
     if response_json["status"] == "OK":
         user = UserSchema(**response_json["result"][0])
     return user
-
 
 
 def get_users(handles: list[str], lang: str = "en") -> list[UserSchema | None]:
@@ -135,3 +138,32 @@ def get_users(handles: list[str], lang: str = "en") -> list[UserSchema | None]:
         for handle in handles
     ]
     return users
+
+
+def get_problem_with_contest(contest_id: int, *, lang: str = "en") -> list[ProblemSchema] | None:
+    problem_url = f"{CODEFORCES_API_CONTEST_URL}?" \
+        f"contestId={contest_id}" \
+        f"&lang={lang}"
+
+    print(f"{problem_url=}")
+    response = requests.get(problem_url)
+    if response.status_code != 200:
+        print(1)
+        return None
+
+    try:
+        response_json = response.json()
+    except requests.exceptions.JSONDecodeError as exp:
+        print(exp)
+        return None
+
+    if response_json["status"] != "OK":
+        print(2)
+        return None
+
+    problems = [
+        ProblemSchema(**problem)
+        for problem in response_json["result"]["problems"]
+    ]
+
+    return problems

@@ -2,7 +2,7 @@ from etr.schemas.contest import ContestSchema
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.user import UserSchema
 from etr.schemas.team import TeamSchema
-from etr.utils.codeforces_utils import get_contest, get_submission, get_user, get_users
+from etr.utils.codeforces_utils import get_contest, get_submission, get_user, get_users, get_problem_with_contest
 
 
 def test_get_contest():
@@ -10,7 +10,6 @@ def test_get_contest():
 
     assert contest is not None
     assert contest.name == "VK Cup 2015 - Finals, online mirror"
-    assert contest.problems[4].name == "Restoring Map"
 
 
 def test_get_not_exist_contest():
@@ -19,9 +18,12 @@ def test_get_not_exist_contest():
     assert contest is None
 
 
-def test_get_user_submission():
+def test_get_user_submission(): # TODO: rewrite test
     submissions: list[SubmissionSchema] | None = get_submission(
-        566, from_=1, count=3)
+        566,
+        from_=1,
+        count=3
+    )
 
     assert submissions is not None
     assert submissions[1].id == 227708730
@@ -73,6 +75,22 @@ def test_get_users():
 
 
 def test_get_not_exist_user():
-    user: UserSchema | None = get_user("jasdjaksdjaksdjkasjkdsajkadsjkasjksajkasjdaskjdksaj")
+    user: UserSchema | None = get_user(
+        "jasdjaksdjaksdjkasjkdsajkadsjkasjksajkasjdaskjdksaj")
 
     assert user is None
+
+
+def test_get_problems():
+    problems = get_problem_with_contest(993)
+
+    assert problems is not None
+    assert problems[1].index == "B"
+    assert problems[4].points == 2250
+    assert problems[3].tags[1] == "dp"
+
+
+def test_get_not_exist_problems():
+    problems = get_problem_with_contest(-1)
+
+    assert problems is None
