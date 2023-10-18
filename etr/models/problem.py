@@ -33,8 +33,14 @@ class Problem(Base):
     __tablename__ = "problems"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    contest_id: Mapped[int] = mapped_column(nullable=True)
-    problemset_name: Mapped[str] = mapped_column(nullable=True, type_=String(255))
+    contest_id: Mapped[int] = Column(
+        "contest_id",
+        Integer,
+        ForeignKey("contests.id"),
+        nullable=True
+    )
+    problemset_name: Mapped[str] = mapped_column(
+        nullable=True, type_=String(255))
     index: Mapped[str] = mapped_column(type_=String(255))
     name: Mapped[str] = mapped_column(type_=String(255))
     type: Mapped[str] = mapped_column(nullable=True, type_=String(255))
