@@ -10,7 +10,7 @@ class Contest(Base):
 
     __tablename__ = "contests"
 
-    id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(type_=String(255))
     type: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     phase: Mapped[str] = mapped_column(nullable=True, type_=String(255))
