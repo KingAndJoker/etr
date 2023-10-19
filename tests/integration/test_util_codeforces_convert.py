@@ -1,12 +1,14 @@
 from etr.library.codeforces.codeforces_utils import (
     get_user,
     get_users,
-    get_submission
+    get_submission,
+    get_problem_with_contest
 )
 from etr.utils.codeforces.convert import (
     convert_codeforces_user_schema,
     convert_codeforces_submission_schema,
-    convert_codeforces_submissions_schema
+    convert_codeforces_submissions_schema,
+    convert_codeforces_problems_schema
 )
 from etr.schemas.user import UserSchema
 from etr.schemas.team import TeamSchema
@@ -79,3 +81,17 @@ def test_convert_submissions():
     submissions = convert_codeforces_submissions_schema(codeforces_submissions)
 
     assert submissions[-100].programming_language == "GNU C++"
+
+
+def test_convert_problems():
+    codeforces_problems = get_problem_with_contest(566)
+
+    assert codeforces_problems is not None, "Existing problems is None. Check get_problem_with_contest func or network connection."
+    assert len(codeforces_problems) == 7, "Number of problems is incorrect. Check contest info and get_problem_with_contest func."
+    assert codeforces_problems[3].contestId == 566, "contestId is incorrect. Check get_problem_with_contest."
+
+    problems = convert_codeforces_problems_schema(codeforces_problems)
+
+    assert len(problems) == 7, "Number of problems is incorrect. Check contest info and get_problem_with_contest func."
+    assert problems[3].contest_id == 566, "problem.contest_id is incorrect. Check convert_codeforces_problems_schema."
+    assert problems[6].index == "G", "problem index is incorrect. Check convert_codeforces_problems_schema."
