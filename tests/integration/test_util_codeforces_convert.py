@@ -4,11 +4,13 @@ from etr.library.codeforces.codeforces_utils import (
     get_submission,
     get_problem_with_contest
 )
+from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
 from etr.utils.codeforces.convert import (
     convert_codeforces_user_schema,
     convert_codeforces_submission_schema,
     convert_codeforces_submissions_schema,
-    convert_codeforces_problems_schema
+    convert_codeforces_problems_schema,
+    convert_codeforces_team_schema
 )
 from etr.schemas.user import UserSchema
 from etr.schemas.team import TeamSchema
@@ -95,3 +97,18 @@ def test_convert_problems():
     assert len(problems) == 7, "Number of problems is incorrect. Check contest info and get_problem_with_contest func."
     assert problems[3].contest_id == 566, "problem.contest_id is incorrect. Check convert_codeforces_problems_schema."
     assert problems[6].index == "G", "problem index is incorrect. Check convert_codeforces_problems_schema."
+
+
+def test_team():
+    codeforces_users = get_users(["DmitriyH", "Fefer_Ivan"])
+    codeforces_team = CodeforcesTeamSchema(teamId=123, teamName="BBIWY", users=codeforces_users)
+
+    assert codeforces_users is not None, "Existing users is None. Check get_users or network connection."
+    assert codeforces_team.teamId == 123, "teamId is incorrect. Check CodeforcesTeamSchema."
+    assert codeforces_team.teamName == "BBIWY", "teamName is incorrect. Check CodeforcesTeamSchema."
+
+    team = convert_codeforces_team_schema(codeforces_team)
+
+    assert team.id == 123, "team_id is incorrect. Check convert_codeforces_team_schema."
+    assert team.team_name == "BBIWY", "team_name is incorrect. Check convert_codeforces_team_schema."
+    assert len(team.users) == 2, "Number of users is incorrect. Check convert_codeforces_team_schema."
