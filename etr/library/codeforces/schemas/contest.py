@@ -9,8 +9,8 @@ class CodeforcesContestSchema(BaseModel):
         populate_by_name=True
     )
 
-    contestId: int
-    contestName: str
+    id: int
+    name: str
     type: str | None = None
     phase: str | None = None
     frozen: bool | None = None

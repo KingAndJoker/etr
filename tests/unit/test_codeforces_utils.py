@@ -9,7 +9,7 @@ def test_get_contest():
     contest: CodeforcesContestSchema | None = get_contest(566)
 
     assert contest is not None, "Contest is None. check get_contest def or network connection."
-    assert contest.contestName == "VK Cup 2015 - Finals, online mirror", "Incorrect name of the contest."
+    assert contest.name == "VK Cup 2015 - Finals, online mirror", "Incorrect name of the contest."
 
 
 def test_get_not_exist_contest():
