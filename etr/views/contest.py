@@ -10,6 +10,7 @@ from flask import (
 from etr.db import get_db
 from etr.models.contest import Contest
 from etr.schemas.contest import ContestSchema
+from etr.services.contest import add_contest
 
 
 bp = Blueprint("contest", __name__)
@@ -35,19 +36,9 @@ def new_contest():
 
     elif request.method == "POST":
         contest_id = request.form.get("contest-id")
-        response = requests.get(
-            f"https://codeforces.com/api/contest.standings?"
-            f"contestId={contest_id}"
-            f"&count=1"
-        )
-        response_json = response.json()
+        
+        add_contest(contest_id)
 
-        if response_json['status'] == "OK":
-            with get_db() as session:
-                contest_schema = ContestSchema(**response_json["result"]["contest"])
-                contest = Contest(**contest_schema.model_dump())
-                session.add(contest)
-                session.commit()
         return redirect("/etr")
 
 
