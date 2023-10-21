@@ -148,7 +148,6 @@ def get_problem_with_contest(contest_id: int, *, lang: str = "en") -> list[Codef
         lang=lang
     )
 
-    print(f"{problem_url=}")
     response = requests.get(problem_url)
     if response.status_code != 200:
         print(1)
