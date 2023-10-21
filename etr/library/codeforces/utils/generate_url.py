@@ -28,7 +28,8 @@ def _make_params(**kwargs) -> str:
     """ Make params for url """
     params = ""
     for key, value in sorted(kwargs.items()):
-        params += _pair_key_value(key, value)
+        if value is not None:
+            params += _pair_key_value(key, value)
     return params[:-1]
 
 
