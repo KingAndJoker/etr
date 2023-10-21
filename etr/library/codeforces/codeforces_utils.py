@@ -1,7 +1,7 @@
 """ utils for work with Codeforces API """
 import requests
 
-from etr.library.codeforces import urls
+from etr.library.codeforces.utils.generate_url import generate_url
 from etr.library.codeforces.schemas.contest import CodeforcesContestSchema
 from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
@@ -17,21 +17,21 @@ def get_contest(contest_id: int, *,
                 room: int | str | None = None,
                 show_unofficial: bool | None = None,
                 lang: str = "en") -> CodeforcesContestSchema | None:
-    contest_url = f"{urls.CODEFORCES_API_CONTEST_URL}?" \
-        f"contestId={contest_id}" \
-        f"&lang={lang}"
-    if as_manager:
-        contest_url += f"&asManager={as_manager}"
-    if from_:
-        contest_url += f"&from={from_}"
-    if count:
-        contest_url += f"&{count =}"
-    if handles:
-        contest_url += f"&handles={';'.join(handles)}"
-    if room:
-        contest_url += f"&room={room}"
-    if show_unofficial:
-        contest_url += f"&showUnofficial={show_unofficial}"
+
+    if handles is not None:
+        handles = ";".join(handles)
+
+    contest_url = generate_url(
+        "contest.standings",
+        contestId=contest_id,
+        asManager=as_manager,
+        from_=from_,
+        count=count,
+        handles=handles,
+        room=room,
+        showUnofficial=show_unofficial,
+        lang=lang
+    )
 
     response = requests.get(contest_url)
 
@@ -47,7 +47,8 @@ def get_contest(contest_id: int, *,
     contest: CodeforcesContestSchema | None = None
     if response_json["status"] == "OK":
         try:
-            contest = CodeforcesContestSchema(**response_json["result"]["contest"])
+            contest = CodeforcesContestSchema(
+                **response_json["result"]["contest"])
         except Exception as exp:
             print(exp)
 
@@ -61,19 +62,15 @@ def get_submission(
         from_: int | None = None,
         count: int | None = None,
         lang: str = "en") -> list[CodeforcesSubmissionSchema] | None:
-    submission_url = f"{urls.CODEFROCES_API_SUBMISSION_URL}?" \
-        f"contestId={contestId}" \
-        f"&lang={lang}"
-    if as_manager:
-        submission_url += f"&asManager={as_manager}"
-    if handle:
-        submission_url += f"&handle={handle}"
-    if from_:
-        submission_url += f"&from={from_}"
-    if count:
-        submission_url += f"&{count = }"
-
-    print(submission_url)
+    submission_url = generate_url(
+        "contest.status",
+        contestId=contestId,
+        asManager=as_manager,
+        handle=handle,
+        from_=from_,
+        count=count,
+        lang=lang
+    )
 
     submissions: list[CodeforcesSubmissionSchema] | None = None
     response = requests.get(submission_url)
@@ -111,7 +108,11 @@ def get_submission(
 
 
 def get_user(handle: str, lang: str = "en") -> CodeforcesUserSchema | None:
-    user_url = f"{urls.CODEFORCES_API_USER_INFO_URL}?handles={handle}&lang={lang}"
+    user_url = generate_url(
+        "user.info",
+        handles=handle,
+        lang=lang
+    )
 
     response = requests.get(user_url)
 
@@ -139,9 +140,13 @@ def get_users(handles: list[str], lang: str = "en") -> list[CodeforcesUserSchema
 
 
 def get_problem_with_contest(contest_id: int, *, lang: str = "en") -> list[CodeforcesProblemSchema] | None:
-    problem_url = f"{urls.CODEFORCES_API_CONTEST_URL}?" \
-        f"contestId={contest_id}" \
-        f"&lang={lang}"
+    problem_url = generate_url(
+        "contest.standings",
+        contestId=contest_id,
+        from_=1,
+        count=1,
+        lang=lang
+    )
 
     print(f"{problem_url=}")
     response = requests.get(problem_url)
