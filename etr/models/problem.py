@@ -19,7 +19,7 @@ class Tag(Base):
     __tablename__ = "tags"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
-    tag: Mapped[str] = mapped_column(type_=String(255))
+    tag: Mapped[str] = mapped_column(type_=String(255), unique=True)
     problems: Mapped[list["Problem"]] = relationship(
         "Problem",
         secondary=problems_tags,
@@ -40,7 +40,7 @@ class Problem(Base):
     type: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     points: Mapped[float] = mapped_column(nullable=True)
     rating: Mapped[int] = mapped_column(nullable=True)
-    tags: Mapped[list[str]] = relationship(
+    tags: Mapped[list[Tag]] = relationship(
         "Tag",
         secondary=problems_tags,
         back_populates="problems"
