@@ -6,10 +6,16 @@ from flask import (
 from sqlalchemy import inspect
 
 from etr.db import get_db
-from etr.utils.codeforces_utils import get_contest, get_submission
+from etr.library.codeforces.codeforces_utils import get_contest, get_submission
 from etr.models.contest import Contest
 from etr.models.submission import Submission
 from etr.models.user import User
+from etr.schemas.submission import SubmissionSchema
+from etr.utils.codeforces.convert import (
+    convert_codeforces_contest_schema,
+    convert_codeforces_submissions_schema
+)
+from etr.utils.factory import create_contest_model
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -18,24 +24,21 @@ bp = Blueprint("rpc", __name__)
 
 @bp.get("/contest/<contest_id>")
 def update_contest_info(contest_id: int):
-    contest = get_contest(contest_id)
+    contest = convert_codeforces_contest_schema(
+        get_contest(contest_id)
+    )
     if contest is None:
         return {"status": "failed"}
 
-    inst = inspect(Contest)
-    attr_contest: set[str] = {
-        c_attr.key for c_attr in inst.mapper.column_attrs}
-
     with get_db() as session:
-        contest_dict = contest.model_dump(include=attr_contest)
         contest_db = session.query(Contest).filter(
             Contest.id == contest_id
         ).one_or_none()
 
         if contest_db is None:
-            contest_db = Contest(**contest_dict)
+            contest_db = create_contest_model(**contest.model_dump())
         else:
-            for field, value in contest_dict.items():
+            for field, value in contest.model_dump().items():
                 setattr(contest_db, field, value)
 
         session.add(contest_db)
@@ -49,12 +52,11 @@ def update_submission_info(contest_id):
     with get_db() as session:
         users = session.query(User).filter(User.watch).all()
 
-    submissions = list()
+    submissions: list[SubmissionSchema] = list()
     for user in users:
-        submissions = get_submission(contest_id, handle=user.handle)
-
-    if submissions is None:
-        return {"status": "failed"}
+        submissions += convert_codeforces_submissions_schema(
+            get_submission(contest_id, handle=user.handle)
+        )
 
     with get_db() as session:
         for i, submission in enumerate(submissions):
@@ -64,7 +66,7 @@ def update_submission_info(contest_id):
 
             if sub is None:
                 sub = Submission(**submission.model_dump())
-            
+
             session.add(sub)
         session.commit()
 
