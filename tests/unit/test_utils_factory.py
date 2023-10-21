@@ -1,7 +1,8 @@
-from etr.utils.factory import create_contest_model
+from etr.utils.factory import create_contest_model, create_problem_model
+from etr.models.problem import Problem
 
 
-def test_factury_contest_1():
+def test_factory_contest_1():
     contest = create_contest_model(
         id=1,
         name="Test Contest #1",
@@ -42,7 +43,7 @@ def test_factury_contest_1():
     assert contest.season == "Summer", "season is not equal 'Summer'. Check create_contest_model function."
 
 
-def test_factury_contest_2():
+def test_factory_contest_2():
     contest = create_contest_model(
         id=2,
         name="Test Contest #2",
@@ -72,7 +73,60 @@ def test_factury_contest_2():
     assert contest.season is None, "season is not equal None. Check create_contest_model function."
 
 
-def test_factury_contest_none():
+def test_factory_contest_none():
     contest = create_contest_model()
 
     assert contest is None, "contest is None. Check create_contest_model function."
+
+
+def test_factory_problem_1():
+    problem: Problem | None = create_problem_model(
+        id=1,
+        contest_id=1,
+        index="A",
+        name="Test Problem #1",
+        type="PROGRAMMING",
+        points=1500,
+        rating=1000,
+        tags=["implementation", "math", "number theory"],
+        zxc="123"
+    )
+
+    assert problem is not None, "problem is None. Check create_problem_model function."
+    assert problem.id == 1, "id is not equal 1. Check create_problem_model function."
+    assert problem.contest_id == 1, "contest_id is not equal 1. Check create_problem_model function."
+    assert problem.index == "A", "index is not equal 'A'. Check create_problem_model function."
+    assert problem.name == "Test Problem #1", "name is not equal 'Test Problem #1'. Check create_problem_model function."
+    assert problem.type == "PROGRAMMING", "type is not equal 'PROGRAMMING'. Check create_problem_model function."
+    assert problem.points == 1500, "points is not equal 1500. Check create_problem_model function."
+    assert problem.rating == 1000, "rating is not equal 1000. Check create_problem_model function."
+
+
+def test_factory_problem_2():
+    problem: Problem | None = create_problem_model(
+        id=2,
+        index="B",
+        name="Test Problem #2",
+    )
+
+    assert problem is not None, "problem is None. Check create_problem_model function."
+    assert problem.id == 2, "id is not equal 2. Check create_problem_model function."
+    assert problem.contest_id is None, "contest_id is not equal None. Check create_problem_model function."
+    assert problem.index == "B", "index is not equal 'B'. Check create_problem_model function."
+    assert problem.name == "Test Problem #2", "name is not equal 'Test Problem #2'. Check create_problem_model function."
+    assert problem.type is None, "type is not equal None. Check create_problem_model function."
+    assert problem.points is None, "points is not equal None. Check create_problem_model function."
+
+
+def test_factory_problem_none():
+    problem: Problem | None = create_problem_model()
+
+    assert problem is None, "problem is None. Check create_problem_model function."
+
+
+def test_factory_problem_with_missing_necessary_field():
+    problem: Problem | None = create_problem_model(
+        id=1
+    )
+
+    assert problem is None, "problem is not None. Check create_problem_model function."
