@@ -22,6 +22,6 @@ def add_contest(contest_id: int) -> ContestSchema:
         session.commit()
 
     problems_schema = add_problems(contest_id)
-    contest.problems = problems_schema
+    contest_schema.problems = problems_schema
 
     return contest_schema
