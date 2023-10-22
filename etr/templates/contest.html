@@ -30,6 +30,67 @@
         {{ contest.description }}
     </div>
     {% endif %}
+
+    <table border="1" id="acm_result">
+        <tr id="head_acm_result">
+            <th>user</th>
+        </tr>
+    </table>
+
+    <script>
+        async function create_table(contest_id) {
+            let response = await fetch(`/etr/api/problem/${contest_id}`)
+            let problems = await response.json()
+            problems = problems["problems"]
+            console.log(problems)
+
+            table_acm_result_head = document.getElementById("head_acm_result")
+            for (var i = 0; i < problems.length; i++) {
+                table_acm_result_head.innerHTML += `<th>${problems[i]["index"]}</th>`
+            }
+
+            table_acm_result = document.getElementById("acm_result")
+
+            response = await fetch(`/etr/api/user`)
+            let users = await response.json()
+
+            for (var i = 0; i < users.length; i++) {
+                let cells = `<td>${users[i].handle}</td>`
+
+                for (var j = 0; j < problems.length; j++) {
+                    let cell = ""
+
+                    let cell_response = await fetch(`/etr/api/submission?handle=${users[i]["handle"]}&contest_id=${contest_id}&problem_index=${problems[j]["index"]}`)
+                    let cell_status = await cell_response.json()
+
+                    if (cell_status.length > 0) {
+                        cell = cell_status.length
+
+                        let complete = false
+                        for (var k = 0; k < cell_status.length && !complete; k++) {
+                            if (cell_status[k]["verdict"] === "OK") {
+                                complete = true
+                            }
+                        }
+                        // TODO: was the solution sent during the contest?
+                        if (complete) {
+                            cell = `+${cell}`
+                        }
+                        else {
+                            cell = `-${cell}`
+                        }
+                    }
+
+                    cells += `<td>${cell}</td>`
+                }
+
+                table_acm_result.innerHTML += `<tr>${cells}</tr>`
+            }
+        }
+    </script>
+    <script>
+        create_table({{ contest.id }})
+    </script>
 </body>
 
 </html>
