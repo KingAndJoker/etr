@@ -1,4 +1,8 @@
-from etr.utils.factory import create_contest_model, create_problem_model
+from etr.utils.factory import (
+    create_contest_model,
+    create_problem_model,
+    create_submission_model
+)
 from etr.models.problem import Problem
 
 
@@ -130,3 +134,78 @@ def test_factory_problem_with_missing_necessary_field():
     )
 
     assert problem is None, "problem is not None. Check create_problem_model function."
+
+
+def test_factory_submission_user():
+    submission = create_submission_model(
+        id=1,
+        contest_id=1,
+        problem_id=1,
+        author_id=1,
+        programming_language="Python",
+        verdict="OK",
+        testset="TESTS",
+        passed_test_count=10,
+        time_consumed_millis=1000,
+        memory_consumed_bytes=1000000,
+        points=1000,
+        creation_time_seconds=111111,
+        relative_time_seconds=222222,
+        zxc="123"
+    )
+
+    assert submission is not None, "submission is None. Check create_submission_model function."
+    assert submission.id == 1, "id is not equal 1. Check create_submission_model function."
+    assert submission.contest_id == 1, "contest_id is not equal 1. Check create_submission_model function."
+    assert submission.problem_id == 1, "problem_id is not equal 1. Check create_submission_model function."
+    assert submission.author_id == 1, "author_id is not equal 1. Check create_submission_model function."
+    assert submission.team_id is None, "team_id is not equal None. Check create_submission_model function."
+    assert submission.programming_language == "Python", "programming_language is not equal 'Python'. Check create_submission_model function."
+    assert submission.verdict == "OK", "verdict is not equal 'OK'. Check create_submission_model function."
+    assert submission.testset == "TESTS", "testset is not equal 'TESTS'. Check create_submission_model function."
+    assert submission.passed_test_count == 10, "passed_test_count is not equal 10. Check create_submission_model function."
+    assert submission.time_consumed_millis == 1000, "time_consumed_millis is not equal 1000. Check create_submission_model function."
+    assert submission.memory_consumed_bytes == 1000000, "memory_consumed_bytes is not equal 1000000. Check create_submission_model function."
+    assert submission.points == 1000, "points is not equal 1000. Check create_submission_model function."
+    assert submission.creation_time_seconds == 111111, "creation_time_seconds is not equal 111111. Check create_submission_model function."
+    assert submission.relative_time_seconds == 222222, "relative_time_seconds is not equal 222222. Check create_submission_model function."
+
+
+def test_factory_submission_team():
+    submission = create_submission_model(
+        id=2,
+        contest_id=2,
+        problem_id=2,
+        team_id=2,
+        programming_language="C++",
+        verdict="WRONG_ANSWER",
+        testset="PRETESTS",
+        passed_test_count=5,
+        time_consumed_millis=500,
+        memory_consumed_bytes=500000,
+        points=500,
+        creation_time_seconds=222222,
+        relative_time_seconds=333333,
+    )
+
+    assert submission is not None, "submission is None. Check create_submission_model function."
+    assert submission.id == 2, "id is not equal 2. Check create_submission_model function."
+    assert submission.contest_id == 2, "contest_id is not equal 2. Check create_submission_model function."
+    assert submission.problem_id == 2, "problem_id is not equal 2. Check create_submission_model function."
+    assert submission.author_id is None, "author_id is not equal None. Check create_submission_model function."
+    assert submission.team_id == 2, "team_id is not equal 2. Check create_submission_model function."
+    assert submission.programming_language == "C++", "programming_language is not equal 'C++'. Check create_submission_model function."
+    assert submission.verdict == "WRONG_ANSWER", "verdict is not equal 'WRONG_ANSWER'. Check create_submission_model function."
+    assert submission.testset == "PRETESTS", "testset is not equal 'PRETESTS'. Check create_submission_model function."
+    assert submission.passed_test_count == 5, "passed_test_count is not equal 5. Check create_submission_model function."
+    assert submission.time_consumed_millis == 500, "time_consumed_millis is not equal 500. Check create_submission_model function."
+    assert submission.memory_consumed_bytes == 500000, "memory_consumed_bytes is not equal 500000. Check create_submission_model function."
+    assert submission.points == 500, "points is not equal 500. Check create_submission_model function."
+    assert submission.creation_time_seconds == 222222, "creation_time_seconds is not equal 222222. Check create_submission_model function."
+    assert submission.relative_time_seconds == 333333, "relative_time_seconds is not equal 333333. Check create_submission_model function."
+
+
+def test_factory_submission_none():
+    submission = create_submission_model()
+
+    assert submission is None, "submission is not None. Check create_submission_model function."
