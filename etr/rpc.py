@@ -1,4 +1,5 @@
 """Remote Procedure Call module"""
+import copy
 from flask import (
     Blueprint,
     request
@@ -70,8 +71,14 @@ def update_submission_info(contest_id):
             if sub is None:
                 sub = create_submission_model(**submission_schema.model_dump())
 
-                if sub is not None: session.add(sub)
+                if sub is not None:
+                    session.add(sub)
+                    session.commit()
 
-        session.commit()
-
-    return {"status": "ok"}
+    return {
+        "status": "ok",
+        "result": [
+            submission_schema.model_dump()
+            for submission_schema in submissions_schema
+        ]
+    }
