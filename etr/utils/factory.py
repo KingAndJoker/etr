@@ -78,6 +78,9 @@ def create_submission_model(**kwargs) -> Submission | None:
         for field, value in kwargs.items():
             if field in attr_submission:
                 setattr(submission, field, value)
+        
+        if submission.problem_id is None:
+            submission.problem_id = kwargs["problem"].id
     except:
         return None
 
