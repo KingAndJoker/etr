@@ -14,7 +14,7 @@ from etr.models.team import Team, teams_users
 
 DEFAULT_DATABASE_URL = "sqlite:///storage/users.db"
 DATABASE_URL = os.getenv("URL_DATABASE", DEFAULT_DATABASE_URL)
-ECHO = True
+ECHO = os.getenv("DATABASE_ECHO", "True") in ("true", "True")
 engine = None
 
 
