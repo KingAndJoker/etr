@@ -36,6 +36,7 @@ mysql+mysqlconnector://root:1@localhost:3306
 ```apacheconf
 URL_PREFIX=/etr
 URL_DATABASE=mysql+mysqlconnector://root:password@localhost:3306
+DATABASE_ECHO=true
 CODEFORCES_API_KEY=0123456789abcdef0123456789abcdef01234567
 CODEFORCES_API_SECRET=0123456789abcdef0123456789abcdef01234567
 ```
