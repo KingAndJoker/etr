@@ -82,10 +82,10 @@ def create_submission_model(**kwargs) -> Submission | None:
         
         if submission.problem_id is None:
             with get_db() as session:
-                problem = session.query(Problem).filter(
-                    Problem.contest_id == submission.contest_id and
-                    Problem.index == submission.problem.index
-                ).first()
+                problem = session.query(Problem).filter_by(
+                    contest_id = submission.contest_id,
+                    index = kwargs["problem"]["index"]
+                ).one_or_none()
             submission.problem_id = problem.id
 
         if "teamId" in kwargs["author"]:
