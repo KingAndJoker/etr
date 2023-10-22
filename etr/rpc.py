@@ -15,7 +15,10 @@ from etr.utils.codeforces.convert import (
     convert_codeforces_contest_schema,
     convert_codeforces_submissions_schema
 )
-from etr.utils.factory import create_contest_model
+from etr.utils.factory import (
+    create_contest_model,
+    create_submission_model
+)
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -52,22 +55,23 @@ def update_submission_info(contest_id):
     with get_db() as session:
         users = session.query(User).filter(User.watch).all()
 
-    submissions: list[SubmissionSchema] = list()
+    submissions_schema: list[SubmissionSchema] = list()
     for user in users:
-        submissions += convert_codeforces_submissions_schema(
+        submissions_schema += convert_codeforces_submissions_schema(
             get_submission(contest_id, handle=user.handle)
         )
 
     with get_db() as session:
-        for i, submission in enumerate(submissions):
+        for submission_schema in submissions_schema:
             sub = session.query(Submission).filter(
-                Submission.id == submission.id and Submission.contest_id == submission.contest_id
+                Submission.id == submission_schema.id and Submission.contest_id == contest_id
             ).one_or_none()
 
             if sub is None:
-                sub = Submission(**submission.model_dump())
+                sub = create_submission_model(**submission_schema.model_dump())
 
-            session.add(sub)
+                if sub is not None: session.add(sub)
+
         session.commit()
 
     return {"status": "ok"}
