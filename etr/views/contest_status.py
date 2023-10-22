@@ -23,6 +23,11 @@ def status():
 
     with get_db() as session:
         contests = session.query(Contest).all()
+        # TODO: lazy load relationpships
+        for contest in contests:
+            for problem in contest.problems:
+                problem.tags
+            contest.problems
         users = session.query(User).all()
 
     contests = [ContestSchema.model_validate(contest) for contest in contests]
@@ -46,6 +51,7 @@ def status():
             except:
                 response_json = {"status": "zxc"}
 
+            # TODO: horror code (refactor)
             if response_json["status"] == "OK":
                 for data in response_json["result"]:
                     author = None
