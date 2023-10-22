@@ -4,6 +4,7 @@ from sqlalchemy import inspect
 from etr.models.contest import Contest
 from etr.models.problem import Problem, Tag
 from etr.models.submission import Submission
+from etr.models.user import User
 from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
 from etr.schemas.submission import SubmissionSchema
@@ -80,7 +81,19 @@ def create_submission_model(**kwargs) -> Submission | None:
                 setattr(submission, field, value)
         
         if submission.problem_id is None:
-            submission.problem_id = kwargs["problem"].id
+            with get_db() as session:
+                problem = session.query(Problem).filter(
+                    Problem.contest_id == submission.contest_id and
+                    Problem.index == submission.problem.index
+                ).first()
+            submission.problem_id = problem.id
+
+        if "teamId" in kwargs["author"]:
+            submission.team_id = kwargs["author"]["teamId"]
+        else:
+            with get_db() as session:
+                user = session.query(User).filter(User.handle == kwargs["author"]["handle"]).first()
+                submission.author_id = user.id
     except:
         return None
 
