@@ -4,6 +4,7 @@ from etr.utils.factory import (
     create_submission_model
 )
 from etr.models.problem import Problem
+from etr.schemas.problem import ProblemSchema
 
 
 def test_factory_contest_1():
@@ -203,6 +204,48 @@ def test_factory_submission_team():
     assert submission.points == 500, "points is not equal 500. Check create_submission_model function."
     assert submission.creation_time_seconds == 222222, "creation_time_seconds is not equal 222222. Check create_submission_model function."
     assert submission.relative_time_seconds == 333333, "relative_time_seconds is not equal 333333. Check create_submission_model function."
+
+
+def test_factory_submission_with_problem_schema():
+    submission = create_submission_model(
+        id=3,
+        contest_id=3,
+        programming_language="Java",
+        verdict="COMPILATION_ERROR",
+        testset="TESTS",
+        passed_test_count=0,
+        time_consumed_millis=0,
+        memory_consumed_bytes=0,
+        points=0,
+        creation_time_seconds=333333,
+        relative_time_seconds=444444,
+        problem=ProblemSchema(
+            id=4,
+            contest_id=3,
+            index="C",
+            name="Test Problem #3",
+            type="PROGRAMMING",
+            points=1500,
+            rating=1000,
+            tags=["implementation", "math", "number theory"]
+        )
+    )
+
+    assert submission is not None, "submission is None. Check create_submission_model function."
+    assert submission.id == 3, "id is not equal 3. Check create_submission_model function."
+    assert submission.contest_id == 3, "contest_id is not equal 3. Check create_submission_model function."
+    assert submission.problem_id == 4, "problem_id is not equal 4. Check create_submission_model function."
+    assert submission.author_id is None, "author_id is not equal None. Check create_submission_model function."
+    assert submission.team_id is None, "team_id is not equal None. Check create_submission_model function."
+    assert submission.programming_language == "Java", "programming_language is not equal 'Java'. Check create_submission_model function."
+    assert submission.verdict == "COMPILATION_ERROR", "verdict is not equal 'COMPILATION_ERROR'. Check create_submission_model function."
+    assert submission.testset == "TESTS", "testset is not equal 'TESTS'. Check create_submission_model function."
+    assert submission.passed_test_count == 0, "passed_test_count is not equal 0. Check create_submission_model function."
+    assert submission.time_consumed_millis == 0, "time_consumed_millis is not equal 0. Check create_submission_model function."
+    assert submission.memory_consumed_bytes == 0, "memory_consumed_bytes is not equal 0. Check create_submission_model function."
+    assert submission.points == 0, "points is not equal 0. Check create_submission_model function."
+    assert submission.creation_time_seconds == 333333, "creation_time_seconds is not equal 333333. Check create_submission_model function."
+    assert submission.relative_time_seconds == 444444, "relative_time_seconds is not equal 444444. Check create_submission_model function."
 
 
 def test_factory_submission_none():
