@@ -1,5 +1,5 @@
 """submission model"""
-from sqlalchemy import ForeignKey, Integer, String
+from sqlalchemy import ForeignKey, Integer, String, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from etr.models.base import Base
@@ -25,9 +25,9 @@ class Submission(Base):
         "Problem",
         back_populates="submissions",
     )
-    author_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
+    author_id: Mapped[int] = Column("author_id", Integer, ForeignKey("users.id"), nullable=True)
     author: Mapped[User] = relationship("User", back_populates="submissions")
-    team_id: Mapped[Team] = mapped_column(Integer, ForeignKey("teams.id"))
+    team_id: Mapped[Team] = Column("team_id", Integer, ForeignKey("teams.id"), nullable=True)
     team: Mapped[Team] = relationship("Team", back_populates="submissions")
     programming_language: Mapped[str] = mapped_column(type_=String(255))
     verdict: Mapped[str] = mapped_column(nullable=True, type_=String(255))
