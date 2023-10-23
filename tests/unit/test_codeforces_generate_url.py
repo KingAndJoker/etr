@@ -3,6 +3,7 @@ import requests
 from etr.library.codeforces.utils.generate_url import generate_url
 
 
+#TODO: check url status in json
 def test_generate_url_contest_standings():
     url = generate_url("contest.standings", contestId="1234", from_=1, count=5)
     
