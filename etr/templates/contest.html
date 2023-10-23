@@ -5,6 +5,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ contest.name }}</title>
+
+    <style>
+        .successfully {
+            color: green;
+        }
+
+        .fail {
+            color: red;
+        }
+
+        .attempt_cell {
+            /* visibility: visible; */
+            display: inline;
+        }
+
+        .score_cell {
+            /* visibility: collapse; */
+            display: inline;
+        }
+
+        .none {
+            display: none;
+        }
+    </style>
+
+    <script>
+        let status = 1
+
+        function switch_view_cell() {
+            if (status) {
+                status = 0
+                let cells = document.getElementsByClassName("none")
+                while (cells.length > 0) {
+                    cells[0].className = "score_cell"
+                }
+
+                cells = document.getElementsByClassName("attempt_cell")
+                while (cells.length > 0) {
+                    cells[0].className = "none"
+                }
+            }
+            else {
+                status = 1
+                let cells = document.getElementsByClassName("none")
+                while (cells.length > 0) {
+                    cells[0].className = "attempt_cell"
+                }
+
+                cells = document.getElementsByClassName("score_cell")
+                while (cells.length > 0) {
+                    cells[0].className = "none"
+                }
+            }
+        }
+    </script>
 </head>
 
 <body>
@@ -30,6 +85,8 @@
         {{ contest.description }}
     </div>
     {% endif %}
+
+    <button onclick="switch_view_cell()">switch table view</button>
 
     <table border="1" id="acm_result">
         <tr id="head_acm_result">
@@ -58,26 +115,41 @@
                 let cells = `<td>${users[i].handle}</td>`
 
                 for (var j = 0; j < problems.length; j++) {
+                    let attempt_cell = ""
+                    let scores_cell = ""
                     let cell = ""
 
                     let cell_response = await fetch(`/etr/api/submission?handle=${users[i]["handle"]}&contest_id=${contest_id}&problem_index=${problems[j]["index"]}`)
                     let cell_status = await cell_response.json()
 
                     if (cell_status.length > 0) {
-                        cell = cell_status.length
+                        attempt_cell = cell_status.length
+                        scores_cell = ""
 
                         let complete = false
+                        let maxScore = 0
                         for (var k = 0; k < cell_status.length && !complete; k++) {
                             if (cell_status[k]["verdict"] === "OK") {
                                 complete = true
                             }
+                            if (cell_status[k]["points"]) {
+                                if (maxScore < cell_status[k]["points"]) {
+                                    maxScore = cell_status[k]["points"]
+                                }
+                            }
                         }
                         // TODO: was the solution sent during the contest?
+                        scores_cell = `${maxScore}`
+                        cell = ""
                         if (complete) {
-                            cell = `+${cell}`
+                            attempt_cell = `<p class="attempt_cell">+${attempt_cell}</p>`
+                            scores_cell = `<p class="none">${scores_cell}</p>`
+                            cell = `<div class="successfully">${attempt_cell}${scores_cell}</div>`
                         }
                         else {
-                            cell = `-${cell}`
+                            attempt_cell = `<p class="attempt_cell">-${attempt_cell}</p>`
+                            scores_cell = `<p class="none">${scores_cell}</p>`
+                            cell = `<div class="fail">${attempt_cell}${scores_cell}</div>`
                         }
                     }
 
