@@ -37,3 +37,6 @@ class User(Base):
         "Submission",
         back_populates="author"
     )
+
+
+from etr.models.submission import Submission
