@@ -25,9 +25,22 @@ class Submission(Base):
         "Problem",
         back_populates="submissions",
     )
-    author_id: Mapped[int] = Column("author_id", Integer, ForeignKey("users.id"), nullable=True)
-    author: Mapped[User] = relationship("User", back_populates="submissions")
-    team_id: Mapped[Team] = Column("team_id", Integer, ForeignKey("teams.id"), nullable=True)
+    author_id: Mapped[int] = Column(
+        "author_id",
+        Integer,
+        ForeignKey("users.id"),
+        nullable=True
+    )
+    author: Mapped[User] = relationship(
+        "User",
+        back_populates="submissions",
+    )
+    team_id: Mapped[Team] = Column(
+        "team_id",
+        Integer,
+        ForeignKey("teams.id"),
+        nullable=True
+    )
     team: Mapped[Team] = relationship("Team", back_populates="submissions")
     programming_language: Mapped[str] = mapped_column(type_=String(255))
     verdict: Mapped[str] = mapped_column(nullable=True, type_=String(255))
