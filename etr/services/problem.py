@@ -6,7 +6,6 @@ from etr.models.problem import Problem
 from etr.schemas.problem import ProblemSchema
 
 
-
 def add_problems(contest_id: int):
     """ add contest problems to db """
     problems_schema = convert_codeforces_problems_schema(
@@ -41,3 +40,15 @@ def get_problems_with_contest_id(contest_id: int) -> list[dict] | None:
     ]
 
     return problems
+
+
+def is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
+    """ return True if no the task in contest, else False """
+
+    with get_db() as session:
+        problem_db = session.query(Problem).filter_by(
+            contest_id=contest_id,
+            index=problemSchema.index
+        ).one_or_none()
+
+    return problem_db is None
