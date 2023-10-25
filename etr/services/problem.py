@@ -4,6 +4,24 @@ from etr.library.codeforces.codeforces_utils import get_problem_with_contest
 from etr.db import get_db
 from etr.models.problem import Problem
 from etr.schemas.problem import ProblemSchema
+from etr.utils.factory import create_problem_model
+
+
+def _add_problem_schema_to_db(problem_schema: ProblemSchema) -> ProblemSchema | None:
+    """ add problem schema to db """
+
+    problem = create_problem_model(**problem_schema.model_dump())
+    if problem is None:
+        return None
+
+    try:
+        with get_db() as session:
+            session.add(problem)
+            session.commit()
+    except:
+        return None
+
+    return problem_schema
 
 
 def add_problems(contest_id: int):
@@ -27,7 +45,9 @@ def add_problems(contest_id: int):
 def get_problems_with_contest_id(contest_id: int) -> list[dict] | None:
     """ get problems with contest id """
     with get_db() as session:
-        problems = session.query(Problem).filter(Problem.contest_id == contest_id).all()
+        problems = session.query(Problem).filter(
+            Problem.contest_id == contest_id
+        ).all()
 
         # TODO: Bad code
         # code should work without this loop
@@ -42,7 +62,7 @@ def get_problems_with_contest_id(contest_id: int) -> list[dict] | None:
     return problems
 
 
-def is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
+def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     """ return True if no the task in contest, else False """
 
     with get_db() as session:
@@ -52,3 +72,23 @@ def is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
         ).one_or_none()
 
     return problem_db is None
+
+
+def add_missing_problem_with_contest(contest_id: int) -> list[dict]:
+    """ add missing problem to db. Return list of added problems. """
+
+    problems_schema = convert_codeforces_problems_schema(
+        get_problem_with_contest(contest_id)
+    )
+
+    added_problems_schema: list[ProblemSchema] = list()
+
+    for problem_schema in problems_schema:
+        if _is_missing_problem(problem_schema, contest_id):
+            problem_schema_returned = _add_problem_schema_to_db(problem_schema)
+            if problem_schema_returned is not None:
+                added_problems_schema.append(problem_schema_returned)
+        else:
+            pass
+
+    return None
