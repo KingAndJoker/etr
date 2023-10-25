@@ -2,6 +2,7 @@ import pytest
 from sqlalchemy import create_engine, Engine
 
 from etr.models.base import Base
+from etr.models.contest import Contest
 
 
 @pytest.fixture()
