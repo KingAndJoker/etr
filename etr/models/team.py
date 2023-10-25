@@ -29,6 +29,7 @@ class Team(Base):
     __tablename__ = "teams"
 
     id: Mapped[int] = mapped_column(primary_key=True)
+    # TODO: rename to team_name
     teamName: Mapped[str] = mapped_column(type_=String(255))
 
     users: Mapped[list[User]] = relationship(secondary=teams_users)
