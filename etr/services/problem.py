@@ -30,16 +30,14 @@ def add_problems(contest_id: int):
         get_problem_with_contest(contest_id)
     )
 
-    with get_db() as session:
-        problems = [
-            create_problem_model(**problem_schema.model_dump())
-            for problem_schema in problems_schema
-        ]
-        session.add_all(problems)
+    added_problems_schema: list[ProblemSchema] = list()
 
-        session.commit()
+    for problem_schema in problems_schema:
+        problem_schema_returned = _add_problem_schema_to_db(problem_schema)
+        if problem_schema_returned is not None:
+            added_problems_schema.append(problem_schema_returned)
 
-    return problems_schema
+    return added_problems_schema
 
 
 def get_problems_with_contest_id(contest_id: int) -> list[dict] | None:
