@@ -3,6 +3,8 @@ from sqlalchemy import create_engine, Engine
 
 from etr.models.base import Base
 from etr.models.contest import Contest
+from etr.models.problem import Problem
+from etr.models.submission import Submission
 
 
 @pytest.fixture()
