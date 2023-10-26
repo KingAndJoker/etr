@@ -72,7 +72,7 @@ def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     return problem_db is None
 
 
-def add_missing_problem_with_contest(contest_id: int) -> list[dict]:
+def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
     """ add missing problem to db. Return list of added problems. """
 
     problems_schema = convert_codeforces_problems_schema(
@@ -89,4 +89,4 @@ def add_missing_problem_with_contest(contest_id: int) -> list[dict]:
         else:
             pass
 
-    return None
+    return added_problems_schema
