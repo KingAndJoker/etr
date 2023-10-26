@@ -3,7 +3,6 @@ from etr.models.user import User
 from etr.schemas.user import UserSchema
 
 def get_users() -> list[dict]:
-    # TODO: fix bug: get_users does not returns all info
     with get_db() as session:
         users = session.query(User).filter(User.watch).all()
 
