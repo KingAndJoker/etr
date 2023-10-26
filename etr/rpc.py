@@ -21,6 +21,7 @@ from etr.utils.factory import (
     create_submission_model
 )
 from etr.services.problem import add_missing_problem_with_contest
+from etr.services.contest import update_contest
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -29,27 +30,21 @@ bp = Blueprint("rpc", __name__)
 
 @bp.get("/contest/<contest_id>")
 def update_contest_info(contest_id: int):
-    contest = convert_codeforces_contest_schema(
-        get_contest(contest_id)
-    )
-    if contest is None:
-        return {"status": "failed"}
+    contest_schema = update_contest(contest_id)
 
-    with get_db() as session:
-        contest_db = session.query(Contest).filter(
-            Contest.id == contest_id
-        ).one_or_none()
+    response = dict()
+    status = "ok"
 
-        if contest_db is None:
-            contest_db = create_contest_model(**contest.model_dump())
-        else:
-            for field, value in contest.model_dump().items():
-                setattr(contest_db, field, value)
+    if contest_schema is None:
+        status = "error"
 
-        session.add(contest_db)
-        session.commit()
+    else:
+        contest = contest_schema.model_dump()
+        response["result"] = contest
 
-    return {"status": "ok"}
+    response["status"] = status
+
+    return response
 
 
 @bp.get("/submission/<contest_id>")
