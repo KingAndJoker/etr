@@ -20,6 +20,7 @@ from etr.utils.factory import (
     create_contest_model,
     create_submission_model
 )
+from etr.services.problem import add_missing_problem_with_contest
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -81,4 +82,18 @@ def update_submission_info(contest_id):
             submission_schema.model_dump()
             for submission_schema in submissions_schema
         ]
+    }
+
+
+@bp.get("/problem/<contest_id>")
+def update_missing_problems(contest_id: int):
+    added_problems = add_missing_problem_with_contest(contest_id)
+    problems = [
+        added_problem.model_dump()
+        for added_problem in added_problems
+    ]
+
+    return {
+        "status": "ok",
+        "result": added_problems
     }
