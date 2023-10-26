@@ -32,5 +32,5 @@ class Team(Base):
     # TODO: rename to team_name
     teamName: Mapped[str] = mapped_column(type_=String(255))
 
-    users: Mapped[list[User]] = relationship(secondary=teams_users)
+    users: Mapped[list[User]] = relationship(secondary=teams_users, lazy="selectin")
     submissions: Mapped[list["Submission"]] = relationship("Submission", back_populates="team")
