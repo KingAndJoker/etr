@@ -24,7 +24,7 @@ def _add_problem_schema_to_db(problem_schema: ProblemSchema) -> ProblemSchema | 
     return problem_schema
 
 
-def add_problems(contest_id: int):
+def add_problems(contest_id: int) -> list[ProblemSchema]:
     """ add contest problems to db """
     problems_schema = convert_codeforces_problems_schema(
         get_problem_with_contest(contest_id)
