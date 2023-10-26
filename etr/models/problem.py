@@ -49,7 +49,8 @@ class Problem(Base):
     tags: Mapped[list[Tag]] = relationship(
         "Tag",
         secondary=problems_tags,
-        back_populates="problems"
+        back_populates="problems",
+        lazy="selectin"
     )
 
     submissions: Mapped[list["Submission"]] = relationship(

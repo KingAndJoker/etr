@@ -29,5 +29,6 @@ class Contest(Base):
     season: Mapped[str] = mapped_column(nullable=True, type_=String(255))
 
     problems: Mapped[list["Problem"]] = relationship(
-        "Problem"
+        "Problem",
+        lazy="selectin"
     )

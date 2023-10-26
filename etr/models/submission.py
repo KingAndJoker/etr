@@ -24,24 +24,30 @@ class Submission(Base):
     problem: Mapped[Problem] = relationship(
         "Problem",
         back_populates="submissions",
+        lazy="selectin"
     )
     author_id: Mapped[int] = Column(
         "author_id",
         Integer,
         ForeignKey("users.id"),
-        nullable=True
+        nullable=True,
     )
     author: Mapped[User] = relationship(
         "User",
         back_populates="submissions",
+        lazy="selectin"
     )
     team_id: Mapped[Team] = Column(
         "team_id",
         Integer,
         ForeignKey("teams.id"),
-        nullable=True
+        nullable=True,
     )
-    team: Mapped[Team] = relationship("Team", back_populates="submissions")
+    team: Mapped[Team] = relationship(
+        "Team",
+        back_populates="submissions",
+        lazy="selectin"
+    )
     programming_language: Mapped[str] = mapped_column(type_=String(255))
     verdict: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     testset: Mapped[str] = mapped_column(nullable=True, type_=String(255))
