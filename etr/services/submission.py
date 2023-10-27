@@ -96,7 +96,7 @@ def update_submission(
     handle: str | None,
 ) -> list[SubmissionSchema] | None:
     user = get_user(handle) if handle else None
-    problem = get_problems_with_contest_id(contest_id) if index else None
+    problems = get_problems_with_contest_id(contest_id)
 
     submissions_schema = convert_codeforces_submissions_schema(
         get_submission(contest_id, handle=handle)
@@ -106,6 +106,7 @@ def update_submission(
     for submission_schema in submissions_schema:
         sub = _get_submission_with_schema(submission_schema)
         if sub is None:
-            added_submissions_schemas.append(_add_submission_with_schema(sub))
+            _add_submission_with_schema(submission_schema)
+            added_submissions_schemas.append(submission_schema)
 
     return added_submissions_schemas
