@@ -31,9 +31,9 @@ def create_app() -> Flask:
     from etr.views import index
     from etr.views import contest
     from etr.views import contest_status
-    from etr.views.api import api_problem
-    from etr.views.api import api_user
-    from etr.views.api import api_submission
+    from etr.api import api_problem
+    from etr.api import api_user
+    from etr.api import api_submission
     from etr import rpc
     app.register_blueprint(index.bp, url_prefix=URL_PREFIX)
     app.register_blueprint(user.bp, url_prefix=URL_PREFIX + "/user")
