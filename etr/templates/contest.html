@@ -1,193 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "./base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ contest.name }}</title>
+{% block title %}{{ contest.name }}{% endblock %}
 
-    <style>
-        .successfully {
-            color: green;
-        }
+{% block imports %}
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+<script src="{{ url_for('static', filename='contest_table.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+{% endblock %}
 
-        .fail {
-            color: red;
-        }
+{% block content %}
+<h1>{{ contest.name }}</h1>
+<div>
+    {{ contest.type }}
+    {% if contest.kind %}
+    , {{ contest.kind }}
+    {% endif%}
+</div>
+<div>
+    duration: {{ contest.duration_time }}<br>
+    start time: {{ contest.start_datatime }}<br>
+</div>
+{% if contest.website_url %}
+<div>
+    <a href="{{ contest.website_url }}">contest site</a>
+</div>
+{% endif %}
+{% if contest.description %}
+<div>
+    <h2>Description</h2>
+    {{ contest.description }}
+</div>
+{% endif %}
 
-        .attempt_cell {
-            /* visibility: visible; */
-            display: inline;
-        }
+<br>
+<button onclick="switch_view_cell()" class="btn btn-info">switch table view</button>
+<button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">update submission on db</button>
+<br>
 
-        .score_cell {
-            /* visibility: collapse; */
-            display: inline;
-        }
+<table id="acm_result" class="table table-striped table-hover">
+    <tr id="head_acm_result" class="table-info">
+        <th>user</th>
+    </tr>
+</table>
 
-        .none {
-            display: none;
-        }
-    </style>
-
-    <script>
-        let status = 1
-
-        function switch_view_cell() {
-            if (status) {
-                status = 0
-                let cells = document.getElementsByClassName("none")
-                while (cells.length > 0) {
-                    cells[0].className = "score_cell"
-                }
-
-                cells = document.getElementsByClassName("attempt_cell")
-                while (cells.length > 0) {
-                    cells[0].className = "none"
-                }
-            }
-            else {
-                status = 1
-                let cells = document.getElementsByClassName("none")
-                while (cells.length > 0) {
-                    cells[0].className = "attempt_cell"
-                }
-
-                cells = document.getElementsByClassName("score_cell")
-                while (cells.length > 0) {
-                    cells[0].className = "none"
-                }
-            }
-        }
-
-        async function update_submission_send_request(contest_id) {
-            let response = await fetch(`/etr/api/user`)
-            let users = await response.json()
-
-            response = await fetch(`/etr/api/problem/${contest_id}`)
-            let problems = await response.json()
-            problems = problems["problems"]
-
-            for (var i = 0; i < users.length; i++) {
-                let url = `/etr/rpc/submission/${contest_id}?handle=${users[i].handle}`
-                console.log(url)
-                response = await fetch(url)
-            }
-
-            window.location.reload()
-        }
-    </script>
-</head>
-
-<body>
-    <h1>{{ contest.name }}</h1>
-    <div>
-        {{ contest.type }}
-        {% if contest.kind %}
-            , {{ contest.kind }}
-        {% endif%}
-    </div>
-    <div>
-        duration: {{ contest.duration_time }}<br>
-        start time: {{ contest.start_datatime }}<br>
-    </div>
-    {% if contest.website_url %}
-    <div>
-        <a href="{{ contest.website_url }}">contest site</a>
-    </div>
-    {% endif %}
-    {% if contest.description %}
-    <div>
-        <h2>Description</h2>
-        {{ contest.description }}
-    </div>
-    {% endif %}
-
-    <button onclick="switch_view_cell()">switch table view</button>
-    <button onclick="update_submission_send_request({{ contest.id }})">update submission on db</button>
-
-    <table border="1" id="acm_result">
-        <tr id="head_acm_result">
-            <th>user</th>
-        </tr>
-    </table>
-
-    <script>
-        async function create_table(contest_id) {
-            let response = await fetch(`/etr/api/problem/${contest_id}`)
-            let problems = await response.json()
-            problems = problems["problems"]
-            console.log(problems)
-
-            table_acm_result_head = document.getElementById("head_acm_result")
-            for (var i = 0; i < problems.length; i++) {
-                table_acm_result_head.innerHTML += `<th>${problems[i]["index"]}</th>`
-            }
-
-            table_acm_result = document.getElementById("acm_result")
-
-            response = await fetch(`/etr/api/user`)
-            let users = await response.json()
-
-            for (var i = 0; i < users.length; i++) {
-                let cells = `<td>${users[i].handle}</td>`
-
-                // TODO: rewrite!!!
-                console.log(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
-                let codeforces_response_user_rows = await fetch(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
-                let codeforces_json_user_rows = await codeforces_response_user_rows.json()
-
-                for (var j = 0; j < problems.length; j++) {
-                    let attempt_cell = ""
-                    let scores_cell = ""
-                    let cell = ""
-
-                    let cell_response = await fetch(`/etr/api/submission?handle=${users[i]["handle"]}&contest_id=${contest_id}&problem_index=${problems[j]["index"]}`)
-                    let cell_status = await cell_response.json()
-
-                    if (cell_status.length > 0) {
-                        attempt_cell = cell_status.length
-                        scores_cell = ""
-
-                        let complete = false
-                        let maxScore = null
-                        for (var k = 0; k < cell_status.length && !complete; k++) {
-                            if (cell_status[k]["verdict"] === "OK") {
-                                complete = true
-
-                                // TODO: rewrite
-                                if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
-                                    maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
-                                } else {
-                                    maxScore = problems[j].points
-                                }
-                            }
-                        }
-                        // TODO: was the solution sent during the contest?
-                        scores_cell = `${maxScore}`
-                        cell = ""
-                        if (complete) {
-                            attempt_cell = `<p class="attempt_cell">+${attempt_cell}</p>`
-                            scores_cell = `<p class="none">${scores_cell}</p>`
-                            cell = `<div class="successfully">${attempt_cell}${scores_cell}</div>`
-                        }
-                        else {
-                            attempt_cell = `<p class="attempt_cell">-${attempt_cell}</p>`
-                            scores_cell = `<p class="none">${attempt_cell}</p>`
-                            cell = `<div class="fail">${attempt_cell}${scores_cell}</div>`
-                        }
-                    }
-
-                    cells += `<td>${cell}</td>`
-                }
-
-                table_acm_result.innerHTML += `<tr>${cells}</tr>`
-            }
-        }
-    </script>
-    <script>
-        create_table({{ contest.id }})
-    </script>
-</body>
-
-</html>
+<script>
+    create_table({{ contest.id }})
+</script>
+{% endblock %}
