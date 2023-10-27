@@ -22,6 +22,7 @@ from etr.utils.factory import (
 )
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.contest import update_contest
+from etr.services.submission import update_submission
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -48,36 +49,25 @@ def update_contest_info(contest_id: int):
 
 
 @bp.get("/submission/<contest_id>")
-def update_submission_info(contest_id):
-    with get_db() as session:
-        users = session.query(User).filter(User.watch).all()
+def update_submission_info(contest_id: int):
+    handle = request.args.get("handle", None)
+    index = request.args.get("index", None)
 
-    submissions_schema: list[SubmissionSchema] = list()
-    for user in users:
-        submissions_schema += convert_codeforces_submissions_schema(
-            get_submission(contest_id, handle=user.handle)
-        )
-
-    with get_db() as session:
-        for submission_schema in submissions_schema:
-            sub = session.query(Submission).filter(
-                Submission.id == submission_schema.id and Submission.contest_id == contest_id
-            ).one_or_none()
-
-            if sub is None:
-                sub = create_submission_model(**submission_schema.model_dump())
-
-                if sub is not None:
-                    session.add(sub)
-                    session.commit()
-
-    return {
-        "status": "ok",
-        "result": [
+    response = dict()
+    status = "ok"
+    submissions_schema = update_submission(contest_id, handle=handle, index=index)
+    if submissions_schema is None:
+        status = "error"
+    else:
+        submissions = [
             submission_schema.model_dump()
             for submission_schema in submissions_schema
         ]
-    }
+        response["result"] = submissions
+    
+    response["status"] = status
+
+    return response
 
 
 @bp.get("/problem/<contest_id>")
