@@ -1,12 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Status task</title>
-</head>
-<body>
-    <table border="1">
+{% extends "./base.html" %}
+
+{% block title %}Status{% endblock %}
+{% block content %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
         <tr>
             <th>id</th>
             <th>user handle</th>
@@ -25,18 +22,18 @@
         <tr>
             <td>{{ status.id }}</td>
             {% if status.author.teamName %}
-                <td>
-                    <a style="color: red;">{{ status.author.teamName }}</a>
-                    <sub>
-                        {% for user in status.author.users %}
-                        {{ user.handle }};
-                        {% endfor %}
-                    </sub>
-                </td>
+            <td>
+                <a style="color: red;">{{ status.author.teamName }}</a>
+                <sub>
+                    {% for user in status.author.users %}
+                    {{ user.handle }};
+                    {% endfor %}
+                </sub>
+            </td>
             {% else %}
-                <td>
-                    {{ status.author.handle }}
-                </td>
+            <td>
+                {{ status.author.handle }}
+            </td>
             {% endif %}
             <td>{{ status.contestId }}</td>
             <td>{{ status.creationTimeSeconds }}</td>
@@ -51,5 +48,5 @@
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+</div>
+{% endblock %}
