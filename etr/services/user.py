@@ -38,3 +38,17 @@ def get_user(handle: str, watch: bool = True) -> UserSchema | None:
     user = UserSchema.model_validate(user_db)
 
     return user
+
+
+def get_users(watch: bool = True) -> list[UserSchema] | None:
+    users_db = _get_all_users(watch)
+
+    if users_db is None:
+        return None
+    
+    users = [
+        UserSchema.model_validate(user_db)
+        for user_db in users_db
+    ]
+
+    return users
