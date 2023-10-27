@@ -1,31 +1,30 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contests list</title>
-</head>
-<body>
-    <table border="1">
+{% extends "./base.html" %}
+
+{% block title %}Contests list{% endblock %}
+{% block content %}
+<!-- TODO: rewrite to API requests -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover table-responsive">
         <tr>
-        <th>id</th>
-        <th>name</th>
-        <th>type</th>
-        <th>phase</th>
-        <th>frozen</th>
-        <th>durationSeconds</th>
-        <th>startTimeSeconds</th>
-        <th>relativeTimeSeconds</th>
-        <th>preparedBy</th>
-        <th>websiteUrl</th>
-        <th>description</th>
-        <th>difficulty</th>
-        <th>kind</th>
-        <th>icpcRegion</th>
-        <th>counthy</th>
-        <th>city</th>
-        <th>season</th>
-    </tr>
+            <th scope="col">id</th>
+            <th>name</th>
+            <th>type</th>
+            <th>phase</th>
+            <th>frozen</th>
+            <th>durationSeconds</th>
+            <th>startTimeSeconds</th>
+            <th>relativeTimeSeconds</th>
+            <th>preparedBy</th>
+            <th>websiteUrl</th>
+            <th>description</th>
+            <th>difficulty</th>
+            <th>kind</th>
+            <th>icpcRegion</th>
+            <th>counthy</th>
+            <th>city</th>
+            <th>season</th>
+        </tr>
+
         {% for contest in contests %}
         <tr>
             <td>{{ contest.id }}</td>
@@ -48,5 +47,5 @@
         </tr>
         {% endfor %}
     </table>
-</body>
-</html>
+</div>
+{% endblock %}
