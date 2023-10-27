@@ -12,3 +12,9 @@ bp = Blueprint("index", __name__)
 def index():
     """index page"""
     return render_template("index.html")
+
+
+@bp.get("/about")
+def about():
+    """about page"""
+    return render_template("about.html")
