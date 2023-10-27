@@ -40,21 +40,26 @@ def add_problems(contest_id: int) -> list[ProblemSchema]:
     return added_problems_schema
 
 
-def get_problems_with_contest_id(contest_id: int) -> list[dict] | None:
-    """ get problems with contest id """
+def _get_problems_db_with_contest_id(contest_id: int) -> Problem:
     with get_db() as session:
         problems = session.query(Problem).filter(
             Problem.contest_id == contest_id
         ).all()
 
-        # TODO: Bad code
-        # code should work without this loop
         for i, _ in enumerate(problems):
             problems[i].tags = [tag.tag for tag in problems[i].tags]
 
+    return problems
+
+
+def get_problems_with_contest_id(contest_id: int) -> list[ProblemSchema] | None:
+    """ get problems with contest id """
+
+    problems_db = _get_problems_db_with_contest_id(contest_id)
+
     problems = [
-        ProblemSchema.model_validate(problem).model_dump()
-        for problem in problems
+        ProblemSchema.model_validate(problem_db)
+        for problem_db in problems_db
     ]
 
     return problems
