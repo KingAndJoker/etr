@@ -1,0 +1,21 @@
+.successfully {
+    color: green;
+}
+
+.fail {
+    color: red;
+}
+
+.attempt_cell {
+    /* visibility: visible; */
+    display: inline;
+}
+
+.score_cell {
+    /* visibility: collapse; */
+    display: inline;
+}
+
+.none {
+    display: none;
+}
