@@ -10876,3 +10876,8 @@ textarea.form-control-lg {
 }
 
 /*# sourceMappingURL=bootstrap.css.map */
+
+/* my modify */
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
