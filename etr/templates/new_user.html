@@ -1,23 +1,17 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "./base.html" %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New user</title>
-</head>
-
-<body>
+{% block title %}New user{% endblock %}
+{% block content %}
+<div class="container col-3">
     <h1>New user</h1>
+    <br>
     <form action="/etr/user/new" method="post">
         <p>
-            <label for="handle">Handle</label>
-            <input type="text" name="handle">
+            <input class="form-control form-control-lg" type="text" placeholder="handle">
         </p>
         <p>
-            <input type="submit">
+            <button type="submit" class="btn btn-primary mb-2">send handle</button>
         </p>
     </form>
-</body>
-
-</html>
+</div>
+{% endblock %}
