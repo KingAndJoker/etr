@@ -59,6 +59,23 @@
                 }
             }
         }
+
+        async function update_submission_send_request(contest_id) {
+            let response = await fetch(`/etr/api/user`)
+            let users = await response.json()
+
+            response = await fetch(`/etr/api/problem/${contest_id}`)
+            let problems = await response.json()
+            problems = problems["problems"]
+
+            for (var i = 0; i < users.length; i++) {
+                let url = `/etr/rpc/submission/${contest_id}?handle=${users[i].handle}`
+                console.log(url)
+                response = await fetch(url)
+            }
+
+            window.location.reload()
+        }
     </script>
 </head>
 
@@ -87,6 +104,7 @@
     {% endif %}
 
     <button onclick="switch_view_cell()">switch table view</button>
+    <button onclick="update_submission_send_request({{ contest.id }})">update submission on db</button>
 
     <table border="1" id="acm_result">
         <tr id="head_acm_result">
@@ -136,9 +154,9 @@
                         for (var k = 0; k < cell_status.length && !complete; k++) {
                             if (cell_status[k]["verdict"] === "OK") {
                                 complete = true
-                                
+
                                 // TODO: rewrite
-                                if(codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
+                                if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
                                     maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
                                 } else {
                                     maxScore = problems[j].points
