@@ -88,12 +88,13 @@ def create_submission_model(**kwargs) -> Submission | None:
                 ).one_or_none()
             submission.problem_id = problem.id
 
-        if "teamId" in kwargs["author"]:
-            submission.team_id = kwargs["author"]["teamId"]
-        else:
-            with get_db() as session:
-                user = session.query(User).filter(User.handle == kwargs["author"]["handle"]).first()
-                submission.author_id = user.id
+        if "author" in kwargs:
+            if "teamId" in kwargs["author"]:
+                submission.team_id = kwargs["author"]["teamId"]
+            else:
+                with get_db() as session:
+                    user = session.query(User).filter(User.handle == kwargs["author"]["handle"]).first()
+                    submission.author_id = user.id
     except:
         return None
 
