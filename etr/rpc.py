@@ -55,16 +55,20 @@ def update_submission_info(contest_id: int):
 
     response = dict()
     status = "ok"
-    submissions_schema = update_submission(contest_id, handle=handle, index=index)
+    submissions_schema = update_submission(
+        contest_id,
+        handle=handle,
+        index=index
+    )
     if submissions_schema is None:
         status = "error"
     else:
         submissions = [
             submission_schema.model_dump()
-            for submission_schema in submissions_schema
+            for submission_schema in submissions_schema if submission_schema is not None
         ]
         response["result"] = submissions
-    
+
     response["status"] = status
 
     return response
