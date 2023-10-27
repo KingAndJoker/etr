@@ -42,10 +42,12 @@ async function create_table(contest_id) {
                         complete = true
 
                         // TODO: rewrite
-                        if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
-                            maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
-                        } else {
-                            maxScore = problems[j].points
+                        if (codeforces_json_user_rows["result"]["rows"].length > 0) {
+                            if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
+                                maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
+                            } else {
+                                maxScore = problems[j].points
+                            }
                         }
                     }
                 }
