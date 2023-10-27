@@ -5,14 +5,85 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
-    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='css/bootstrap.css') }}">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/bootstrap.css') }}">
     {% block imports %}{% endblock %}
 </head>
 
 <body>
-    <div id="head" class="container">
-        <h1>Head</h1>
-    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container">
+            <div class="order-lg-3 d-flex align-items-center">
+                <!-- <div>
+                    <div class="d-flex align-items-center">
+                        <a href="#" class="btn btn-outline-primary shadow-sm me-1">Sign In</a>
+                        <a href="#" class="btn btn-primary d-none d-md-block">Sign Up</a>
+                    </div>
+                </div> -->
+                <!-- Button -->
+                <!-- <button class="navbar-toggler collapsed" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbar-default" aria-controls="navbar-default" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                    <span class="icon-bar top-bar mt-0"></span>
+                    <span class="icon-bar middle-bar"></span>
+                    <span class="icon-bar bottom-bar"></span>
+                </button> -->
+            </div>
+            <!-- Collapse -->
+            <div class="collapse navbar-collapse" id="navbar-default">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a href="/etr" class="nav-link active" aria-current="page">
+                            Index
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="/etr/user" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Users
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="/etr/user">All</a></li>
+                            <li><a class="dropdown-item" href="/etr/user/new">New</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="/etr/contest" role="button" data-bs-toggle="dropdown"
+                            aria-expanded="false">
+                            Contests
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-dark">
+                            <li><a class="dropdown-item" href="/etr/contest">All</a></li>
+                            <li><a class="dropdown-item" href="/etr/contest/new">New</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" role="button">
+                            Teams
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#" role="button">
+                            Problems
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/etr/status" role="button">
+                            Submissions
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/etr/about" role="button">
+                            About
+                        </a>
+                    </li>
+                </ul>
+
+            </div>
+        </div>
+    </nav>
+    <br>
+
     <div id="content" class="container">{% block content %}{% endblock %}</div>
     <div id="footer" class="container">{% block footer %}{% endblock %}</div>
 </body>
