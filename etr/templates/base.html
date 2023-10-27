@@ -5,14 +5,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
+    <link rel= "stylesheet" type= "text/css" href= "{{ url_for('static', filename='bootstrap.css') }}">
 </head>
 
 <body>
-    <div id="head">
+    <div id="head" class="container">
         <h1>Head</h1>
     </div>
-    <div id="content">{% block content %}{% endblock %}</div>
-    <div id="footer">{% block footer %}{% endblock %}</div>
+    <div id="content" class="container">{% block content %}{% endblock %}</div>
+    <div id="footer" class="container">{% block footer %}{% endblock %}</div>
 </body>
 
 </html>
