@@ -31,4 +31,36 @@ job("Run only on tags") {
             tags("\$DOCKER_TAG", "\$BRANCH")
         }
     }
+
+    container("Start deployment", image = "alpine:3.18") {
+        kotlinScript { api ->
+            // create and start deployment
+            api.space().projects.automation.deployments.start(
+                project = api.projectIdentifier(),
+                targetIdentifier = TargetIdentifier.Id("etr-container"),
+                version = System.getenv("JB_SPACE_EXECUTION_NUMBER"),
+                // sync the job and deployment states
+                syncWithAutomationJob = true
+            )
+        }
+    }
+
+    parameters {
+        secret("private-key", "{{ project:DEPLOYER_SSH_KEY }}")
+    }
+
+    host {
+        fileInput {
+            source = FileSource.Text("{{ private-key }}")
+            localPath = "/root/.ssh/id_rsa"
+        }
+
+        shellScript {
+            interpreter = "/bin/bash"
+            content = """
+                ssh -o StrictHostKeyChecking=no deploy@${'$'}DL_CONTAINERS_HOST -p ${'$'}DL_CONTAINERS_HOST_SSH_PORT bash deploy-etr.sh
+            """
+        }
+    }
+
 }
