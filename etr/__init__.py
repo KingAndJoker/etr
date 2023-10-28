@@ -10,14 +10,16 @@ from .models.base import Base
 
 def create_app() -> Flask:
     """Create and configure an instance of the Flask application."""
-    app = Flask(__name__, instance_relative_config=True)
+
+    URL_PREFIX = os.getenv("URL_PREFIX", "")
+
+    app = Flask(__name__, instance_relative_config=True, static_url_path=f"{URL_PREFIX}/static")
     
     load_dotenv()
     app.config.from_mapping(
         # a default secret that should be overridden by instance config
         SECRET_KEY="dev",
     )
-    URL_PREFIX = os.getenv("URL_PREFIX", "")
     # app.config.from_file("pyproject.toml")
 
     # register the database commands
@@ -25,6 +27,7 @@ def create_app() -> Flask:
 
     # Base.metadata.create_all(app.config["DATABASE_ENGINE"])
     db.init_db(app)
+    app.static_url_path
 
     # apply the blueprints to the app
     from etr.views import user
