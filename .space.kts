@@ -9,6 +9,7 @@ job("Run only on tags") {
 
     kaniko {
         beforeBuildScript {
+            // Start deployment
             // Create an env variable BRANCH,
             // use env var to get full branch name,
             // leave only the branch name without the 'refs/heads/' path
@@ -28,20 +29,7 @@ job("Run only on tags") {
             args["TARGET_BRANCH"] = "\$BRANCH"
         }
         push("dl-gsu-by.registry.jetbrains.space/p/main/containers/etr") {
-            tags("\$DOCKER_TAG", "\$BRANCH")
-        }
-    }
-
-    container("Start deployment", image = "alpine:3.18") {
-        kotlinScript { api ->
-            // create and start deployment
-            api.space().projects.automation.deployments.start(
-                project = api.projectIdentifier(),
-                targetIdentifier = TargetIdentifier.Id("etr-container"),
-                version = System.getenv("JB_SPACE_EXECUTION_NUMBER"),
-                // sync the job and deployment states
-                syncWithAutomationJob = true
-            )
+            tags("\$BRANCH", "\$DOCKER_TAG", "latest")
         }
     }
 
@@ -52,13 +40,30 @@ job("Run only on tags") {
     host {
         fileInput {
             source = FileSource.Text("{{ private-key }}")
-            localPath = "/root/.ssh/id_rsa"
+            localPath = "/root/.ssh/id_rsa.b64"
         }
 
         shellScript {
             interpreter = "/bin/bash"
             content = """
-                ssh -o StrictHostKeyChecking=no deploy@${'$'}DL_CONTAINERS_HOST -p ${'$'}DL_CONTAINERS_HOST_SSH_PORT bash deploy-etr.sh
+                export BRANCH=${'$'}(echo ${'$'}JB_SPACE_GIT_BRANCH | cut -d'/' -f 3)
+                export DOCKER_TAG=${'$'}BRANCH-${'$'}JB_SPACE_EXECUTION_NUMBER
+
+                curl "https://dl-gsu-by.jetbrains.space/api/http/projects/id:{{run:project.id}}/automation/deployments/start" \
+                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}BRANCH\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
+                base64 -d </root/.ssh/id_rsa.b64 >/root/.ssh/id_rsa
+                chmod 0600 /root/.ssh/id_rsa
+
+                ssh -o StrictHostKeyChecking=no deploy@{{ project:DL_CONTAINERS_HOST }} -p {{ project:DL_CONTAINERS_HOST_SSH_PORT }} bash deploy-etr.sh ${'$'}DOCKER_TAG
+                if [ $? -eq 0 ] 
+                then 
+                    export RES=finish
+                else 
+                    export RES=fail
+                fi
+                curl "https://dl-gsu-by.jetbrains.space/api/http/projects/id:{{run:project.id}}/automation/deployments/${'$'}RES" \
+                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}BRANCH\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
+
             """
         }
     }
