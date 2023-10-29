@@ -6,9 +6,8 @@ from etr.utils.codeforces.convert import convert_codeforces_user_schema
 from etr.utils.factory import create_user_model
 
 
-def _get_user_db_with_handle(**kwargs) -> User | None:
+def _get_user_db_with_kwargs(**kwargs) -> User | None:
     with get_db() as session:
-        print(kwargs)
         user = session.query(User).filter_by(
             **kwargs
         ).one_or_none()
@@ -28,7 +27,7 @@ def _get_users_filter_by(watch: bool = True, **kwargs) -> list[User]:
 
 def _get_users_db_with_handle(handles: list[str], watch: bool = True) -> list[User]:
     users = [
-        user := _get_user_db_with_handle(
+        user := _get_user_db_with_kwargs(
             handle=handle,
             watch=watch
         )
@@ -39,7 +38,7 @@ def _get_users_db_with_handle(handles: list[str], watch: bool = True) -> list[Us
 
 
 def get_user(handle: str, watch: bool = True) -> UserSchema | None:
-    user_db = _get_user_db_with_handle(
+    user_db = _get_user_db_with_kwargs(
         handle=handle,
         watch=watch
     )
@@ -78,7 +77,7 @@ def get_users(
 
 
 def add_user(handle: str, lang: str = "en") -> UserSchema | None:
-    user_db = _get_user_db_with_handle(handle=handle)
+    user_db = _get_user_db_with_kwargs(handle=handle)
 
     if user_db is not None:
         return None
@@ -108,3 +107,46 @@ def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
         session.commit()
 
     return user_schema
+
+
+def update_user(id: int, **kwargs) -> UserSchema | None:
+    user_db = _get_user_db_with_kwargs(id=id)
+
+    if user_db is None:
+        return None
+    
+    if _check_patch_with_kwargs(user_db, **kwargs):
+        user_db = _update_user_with_kwargs(user_db, **kwargs)
+    
+    user_schema = UserSchema.model_validate(
+        _get_user_db_with_kwargs(id=id)
+    )
+    return user_schema
+
+
+def _check_patch_with_kwargs(user_db: User, **kwargs) -> bool:
+    user_schema = UserSchema.model_validate(user_db)
+
+    try:
+        for key, value in kwargs.items():
+            setattr(user_schema, key, value)
+    except:
+        return False
+    
+    try:
+        check_user_schema = UserSchema(**user_schema.model_dump())
+    except:
+        return False
+
+    return True
+
+
+def _update_user_with_kwargs(user_db: User, **kwargs) -> User:
+    for key, value in kwargs.items():
+        setattr(user_db, key, value)
+    
+    with get_db() as session:
+        session.add(user_db)
+        session.commit()
+    
+    return user_db

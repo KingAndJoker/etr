@@ -4,6 +4,7 @@ from flask import Blueprint, request
 from etr.services.user import get_users
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 from etr.services.user import add_user
+from etr.services.user import update_user
 
 
 bp = Blueprint("api_user", __name__)
@@ -64,4 +65,19 @@ def new_user():
     return {
         "status": "ok",
         "user": user_schema.model_dump()
+    }
+
+
+@bp.patch("/user/<int:user_id>")
+def patch_user(user_id: int):
+    data = request.get_json()
+
+    user_schema = update_user(id=user_id, **data)
+
+    if user_schema is None:
+        return {"status": "error"}
+
+    return {
+        "status": "ok",
+        "result": user_schema.model_dump()
     }
