@@ -48,9 +48,11 @@ job("Run only on tags") {
             content = """
                 export BRANCH=${'$'}(echo ${'$'}JB_SPACE_GIT_BRANCH | cut -d'/' -f 3)
                 export DOCKER_TAG=${'$'}BRANCH-${'$'}JB_SPACE_EXECUTION_NUMBER
+                export DEPLOY_VERSION=${'$'}BRANCH.${'$'}JB_SPACE_EXECUTION_NUMBER
 
+                # Create new deployment
                 curl "https://dl-gsu-by.jetbrains.space/api/http/projects/id:{{run:project.id}}/automation/deployments/start" \
-                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}BRANCH\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
+                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}DEPLOY_VERSION\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
                 base64 -d </root/.ssh/id_rsa.b64 >/root/.ssh/id_rsa
                 chmod 0600 /root/.ssh/id_rsa
 
@@ -61,8 +63,9 @@ job("Run only on tags") {
                 else 
                     export RES=fail
                 fi
+                # Report deployment status
                 curl "https://dl-gsu-by.jetbrains.space/api/http/projects/id:{{run:project.id}}/automation/deployments/${'$'}RES" \
-                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}BRANCH\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
+                -d "{\"targetIdentifier\": \"key:etr-container\", \"version\": \"${'$'}DEPLOY_VERSION\", \"commitRefs\": [{\"repositoryName\": \"{{run:git-checkout.repositories}}\", \"branch\": \"{{ run:git-checkout.ref }}\", \"commit\": \"{{run:git-checkout.commit}}\"}]}" -X POST -H "Authorization: Bearer ${'$'}JB_SPACE_CLIENT_TOKEN"
 
             """
         }
