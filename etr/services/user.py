@@ -15,10 +15,9 @@ def _get_user_db_with_kwargs(**kwargs) -> User | None:
     return user
 
 
-def _get_users_filter_by(watch: bool = True, **kwargs) -> list[User]:
+def _get_users_filter_by(**kwargs) -> list[User]:
     with get_db() as session:
         users = session.query(User).filter_by(
-            watch=watch,
             **kwargs
         ).all()
 
@@ -52,7 +51,6 @@ def get_user(handle: str, watch: bool = True) -> UserSchema | None:
 
 
 def get_users(
-    watch: bool = True,
     lang: str = "en",
     handles: list[str] | None = None,
     **kwargs
@@ -61,10 +59,9 @@ def get_users(
     if handles:
         users_db = list()
         for handle in handles:
-            users_db.extend(_get_users_filter_by(
-                watch, handle=handle, **kwargs))
+            users_db.extend(_get_users_filter_by(handle=handle, **kwargs))
     else:
-        users_db = _get_users_filter_by(watch, **kwargs)
+        users_db = _get_users_filter_by(**kwargs)
 
     users_db = [user_db for user_db in users_db if user_db is not None]
 
@@ -114,10 +111,10 @@ def update_user(id: int, **kwargs) -> UserSchema | None:
 
     if user_db is None:
         return None
-    
+
     if _check_patch_with_kwargs(user_db, **kwargs):
         user_db = _update_user_with_kwargs(user_db, **kwargs)
-    
+
     user_schema = UserSchema.model_validate(
         _get_user_db_with_kwargs(id=id)
     )
@@ -132,7 +129,7 @@ def _check_patch_with_kwargs(user_db: User, **kwargs) -> bool:
             setattr(user_schema, key, value)
     except:
         return False
-    
+
     try:
         check_user_schema = UserSchema(**user_schema.model_dump())
     except:
@@ -144,9 +141,9 @@ def _check_patch_with_kwargs(user_db: User, **kwargs) -> bool:
 def _update_user_with_kwargs(user_db: User, **kwargs) -> User:
     for key, value in kwargs.items():
         setattr(user_db, key, value)
-    
+
     with get_db() as session:
         session.add(user_db)
         session.commit()
-    
+
     return user_db
