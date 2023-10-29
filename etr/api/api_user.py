@@ -3,6 +3,7 @@ from flask import Blueprint, request
 
 from etr.services.user import get_users
 from etr.utils.api.api_user import generate_kwargs_for_get_users
+from etr.services.user import add_user
 
 
 bp = Blueprint("api_user", __name__)
@@ -41,3 +42,26 @@ def get_all_users():
     ]
 
     return users
+
+
+@bp.post("/user/")
+def new_user():
+    lang = request.accept_languages.best_match(["ru", "en"], "en")
+    input_data = request.get_json()
+    handle = input_data.get("handle", None)
+
+    if input_data is None:
+        return {"status": "error"}
+    
+    if handle is None:
+        return {"status": "error"}
+
+    user_schema = add_user(handle, lang)
+
+    if user_schema is None:
+        return {"status": "error"}
+    
+    return {
+        "status": "ok",
+        "user": user_schema.model_dump()
+    }
