@@ -13,9 +13,12 @@ def _get_user_db_with_handle(handle: str, watch: bool = True) -> User | None:
     return user
 
 
-def _get_all_users(watch: bool = True) -> list[User]:
+def _get_users_filter_by(watch: bool = True, **kwargs) -> list[User]:
     with get_db() as session:
-        users = session.query(User).all()
+        users = session.query(User).filter_by(
+            watch=watch,
+            **kwargs
+        ).all()
 
     return users
 
@@ -40,12 +43,12 @@ def get_user(handle: str, watch: bool = True) -> UserSchema | None:
     return user
 
 
-def get_users(watch: bool = True) -> list[UserSchema] | None:
-    users_db = _get_all_users(watch)
+def get_users(watch: bool = True, lang: str = "en", **kwargs) -> list[UserSchema] | None:
+    users_db = _get_users_filter_by(watch, **kwargs)
 
     if users_db is None:
         return None
-    
+
     users = [
         UserSchema.model_validate(user_db)
         for user_db in users_db
