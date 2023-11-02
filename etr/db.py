@@ -1,8 +1,8 @@
 """db utils"""
 import os
 from flask import Flask
-from sqlalchemy import create_engine
-from sqlalchemy.orm import Session
+from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import Session, sessionmaker
 
 from etr.models.base import Base
 from etr.models.user import User
@@ -12,21 +12,18 @@ from etr.models.problem import Problem
 from etr.models.team import Team, teams_users
 
 
-DEFAULT_DATABASE_URL = "sqlite:///storage/users.db"
-DATABASE_URL = os.getenv("URL_DATABASE", DEFAULT_DATABASE_URL)
-ECHO = os.getenv("DATABASE_ECHO", "True") in ("true", "True")
 engine = None
+Session_ = None  # sessionmaker(engine)
 
 
-def init_db(app: Flask) -> None:
-    engine = create_engine(DATABASE_URL, echo=ECHO)
+def init_db(database_url: str, echo: bool = False) -> Engine:
+    global engine
+    engine = create_engine(database_url, echo=echo)
     Base.metadata.create_all(engine)
+    global Session_
+    Session_ = sessionmaker(engine)
+    return engine
 
 
 def get_db() -> Session:
-    global engine
-    if engine:
-        return Session(engine)
-    else:
-        engine = create_engine(DATABASE_URL, echo=ECHO)
-        return Session(engine)
+    return Session_()

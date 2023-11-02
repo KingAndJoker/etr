@@ -18,3 +18,9 @@ def index():
 def about():
     """about page"""
     return render_template("about.html")
+
+
+@bp.get("/api")
+def api():
+    """api page"""
+    return render_template("api.html")

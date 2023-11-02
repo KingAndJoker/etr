@@ -8,6 +8,7 @@ from etr.models.user import User
 from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
 from etr.schemas.submission import SubmissionSchema
+from etr.schemas.user import UserSchema
 from etr.db import get_db
 
 
@@ -102,3 +103,27 @@ def create_submission_model(**kwargs) -> Submission | None:
         return None
 
     return submission
+
+
+def create_user_model(**kwargs) -> User | None:
+    """ factory method returns User model from fields equal to kwargs """
+
+    try:
+        check_user = UserSchema(**kwargs)
+    except:
+        return None
+
+    inst = inspect(User)
+    attr_user: set[str] = {
+        u_attr.key for u_attr in inst.mapper.column_attrs
+    }
+
+    try:
+        user = User()
+        for field, value in kwargs.items():
+            if field in attr_user:
+                setattr(user, field, value)
+    except:
+        return None
+
+    return user

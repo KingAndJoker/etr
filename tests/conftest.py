@@ -1,24 +1,50 @@
 import pytest
+from flask import Flask
 from sqlalchemy import create_engine, Engine
 
 from etr.models.base import Base
 from etr.models.contest import Contest
 from etr.models.problem import Problem
 from etr.models.submission import Submission
+from etr.models.user import User
+from etr.models.team import Team
+from etr.db import init_db
+from etr import create_app
+from tests.seeding import seeding
 
 
 @pytest.fixture()
-def in_memory_db_empty(uri: str | None = None) -> Engine:
-    engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
+def in_memory_db_empty() -> Engine:
+    # engine = create_engine("sqlite:///:memory:")
+    # Base.metadata.create_all(engine)
+    engine = init_db("sqlite:///:memory:", echo=True)
     return engine
 
 
 @pytest.fixture()
-def in_memory_db(uri: str | None = None) -> Engine:
-    engine = in_memory_db_empty(uri)
+def in_memory_db(in_memory_db_empty) -> Engine:
+    engine = in_memory_db_empty
 
-    # TODO: seeding database
-    ...
+    seeding(engine)
 
     return engine
+
+
+@pytest.fixture()
+def app(in_memory_db):
+    app = create_app(in_memory_db)
+    app.config.update({
+        "TESTING": True,
+    })
+
+    return app
+
+
+@pytest.fixture()
+def client(app: Flask):
+    return app.test_client()
+
+
+@pytest.fixture()
+def runner(app: Flask):
+    return app.test_cli_runner()
