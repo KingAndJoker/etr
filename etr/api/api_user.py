@@ -42,7 +42,10 @@ def get_all_users():
         for user_schema in users_schema
     ]
 
-    return users
+    return {
+        "status": "ok",
+        "users": users
+    }
 
 
 @bp.post("/user/")
