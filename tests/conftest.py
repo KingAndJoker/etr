@@ -6,14 +6,18 @@ from etr.models.base import Base
 from etr.models.contest import Contest
 from etr.models.problem import Problem
 from etr.models.submission import Submission
+from etr.models.user import User
+from etr.models.team import Team
+from etr.db import init_db
 from etr import create_app
 from tests.seeding import seeding
 
 
 @pytest.fixture()
 def in_memory_db_empty() -> Engine:
-    engine = create_engine("sqlite:///:memory:")
-    Base.metadata.create_all(engine)
+    # engine = create_engine("sqlite:///:memory:")
+    # Base.metadata.create_all(engine)
+    engine = init_db("sqlite:///:memory:", echo=True)
     return engine
 
 
@@ -33,7 +37,7 @@ def app(in_memory_db):
         "TESTING": True,
     })
 
-    yield app
+    return app
 
 
 @pytest.fixture()
