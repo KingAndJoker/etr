@@ -79,6 +79,7 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
     if user_db is not None:
         return None
 
+    # TODO: rewrite without send request to codeforces
     user_schema = convert_codeforces_user_schema(
         get_codeforces_user(handle, lang=lang)
     )
@@ -87,7 +88,7 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
         return None
 
     user_schema = _add_new_user_with_schema(user_schema)
-    if user_db is None:
+    if user_schema is None:
         return None
 
     return user_schema
