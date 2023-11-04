@@ -1,21 +1,19 @@
+import copy
+
 from etr.db import get_db
 from etr.models.user import User
 from etr.schemas.user import UserSchema
 from etr.library.codeforces.codeforces_utils import get_user as get_codeforces_user
+from etr.library.dl_gsu_by_codeforces.parse_students import get_students
 from etr.utils.codeforces.convert import convert_codeforces_user_schema
 from etr.utils.factory import create_user_model
+from etr.utils.dl_gsu_by_codeforces.convert import convert_dl_to_etr
 
 
-def _get_user_db_with_kwargs(**kwargs) -> User | None:
-    with get_db() as session:
-        user = session.query(User).filter_by(
-            **kwargs
-        ).one_or_none()
-
-    return user
+session = get_db()
 
 
-def _get_users_filter_by(**kwargs) -> list[User]:
+def __get_users_filter_by(**kwargs) -> list[User]:
     with get_db() as session:
         users = session.query(User).filter_by(
             **kwargs
@@ -24,53 +22,55 @@ def _get_users_filter_by(**kwargs) -> list[User]:
     return users
 
 
-def _get_users_db_with_handle(handles: list[str], watch: bool = True) -> list[User]:
-    users = [
-        user := _get_user_db_with_kwargs(
-            handle=handle,
-            watch=watch
-        )
-        for handle in handles if user
-    ]
+def _get_user_db_with_kwargs(**kwargs) -> UserSchema | None:
+    users_db = __get_users_filter_by(**kwargs)
 
-    return users
+    if users_db:
+        return UserSchema.model_validate(users_db[0])
+
+    return None
+
+
+def _get_users_db_with_kwargs(**kwargs) -> list[UserSchema]:
+    users_db = __get_users_filter_by(**kwargs)
+
+    users_schema = list()
+    for user_db in users_db:
+        users_schema.append(UserSchema.model_validate(user_db))
+
+    return users_schema
+
+
+def _get_users_db_with_handles(handles: list[str], **kwargs):
+    users_schema = [
+        _get_user_db_with_kwargs(handle=handle, **kwargs)
+        for handle in handles
+    ]
+    users_schema = [
+        x for x in users_schema if x is not None
+    ]
+    return users_schema
 
 
 def get_user(handle: str, watch: bool = True) -> UserSchema | None:
-    user_db = _get_user_db_with_kwargs(
+    user_schema = _get_user_db_with_kwargs(
         handle=handle,
         watch=watch
     )
 
-    if user_db is None:
-        return None
-
-    user = UserSchema.model_validate(user_db)
-
-    return user
+    return user_schema
 
 
 def get_users(
     lang: str = "en",
-    handles: list[str] | None = None,
     **kwargs
 ) -> list[UserSchema] | None:
-
-    if handles:
-        users_db = list()
-        for handle in handles:
-            users_db.extend(_get_users_filter_by(handle=handle, **kwargs))
+    if "handles" in kwargs:
+        users_schema = _get_users_db_with_handles(**kwargs)
     else:
-        users_db = _get_users_filter_by(**kwargs)
+        users_schema = _get_users_db_with_kwargs(**kwargs)
 
-    users_db = [user_db for user_db in users_db if user_db is not None]
-
-    users = [
-        UserSchema.model_validate(user_db)
-        for user_db in users_db
-    ]
-
-    return users
+    return users_schema
 
 
 def add_user(handle: str, lang: str = "en") -> UserSchema | None:
@@ -94,57 +94,83 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
     return user_schema
 
 
+def __add_user_with_kwargs(**kwargs) -> User | None:
+    try:
+        user = create_user_model(**kwargs)
+        session.add(user)
+        session.commit()
+        return user
+    except:
+        return None
+
+
 def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
-    user_db = create_user_model(**user_schema.model_dump())
+    user_db = __add_user_with_kwargs(**user_schema.model_dump())
 
     if user_db is None:
         return None
-
-    with get_db() as session:
-        session.add(user_db)
-        session.commit()
+    
+    user_schema = UserSchema.model_validate(user_db)
 
     return user_schema
 
 
 def update_user(id: int, **kwargs) -> UserSchema | None:
-    user_db = _get_user_db_with_kwargs(id=id)
+    user_schema = _get_user_db_with_kwargs(id=id)
 
-    if user_db is None:
+    if user_schema is None:
         return None
 
-    if _check_patch_with_kwargs(user_db, **kwargs):
-        user_db = _update_user_with_kwargs(user_db, **kwargs)
+    if _check_patch_with_kwargs(user_schema, **kwargs):
+        user_schema_update = _update_user_with_kwargs(user_schema, **kwargs)
 
-    user_schema = UserSchema.model_validate(
+    user_schema_result = UserSchema.model_validate(
         _get_user_db_with_kwargs(id=id)
     )
-    return user_schema
+    return user_schema_result
 
 
-def _check_patch_with_kwargs(user_db: User, **kwargs) -> bool:
-    user_schema = UserSchema.model_validate(user_db)
-
+def _check_patch_with_kwargs(user_schema: UserSchema, **kwargs) -> bool:
     try:
+        user_copy_schema = copy.deepcopy(user_schema)
         for key, value in kwargs.items():
-            setattr(user_schema, key, value)
-    except:
-        return False
+            setattr(user_copy_schema, key, value)
 
-    try:
-        check_user_schema = UserSchema(**user_schema.model_dump())
+        check_user_schema = UserSchema(**user_copy_schema.model_dump())
     except:
         return False
 
     return True
 
 
-def _update_user_with_kwargs(user_db: User, **kwargs) -> User:
+def __update_user_with_id(user_id: int, **kwargs) -> User | None:
+    user_db = session.query(User).filter_by(id=user_id).one_or_none()
+    if user_db is None:
+        return None
+    # f = open("out.txt", "w")
     for key, value in kwargs.items():
-        setattr(user_db, key, value)
-
-    with get_db() as session:
-        session.add(user_db)
-        session.commit()
-
+        # f.write(f"user[{key}]={value}\n")
+        if key != "id":
+            setattr(user_db, key, value)
+    # f.write(user_db.city)
+    session.add(user_db)
+    session.commit()
     return user_db
+
+
+def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
+    user_db = __update_user_with_id(user_id=user_schema.id, **kwargs)
+    user_schema = UserSchema.model_validate(user_db) if user_db is not None else None
+    return user_schema
+
+
+def sync_user_with_dl():
+    sync_users_schema = convert_dl_to_etr(get_students())
+
+    users_schema = get_users()
+    for dl_user in sync_users_schema:
+        if dl_user.handle in (user_schema.handle for user_schema in users_schema):
+            update_user_schema = _get_user_db_with_kwargs(handle=dl_user.handle)
+            _update_user_with_kwargs(update_user_schema, **dl_user.model_dump())
+        else:
+            _add_new_user_with_schema(dl_user)
