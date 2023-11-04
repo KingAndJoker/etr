@@ -13,9 +13,10 @@ from etr.models.team import Team, teams_users
 
 
 engine = None
-Session_ = None  # sessionmaker(engine)
+Session_ = None
 
 
+# TODO: rewrite to class
 def init_db(database_url: str, echo: bool = False) -> Engine:
     global engine
     engine = create_engine(database_url, echo=echo)
