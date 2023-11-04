@@ -5,26 +5,13 @@
 <script src="{{ url_for('static', filename='js/user_api.js') }}"></script>
 {% endblock %}
 {% block content %}
-<div id="user-table-div" class="table-responsive"></div>
-<!-- <table class="table table-striped table-hover">
-    <tr>
-        <th>handle</th>
-        <th>email</th>
-        <th>vkId</th>
-        <th>openId</th>
-        <th>firstName</th>
-        <th>lastName</th>
-        <th>country</th>
-        <th>city</th>
-        <th>organization</th>
-        <th>contribution</th>
-        <th>rank</th>
-        <th>rating</th>
-        <th>maxRank</th>
-        <th>maxRating</th>
-        <th>friendOfCount</th>
-    </tr>
-</table> -->
+<div class="container">
+    <button type="button" class="btn btn-secondary" onclick="send_request_sync_user_with_dl()">
+        Sync with dl.gsu.by/codeforces
+    </button>
+</div>
+<br>
+<div id="user-table-div" class="container table-responsive"></div>
 {% endblock %}
 {% block footer %}
 <script>show_table()</script>

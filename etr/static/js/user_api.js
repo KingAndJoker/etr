@@ -1,3 +1,13 @@
+async function send_request_sync_user_with_dl() {
+    let response = await fetch("/etr/rpc/user/swdl")
+    let json = await response.json()
+
+    show_table()
+
+    return json["status"]
+}
+
+
 async function create_users_table() {
     let users_table = document.getElementById("users-table")
     if (users_table === null) {
