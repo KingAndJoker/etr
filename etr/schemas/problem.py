@@ -2,8 +2,11 @@
 from pydantic import (
     BaseModel,
     ConfigDict,
-    Field
+    Field,
+    validator
 )
+
+from etr.models.problem import Tag
 
 
 class ProblemSchema(BaseModel):
@@ -22,3 +25,15 @@ class ProblemSchema(BaseModel):
     points: float | None = None
     rating: int | None = None
     tags: list[str] | None = None
+
+    @validator("tags", pre=True)
+    def check_tags(cls, tags: list[Tag] | list[str]):
+        """Check tags"""
+        if len(tags) == 0:
+            return tags
+        if isinstance(tags[0], str):
+            return tags
+        return [
+            tag.tag
+            for tag in tags
+        ]

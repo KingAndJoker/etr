@@ -18,15 +18,7 @@ bp = Blueprint("contest", __name__)
 
 @bp.route("/")
 def get_contests():
-    contests = None
-    with get_db() as session:
-        contests = session.query(Contest).all()
-        contests = [
-            ContestSchema.model_validate(contest)
-            for contest in contests
-        ]
-
-    return render_template("contests.html", contests=contests)
+    return render_template("contests.html")
 
 
 @bp.route("/new", methods=["GET", "POST"])

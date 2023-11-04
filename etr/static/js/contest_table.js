@@ -12,16 +12,17 @@ async function create_table(contest_id) {
     table_acm_result = document.getElementById("acm_result")
 
     response = await fetch(`/etr/api/user`)
-    let users = await response.json()
+    let data = await response.json()
+    let users = data["users"]
 
     let table_rows = ""
     for (var i = 0; i < users.length; i++) {
         let cells = `<td>${users[i].handle}</td>`
 
         // TODO: rewrite!!!
-        console.log(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
-        let codeforces_response_user_rows = await fetch(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
-        let codeforces_json_user_rows = await codeforces_response_user_rows.json()
+        // console.log(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
+        // let codeforces_response_user_rows = await fetch(`https://codeforces.com/api/contest.standings?contestId=${contest_id}&handles=${users[i].handle}`)
+        // let codeforces_json_user_rows = await codeforces_response_user_rows.json()
 
         for (var j = 0; j < problems.length; j++) {
             let attempt_cell = ""
@@ -36,19 +37,22 @@ async function create_table(contest_id) {
                 scores_cell = ""
 
                 let complete = false
-                let maxScore = null
+                let maxScore = problems[j]["points"]
                 for (var k = 0; k < cell_status.length && !complete; k++) {
                     if (cell_status[k]["verdict"] === "OK") {
                         complete = true
+                        if (cell_status[k]["points"]) {
+                            maxScore = cell_status["k"]["points"]
+                        }
 
                         // TODO: rewrite
-                        if (codeforces_json_user_rows["result"]["rows"].length > 0) {
-                            if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
-                                maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
-                            } else {
-                                maxScore = problems[j].points
-                            }
-                        }
+                        // if (codeforces_json_user_rows["result"]["rows"].length > 0) {
+                        //     if (codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"] != 0) {
+                        //         maxScore = codeforces_json_user_rows["result"]["rows"][0]["problemResults"][j]["points"]
+                        //     } else {
+                        //         maxScore = problems[j].points
+                        //     }
+                        // }
                     }
                 }
                 // TODO: was the solution sent during the contest?

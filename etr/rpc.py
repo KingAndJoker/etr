@@ -1,27 +1,11 @@
 """Remote Procedure Call module"""
-import copy
 from flask import (
     Blueprint,
     request
 )
-from sqlalchemy import inspect
 
-from etr.db import get_db
-from etr.library.codeforces.codeforces_utils import get_contest, get_submission
-from etr.models.contest import Contest
-from etr.models.submission import Submission
-from etr.models.user import User
-from etr.schemas.submission import SubmissionSchema
-from etr.utils.codeforces.convert import (
-    convert_codeforces_contest_schema,
-    convert_codeforces_submissions_schema
-)
-from etr.utils.factory import (
-    create_contest_model,
-    create_submission_model
-)
 from etr.services.problem import add_missing_problem_with_contest
-from etr.services.contest import update_contest
+from etr.services.contest import update_contest_with_codeforces
 from etr.services.submission import update_submission
 from etr.services.user import sync_user_with_dl
 
@@ -32,7 +16,7 @@ bp = Blueprint("rpc", __name__)
 
 @bp.get("/contest/<contest_id>")
 def update_contest_info(contest_id: int):
-    contest_schema = update_contest(contest_id)
+    contest_schema = update_contest_with_codeforces(contest_id)
 
     response = dict()
     status = "ok"
@@ -95,6 +79,5 @@ def sync_with_dl():
         sync_user_with_dl()
     except:
         return {"status", "error"}
-    
-    return {"status": "ok"}
 
+    return {"status": "ok"}
