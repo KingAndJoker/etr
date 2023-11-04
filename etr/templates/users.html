@@ -1,8 +1,12 @@
 {% extends "./base.html" %}
 
 {% block title %}users{% endblock %}
+{% block imports %}
+<script src="{{ url_for('static', filename='js/user_api.js') }}"></script>
+{% endblock %}
 {% block content %}
-<table class="table table-striped table-hover">
+<div id="user-table-div" class="table-responsive"></div>
+<!-- <table class="table table-striped table-hover">
     <tr>
         <th>handle</th>
         <th>email</th>
@@ -20,24 +24,8 @@
         <th>maxRating</th>
         <th>friendOfCount</th>
     </tr>
-    {% for user in users %}
-    <tr>
-        <td>{{user.handle}}</td>
-        <td>{{user.email}}</td>
-        <td>{{user.vkId}}</td>
-        <td>{{user.openId}}</td>
-        <td>{{user.firstName}}</td>
-        <td>{{user.lastName}}</td>
-        <td>{{user.country}}</td>
-        <td>{{user.city}}</td>
-        <td>{{user.organization}}</td>
-        <td>{{user.contribution}}</td>
-        <td>{{user.rank}}</td>
-        <td>{{user.rating}}</td>
-        <td>{{user.maxRank}}</td>
-        <td>{{user.maxRating}}</td>
-        <td>{{user.friendOfCount}}</td>
-    </tr>
-    {% endfor %}
-</table>
+</table> -->
+{% endblock %}
+{% block footer %}
+<script>show_table()</script>
 {% endblock %}

@@ -31,14 +31,4 @@ def new_user():
 
 @bp.route("/")
 def get_users():
-    with get_db() as session:
-        users = session.query(User).all()
-        users = [UserSchema.model_validate(user) for user in users]
-        for i, user in enumerate(users):
-            response = requests.get(
-                f"https://codeforces.com/api/user.info?handles={user.handle}"
-            )
-            response_json = response.json()
-            if response_json["status"] == "OK":
-                users[i] = user.model_copy(update=response_json["result"][0])
-    return render_template("users.html", users=users)
+    return render_template("users.html")
