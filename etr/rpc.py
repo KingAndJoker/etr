@@ -23,6 +23,7 @@ from etr.utils.factory import (
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.contest import update_contest
 from etr.services.submission import update_submission
+from etr.services.user import sync_user_with_dl
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
@@ -86,3 +87,14 @@ def update_missing_problems(contest_id: int):
         "status": "ok",
         "result": added_problems
     }
+
+
+@bp.get("/user/swdl")
+def sync_with_dl():
+    try:
+        sync_user_with_dl()
+    except:
+        return {"status", "error"}
+    
+    return {"status": "ok"}
+
