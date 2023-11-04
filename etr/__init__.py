@@ -45,7 +45,9 @@ def create_app(engine: Engine | None = None) -> Flask:
     app.register_blueprint(user.bp, url_prefix=URL_PREFIX + "/user")
     app.register_blueprint(contest.bp, url_prefix=URL_PREFIX + "/contest")
     app.register_blueprint(
-        contest_status.bp, url_prefix=URL_PREFIX + "/status")
+        contest_status.bp,
+        url_prefix=URL_PREFIX + "/status"
+    )
     app.register_blueprint(api_problem.bp, url_prefix=URL_PREFIX + "/api")
     app.register_blueprint(api_user.bp, url_prefix=URL_PREFIX + "/api")
     app.register_blueprint(api_submission.bp, url_prefix=URL_PREFIX + "/api")
