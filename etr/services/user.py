@@ -14,10 +14,9 @@ session = get_db()
 
 
 def __get_users_filter_by(**kwargs) -> list[User]:
-    with get_db() as session:
-        users = session.query(User).filter_by(
-            **kwargs
-        ).all()
+    users = session.query(User).filter_by(
+        **kwargs
+    ).all()
 
     return users
 
@@ -95,17 +94,24 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
 
 
 def __add_user_with_kwargs(**kwargs) -> User | None:
-    try:
-        user = create_user_model(**kwargs)
-        session.add(user)
-        session.commit()
-        return user
-    except:
-        return None
+    with get_db() as session_add:
+        try:
+            user = create_user_model(**kwargs)
+            session_add.add(user)
+            session_add.commit()
+            return user
+        except:
+            session_add.rollback()
+            return None
 
 
 def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
     user_db = __add_user_with_kwargs(**user_schema.model_dump())
+    users_db = __get_users_filter_by(handle=user_schema.handle)
+    if users_db == []:
+        user_db = None
+    else:
+        user_db = users_db[0]
 
     if user_db is None:
         return None
