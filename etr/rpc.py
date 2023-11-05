@@ -77,7 +77,8 @@ def update_missing_problems(contest_id: int):
 def sync_with_dl():
     try:
         sync_user_with_dl()
-    except:
-        return {"status", "error"}
+    except Exception as exp:
+        raise
+        return {"status": "error"}
 
     return {"status": "ok"}
