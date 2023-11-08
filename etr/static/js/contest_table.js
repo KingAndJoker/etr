@@ -7,7 +7,7 @@ function create_table_head(data) {
     th.innerText = "#"
     tr.appendChild(th)
     th = document.createElement("th")
-    th.innerText = "user"
+    th.innerText = "ученик"
     tr.appendChild(th)
 
     for (var i = 0; i < data.contest.problems.length; i++) {

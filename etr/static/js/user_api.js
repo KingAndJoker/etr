@@ -31,9 +31,15 @@ async function create_users_table() {
     let head_row = table_header.insertRow()
     let head = get_header()
 
-    head.forEach(element => {
-        let cell = head_row.insertCell().outerHTML = `<th>${element}</th>`
-    });
+    // head.forEach(element => {
+    //     let cell = head_row.insertCell().outerHTML = `<th>${element}</th>`
+    // });
+    head_row.insertCell().outerHTML = `<th>handle</th>`
+    head_row.insertCell().outerHTML = `<th>фамилия</th>`
+    head_row.insertCell().outerHTML = `<th>имя</th>`
+    head_row.insertCell().outerHTML = `<th>организация</th>`
+    head_row.insertCell().outerHTML = `<th>класс</th>`
+
 
     let table_body = users_table.createTBody()
     users.forEach(user => {

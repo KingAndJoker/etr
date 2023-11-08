@@ -17,24 +17,24 @@
     {% endif%}
 </div>
 <div>
-    duration: {{ contest.duration_time }}<br>
-    start time: {{ contest.start_datatime }}<br>
+    продолжительность: {{ contest.duration_time }}<br>
+    время начала: {{ contest.start_datatime }}<br>
 </div>
 {% if contest.website_url %}
 <div>
-    <a href="{{ contest.website_url }}">contest site</a>
+    <a href="{{ contest.website_url }}">сайт соревнования</a>
 </div>
 {% endif %}
 {% if contest.description %}
 <div>
-    <h2>Description</h2>
+    <h2>Описание</h2>
     {{ contest.description }}
 </div>
 {% endif %}
 
 <br>
-<button onclick="switch_view_cell()" class="btn btn-info">switch table view</button>
-<button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">update submission on db</button>
+<button onclick="switch_view_cell()" class="btn btn-info">переключить баллы</button>
+<button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">обновить отправки</button>
 <br>
 
 <div id="div-contest-table" class="container" align="center">

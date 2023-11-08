@@ -21,6 +21,19 @@ async function show_contest_table() {
 
         let date = new Date(contest["start_time_seconds"] * 1000);
         cell = row.insertCell()
-        cell.innerHTML = `${date}`
+        let month = ["январь",
+            "Февраль",
+            "Март",
+            "Апрель",
+            "Май",
+            "Июнь",
+            "Июль",
+            "Август",
+            "Сентябрь",
+            "Октябрь",
+            "Ноябрь",
+            "Декабрь"
+        ]
+        cell.innerHTML = `${month[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
     })
 }
