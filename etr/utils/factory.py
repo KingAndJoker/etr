@@ -83,7 +83,7 @@ def create_submission_model(**kwargs) -> Submission | None:
         
         if submission.problem_id is None:
             if "problem" in kwargs:
-                submission.problem_id = kwargs["problem"].id
+                submission.problem_id = kwargs["problem"].id # get_problem(...)
             else:
                 with get_db() as session:
                     problem = session.query(Problem).filter_by(

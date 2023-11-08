@@ -26,6 +26,7 @@ def create_app(engine: Engine | None = None) -> Flask:
     app.config.from_mapping(
         SECRET_KEY="dev",
     )
+    app.config['JSON_SORT_KEYS'] = False
 
     if engine is None:
         from etr import db

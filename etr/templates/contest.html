@@ -37,11 +37,8 @@
 <button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">update submission on db</button>
 <br>
 
-<table id="acm_result" class="table table-striped table-hover">
-    <tr id="head_acm_result" class="table-info">
-        <th>user</th>
-    </tr>
-</table>
+<div id="div-contest-table" class="container" align="center">
+</div>
 
 <script>
     create_table({{ contest.id }})

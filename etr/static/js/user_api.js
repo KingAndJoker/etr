@@ -51,15 +51,10 @@ async function create_users_table() {
 function get_header() {
     return [
         "handle",
-        "first_name",
         "last_name",
-        "country",
-        "city",
+        "first_name",
         "organization",
-        "rank",
-        "rating",
-        "max_rank",
-        "max_rating",
+        "grade",
     ]
 }
 

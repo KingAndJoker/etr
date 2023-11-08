@@ -33,6 +33,7 @@ class User(Base):
     title_photo: Mapped[str] = mapped_column(nullable=True, type_=String(255))
 
     watch: Mapped[bool] = mapped_column(default=True)  # Update user info?
+    grade: Mapped[int] = mapped_column(nullable=True, default=None)
 
     teams: Mapped[list["Team"]] = relationship(secondary="teams_users", lazy="selectin")
     submissions: Mapped[list["Submission"]] = relationship(

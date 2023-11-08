@@ -6,7 +6,7 @@ from flask import (
 
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.contest import update_contest_with_codeforces
-from etr.services.submission import update_submission
+from etr.services.submission import update_submissions_with_codeforces
 from etr.services.user import sync_user_with_dl
 
 
@@ -35,26 +35,16 @@ def update_contest_info(contest_id: int):
 
 @bp.get("/submission/<contest_id>")
 def update_submission_info(contest_id: int):
-    handle = request.args.get("handle", None)
-    index = request.args.get("index", None)
+    """ update submissions with codeforces in db """
 
     response = dict()
     status = "ok"
-    submissions_schema = update_submission(
-        contest_id,
-        handle=handle,
-        index=index
+    submissions_schema = update_submissions_with_codeforces(
+        contest_id
     )
-    if submissions_schema is None:
-        status = "error"
-    else:
-        submissions = [
-            submission_schema.model_dump()
-            for submission_schema in submissions_schema if submission_schema is not None
-        ]
-        response["result"] = submissions
-
+    
     response["status"] = status
+    response["result"] = submissions_schema
 
     return response
 

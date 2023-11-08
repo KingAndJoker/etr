@@ -8,22 +8,16 @@ async function show_contest_table() {
     }
 
     contests = json["contests"]
+    let index = 1
     contests.forEach(contest => {
         let row = contest_table.insertRow()
         let cell = row.insertCell()
-        cell.innerHTML = `${contest["id"]}`
+        // cell.innerHTML = `${contest["id"]}`
+        cell.innerHTML = `${index}`
+        index++
 
         cell = row.insertCell()
-        cell.innerHTML = `<a href="/etr/contest/${contest["id"]}">${contest["name"]}</a>}`
-
-        cell = row.insertCell()
-        cell.innerHTML = `${contest["type"]}`
-
-        cell = row.insertCell()
-        cell.innerHTML = `${contest["phase"]}`
-
-        cell = row.insertCell()
-        cell.innerHTML = `${contest["frozen"]}`
+        cell.innerHTML = `<a href="/etr/contest/${contest["id"]}">${contest["name"]}</a>`
 
         let date = new Date(contest["start_time_seconds"] * 1000);
         cell = row.insertCell()

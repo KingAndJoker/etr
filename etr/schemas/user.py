@@ -36,3 +36,4 @@ class UserSchema(BaseModel):
     friend_of_count: int | None = Field(default=None, alias="friendOfCount")
     avatar: str | None = None
     title_photo: str | None = Field(default=None, alias="titlePhoto")
+    grade: int | None = None

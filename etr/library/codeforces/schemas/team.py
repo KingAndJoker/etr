@@ -1,6 +1,8 @@
 """Codeforces Team schema file"""
 from pydantic import BaseModel, ConfigDict
 
+from etr.library.codeforces.schemas.user import CodeforcesUserSchema
+
 
 class CodeforcesTeamSchema(BaseModel):
     """Codeforces Team pydantic schema"""
@@ -12,4 +14,4 @@ class CodeforcesTeamSchema(BaseModel):
 
     teamId: int
     teamName: str
-    users: list["CodeforcesUserSchema"]
+    users: list[CodeforcesUserSchema]

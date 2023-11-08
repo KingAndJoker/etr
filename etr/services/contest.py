@@ -5,6 +5,8 @@ from etr.models.contest import Contest
 from etr.library.codeforces.codeforces_utils import get_contest as get_contest_with_codeforces
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 from etr.services.problem import add_problems
+from etr.services.user import get_users
+from etr.services.submission import get_submissions
 from etr.utils.factory import create_contest_model
 
 
@@ -13,7 +15,13 @@ session = get_db()
 
 def __get_contests_db(**kwargs) -> list[Contest] | None:
     """ get contest from db """
-    contest_db = session.query(Contest).filter_by(**kwargs).all()
+    contest_db = session.query(
+        Contest
+    ).filter_by(
+        **kwargs
+    ).order_by(
+        Contest.start_time_seconds.desc()
+    ).all()
 
     return contest_db
 
@@ -54,7 +62,7 @@ def _get_contests_schema_with_db(**kwargs) -> list[ContestSchema]:
 def _get_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
     """ get contest from codeforces """
     contest_schema = convert_codeforces_contest_schema(
-        get_contest_with_codeforces(contest_id=contest_id)
+        get_contest_with_codeforces(contest_id)
     )
     return contest_schema
 
@@ -86,9 +94,10 @@ def get_contests(**kwargs) -> list[ContestSchema]:
 def add_contest(contest_id: int) -> ContestSchema:
     """ add contest with contest_id """
 
-    contest_schema = _get_contests_schema_with_db(id=contest_id)
-    if contest_schema is not None:
-        return contest_schema
+    contests_schema = _get_contests_schema_with_db(id=contest_id)
+    
+    if len(contests_schema) > 0:
+        return contests_schema[0]
 
     contest_schema = _get_contest_with_codeforces(contest_id)
 
@@ -110,6 +119,27 @@ def update_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
     if contest_schema is None:
         return None
 
-    contest_schema = _update_contest(contest_schema, **contest_cf_schema.model_dump())
+    contest_schema = _update_contest(
+        contest_schema, **contest_cf_schema.model_dump())
 
     return contest_schema
+
+
+def get_contest_table_rows(contest_id: int) -> list:
+    # TODO: write tests
+    rows = list()
+    
+    users = get_users()
+
+    # TODO: rewrite, if user is contestant, but he has no submissions
+    for user in users:
+        submissions = get_submissions(contest_id=contest_id, author_id=user.id)
+        if len(submissions) == 0:
+            continue
+
+        rows.append({
+            "user": user,
+            "submissions": submissions
+        })
+
+    return rows
