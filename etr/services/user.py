@@ -1,5 +1,7 @@
 import copy
 
+from sqlalchemy.orm import Session
+
 from etr.db import get_db
 from etr.models.user import User
 from etr.schemas.user import UserSchema
@@ -10,10 +12,7 @@ from etr.utils.factory import create_user_model
 from etr.utils.dl_gsu_by_codeforces.convert import convert_dl_to_etr
 
 
-session = get_db()
-
-
-def __get_users_filter_by(**kwargs) -> list[User]:
+def __get_users_filter_by(session: Session, **kwargs) -> list[User]:
     users = session.query(User).filter_by(
         **kwargs
     ).all()
@@ -22,20 +21,22 @@ def __get_users_filter_by(**kwargs) -> list[User]:
 
 
 def _get_user_db_with_kwargs(**kwargs) -> UserSchema | None:
-    users_db = __get_users_filter_by(**kwargs)
+    with get_db() as session:
+        users_db = __get_users_filter_by(session, **kwargs)
 
-    if users_db:
-        return UserSchema.model_validate(users_db[0])
+        if users_db != []:
+            return UserSchema.model_validate(users_db[0])
 
     return None
 
 
 def _get_users_db_with_kwargs(**kwargs) -> list[UserSchema]:
-    users_db = __get_users_filter_by(**kwargs)
+    with get_db() as session:
+        users_db = __get_users_filter_by(session, **kwargs)
 
-    users_schema = list()
-    for user_db in users_db:
-        users_schema.append(UserSchema.model_validate(user_db))
+        users_schema = list()
+        for user_db in users_db:
+            users_schema.append(UserSchema.model_validate(user_db))
 
     return users_schema
 
@@ -93,30 +94,30 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
     return user_schema
 
 
-def __add_user_with_kwargs(**kwargs) -> User | None:
-    with get_db() as session_add:
-        try:
-            user = create_user_model(**kwargs)
-            session_add.add(user)
-            session_add.commit()
-            return user
-        except:
-            session_add.rollback()
-            return None
+def __add_user_with_kwargs(session, **kwargs) -> User | None:
+    try:
+        user = create_user_model(**kwargs)
+        session.add(user)
+        session.commit()
+        return user
+    except:
+        session.rollback()
+        return None
 
 
 def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
-    user_db = __add_user_with_kwargs(**user_schema.model_dump())
-    users_db = __get_users_filter_by(handle=user_schema.handle)
-    if users_db == []:
-        user_db = None
-    else:
-        user_db = users_db[0]
+    with get_db() as session:
+        user_db = __add_user_with_kwargs(session, **user_schema.model_dump())
+        users_db = __get_users_filter_by(session, handle=user_schema.handle)
+        if users_db == []:
+            user_db = None
+        else:
+            user_db = users_db[0]
 
-    if user_db is None:
-        return None
-    
-    user_schema = UserSchema.model_validate(user_db)
+        if user_db is None:
+            return None
+        
+        user_schema = UserSchema.model_validate(user_db)
 
     return user_schema
 
@@ -149,24 +150,22 @@ def _check_patch_with_kwargs(user_schema: UserSchema, **kwargs) -> bool:
     return True
 
 
-def __update_user_with_id(user_id: int, **kwargs) -> User | None:
+def __update_user_with_id(session: Session, user_id: int, **kwargs) -> User | None:
     user_db = session.query(User).filter_by(id=user_id).one_or_none()
     if user_db is None:
         return None
-    # f = open("out.txt", "w")
     for key, value in kwargs.items():
-        # f.write(f"user[{key}]={value}\n")
         if key != "id":
             setattr(user_db, key, value)
-    # f.write(user_db.city)
     session.add(user_db)
     session.commit()
     return user_db
 
 
 def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
-    user_db = __update_user_with_id(user_id=user_schema.id, **kwargs)
-    user_schema = UserSchema.model_validate(user_db) if user_db is not None else None
+    with get_db() as session:
+        user_db = __update_user_with_id(session, user_id=user_schema.id, **kwargs)
+        user_schema = UserSchema.model_validate(user_db) if user_db is not None else None
     return user_schema
 
 
