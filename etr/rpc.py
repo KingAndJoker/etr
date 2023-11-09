@@ -1,4 +1,6 @@
 """Remote Procedure Call module"""
+from threading import Thread
+
 from flask import (
     Blueprint,
     request
@@ -37,19 +39,9 @@ def update_contest_info(contest_id: int):
 def update_submission_info(contest_id: int):
     """ update submissions with codeforces in db """
 
-    response = dict()
-    status = "ok"
-    submissions_schema = update_submissions_with_codeforces(
-        contest_id
-    )
+    Thread(target = update_submissions_with_codeforces, args=(contest_id,)).start()
     
-    response["status"] = status
-    response["result"] = [
-        submission.model_dump()
-        for submission in submissions_schema
-    ]
-
-    return response
+    return {"status": "ok"}
 
 
 @bp.get("/problem/<contest_id>")
