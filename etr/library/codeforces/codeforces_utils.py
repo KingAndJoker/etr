@@ -73,6 +73,10 @@ def get_submission(
     )
 
     submissions: list[CodeforcesSubmissionSchema] | None = None
+
+    print(f"get submission")
+    print(f"{submission_url=}")
+
     response = requests.get(submission_url)
     if response.status_code != 200:
         return None
@@ -84,6 +88,8 @@ def get_submission(
         return None
 
     if response_json["status"] == "OK":
+        print(f"length submissions answer: {len(response_json['result'])}")
+
         for i, submission in enumerate(response_json["result"]):
             if "teamName" in response_json["result"][i]["author"]:
                 team_users = [
