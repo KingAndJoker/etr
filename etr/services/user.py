@@ -36,7 +36,10 @@ def _get_users_db_with_kwargs(**kwargs) -> list[UserSchema]:
 
         users_schema = list()
         for user_db in users_db:
-            users_schema.append(UserSchema.model_validate(user_db))
+            try:
+                users_schema.append(UserSchema.model_validate(user_db))
+            except:
+                pass
 
     return users_schema
 
