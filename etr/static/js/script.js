@@ -29,18 +29,9 @@ function switch_view_cell() {
 
 
 async function update_submission_send_request(contest_id) {
-    let response = await fetch(`/etr/api/user`)
-    let users = await response.json()
-
-    response = await fetch(`/etr/api/problem/${contest_id}`)
-    let problems = await response.json()
-    problems = problems["problems"]
-
-    for (var i = 0; i < users.length; i++) {
-        let url = `/etr/rpc/submission/${contest_id}?handle=${users[i].handle}`
-        console.log(url)
-        response = await fetch(url)
-    }
+    let url = `/etr/rpc/submission/${contest_id}`
+    console.log(url)
+    let response = await fetch(url)
 
     window.location.reload()
 }
