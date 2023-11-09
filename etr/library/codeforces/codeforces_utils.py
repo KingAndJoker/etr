@@ -74,6 +74,7 @@ def get_submission(
 
     submissions: list[CodeforcesSubmissionSchema] | None = None
 
+    # TODO: rewrite logger
     print(f"get submission")
     print(f"{submission_url=}")
 
