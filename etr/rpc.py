@@ -39,6 +39,7 @@ def update_contest_info(contest_id: int):
 def update_submission_info(contest_id: int):
     """ update submissions with codeforces in db """
 
+    # TODO: write update submissions for specific user
     Thread(target = update_submissions_with_codeforces, args=(contest_id,)).start()
     
     return {"status": "ok"}
