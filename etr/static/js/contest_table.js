@@ -71,15 +71,17 @@ async function create_table_body(data, contest_id) {
                 task_result[submission.problem.index].max_point = submission.points
             }
             if (cf_data) {
-                let cf_row = cf_data.result.rows.find(cf_row => cf_row.party.members[0].handle == row.user.handle)
-                let cf_problem_index = 0
-                while (data.contest.problems[cf_problem_index].index != submission.problem.index) {
-                    cf_problem_index++
+                try {
+                    let cf_row = cf_data.result.rows.find(cf_row => cf_row.party.members[0].handle == row.user.handle)
+                    let cf_problem_index = 0
+                    while (data.contest.problems[cf_problem_index].index != submission.problem.index) {
+                        cf_problem_index++
+                    }
+                    if (cf_row.problemResults[cf_problem_index].points && task_result[submission.problem.index].max_point < cf_row.problemResults[cf_problem_index].points) {
+                        task_result[submission.problem.index].max_point = cf_row.problemResults[cf_problem_index].points
+                    }
                 }
-                console.log(cf_row.problemResults[cf_problem_index].points)
-                if (cf_row.problemResults[cf_problem_index].points && task_result[submission.problem.index].max_point < cf_row.problemResults[cf_problem_index].points) {
-                    task_result[submission.problem.index].max_point = cf_row.problemResults[cf_problem_index].points
-                }
+                catch {}
             }
         })
 
