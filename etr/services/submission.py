@@ -1,3 +1,4 @@
+import time
 import copy
 
 from sqlalchemy.orm import Session
@@ -174,6 +175,14 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
 
     for user in users:
         cf_subs = cf_get_submission(contest_id, handle=user.handle)
+        count_requests = 20
+        delay_between_requests = 0.5
+        while cf_subs is None and count_requests>0:
+            time.sleep(delay_between_requests)
+            cf_subs = cf_get_submission(contest_id, handle=user.handle)
+            count_requests-=1
+        if cf_subs is None:
+            continue
         submissions = []
         if cf_subs:
             submissions = [
