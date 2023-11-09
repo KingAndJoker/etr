@@ -180,9 +180,7 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
                 convert_codeforces_submission_schema(cf_sub)
                 for cf_sub in cf_subs
             ]
-        if submissions == []:
-            continue
-        
+
         for submission in submissions:
             params = make_params_for_submission(submission)
             sub_is_exist = get_submission(**params)
