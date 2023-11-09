@@ -170,7 +170,7 @@ def update_submission(
 def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema]:
     users = get_users()
 
-    submissions = list()
+    added_submissions = list()
 
     for user in users:
         cf_subs = cf_get_submission(contest_id, handle=user.handle)
@@ -189,9 +189,9 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
             sub_add = _add_submission_with_schema(submission)
             if sub_add is None:
                 continue
-            submissions.append(sub_add)
+            added_submissions.append(sub_add)
 
-    return submissions
+    return added_submissions
 
 
 def make_params_for_submission(submission: SubmissionSchema) -> dict:
