@@ -1,5 +1,7 @@
 import copy
 
+from sqlalchemy.orm import Session
+
 from etr.db import get_db
 from etr.models.submission import Submission
 from etr.schemas.submission import SubmissionSchema
@@ -10,10 +12,7 @@ from etr.library.codeforces.codeforces_utils import get_submission as cf_get_sub
 from etr.utils.codeforces.convert import convert_codeforces_submission_schema
 
 
-session = get_db()
-
-
-def __get_submissions_db(**kwargs) -> list[Submission] | None:
+def __get_submissions_db(session: Session, **kwargs) -> list[Submission] | None:
     """ get submissions from db """
     submissions_db = session.query(
         Submission
@@ -24,7 +23,7 @@ def __get_submissions_db(**kwargs) -> list[Submission] | None:
     return submissions_db
 
 
-def __get_submission_db(**kwargs) -> Submission | None:
+def __get_submission_db(session: Session, **kwargs) -> Submission | None:
     """ get submissions from db """
     submissions_db = session.query(
         Submission
@@ -35,21 +34,20 @@ def __get_submission_db(**kwargs) -> Submission | None:
     return submissions_db
 
 
-def __add_submission_db(**kwargs) -> Submission:
+def __add_submission_db(session: Session, **kwargs) -> Submission:
     """ add submission to db """
-    with get_db() as session_add:
-        try:
-            submission_db = create_submission_model(**kwargs)
-            session_add.add(submission_db)
-            session_add.commit()
-        except:
-            session_add.rollback()
-            return None
+    try:
+        submission_db = create_submission_model(**kwargs)
+        session.add(submission_db)
+        session.commit()
+    except:
+        session.rollback()
+        return None
 
     return submission_db
 
 
-def __update_submission_db(submission: Submission, **kwargs) -> Submission | None:
+def __update_submission_db(session: Session, submission: Submission, **kwargs) -> Submission | None:
     """ update submission in db """
     for field, value in kwargs.items():
         setattr(submission, field, value)
@@ -80,16 +78,17 @@ def _update_submission_db(submission_schema: SubmissionSchema, **kwargs) -> Subm
 
     if not _check_submission_update(submission_schema, **kwargs):
         return None
+    
+    with get_db() as session:
+        submission_db = __get_submission_db(session, id=submission_schema.id)
 
-    submission_db = __get_submission_db(id=submission_schema.id)
+        if submission_db is None:
+            return None
 
-    if submission_db is None:
-        return None
+        submission_db = __update_submission_db(session, submission_db, **kwargs)
 
-    submission_db = __update_submission_db(submission_db, **kwargs)
-
-    submission_db = __get_submission_db(id=submission_schema.id)
-    submission_return_schema = SubmissionSchema.model_validate(submission_db)
+        submission_db = __get_submission_db(session, id=submission_schema.id)
+        submission_return_schema = SubmissionSchema.model_validate(submission_db)
 
     return submission_return_schema
 
@@ -103,33 +102,35 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
         params["problem_id"] = problem.id
         params.pop("problem")
 
-    __add_submission_db(**params)
-    submission_db = __get_submission_db(id=params["id"])
-    if submission_db is None:
-        return None
-    submission_return_schema = SubmissionSchema.model_validate(submission_db)
+    with get_db() as session:
+        __add_submission_db(session, **params)
+        submission_db = __get_submission_db(session, id=params["id"])
+        if submission_db is None:
+            return None
+        submission_return_schema = SubmissionSchema.model_validate(submission_db)
     return submission_return_schema
 
 
 def _get_submissions_with_kwargs(**kwargs) -> list[SubmissionSchema] | None:
-    submissions_db = __get_submissions_db(**kwargs)
+    with get_db() as session:
+        submissions_db = __get_submissions_db(session, **kwargs)
 
-    submissions_schema = [
-        SubmissionSchema.model_validate(submission)
-        for submission in submissions_db
-    ]
+        submissions_schema = [
+            SubmissionSchema.model_validate(submission)
+            for submission in submissions_db
+        ]
 
     return submissions_schema
 
 
 def _get_submission_with_kwargs(**kwargs) -> SubmissionSchema | None:
-    print(f"{kwargs=}")
-    submission_db = __get_submission_db(**kwargs)
+    with get_db() as session:
+        submission_db = __get_submission_db(session, **kwargs)
 
-    if submission_db is None:
-        return None
-    
-    submission_schema = SubmissionSchema.model_validate(submission_db)
+        if submission_db is None:
+            return None
+        
+        submission_schema = SubmissionSchema.model_validate(submission_db)
 
     return submission_schema
 

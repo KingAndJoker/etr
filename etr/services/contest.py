@@ -1,4 +1,6 @@
 """ contest services """
+from sqlalchemy.orm import Session
+
 from etr.db import get_db
 from etr.schemas.contest import ContestSchema
 from etr.models.contest import Contest
@@ -10,10 +12,7 @@ from etr.services.submission import get_submissions
 from etr.utils.factory import create_contest_model
 
 
-session = get_db()
-
-
-def __get_contests_db(**kwargs) -> list[Contest] | None:
+def __get_contests_db(session: Session, **kwargs) -> list[Contest] | None:
     """ get contest from db """
     contest_db = session.query(
         Contest
@@ -26,7 +25,7 @@ def __get_contests_db(**kwargs) -> list[Contest] | None:
     return contest_db
 
 
-def __update_contest_db(contest: Contest, **kwargs) -> Contest:
+def __update_contest_db(session: Session, contest: Contest, **kwargs) -> Contest:
     """ update contest in db """
     for field, value in kwargs.items():
         setattr(contest, field, value)
@@ -38,7 +37,7 @@ def __update_contest_db(contest: Contest, **kwargs) -> Contest:
     return contest
 
 
-def __add_contest_db(contest_schema: ContestSchema) -> Contest:
+def __add_contest_db(session: Session, contest_schema: ContestSchema) -> Contest:
     """ add contest to db """
     contest_db = create_contest_model(**contest_schema.model_dump())
     session.add(contest_db)
@@ -49,12 +48,15 @@ def __add_contest_db(contest_schema: ContestSchema) -> Contest:
 
 def _get_contests_schema_with_db(**kwargs) -> list[ContestSchema]:
     """ get contest from db """
-    contests_db = __get_contests_db(**kwargs)
+    with get_db() as session:
+        contests_db = __get_contests_db(session, **kwargs)
+        for contest_db in contests_db:
+            contest_db.problems
 
-    contests_schema = [
-        ContestSchema.model_validate(contest_db)
-        for contest_db in contests_db
-    ]
+        contests_schema = [
+            ContestSchema.model_validate(contest_db)
+            for contest_db in contests_db
+        ]
 
     return contests_schema
 
@@ -69,17 +71,19 @@ def _get_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
 
 def _add_contest_db(contest_schema: ContestSchema) -> ContestSchema:
     """ add contest to db """
-    contest_db = __add_contest_db(contest_schema)
-    contest_schema_return = ContestSchema.model_validate(contest_db)
+    with get_db() as session:
+        contest_db = __add_contest_db(session, contest_schema)
+        contest_schema_return = ContestSchema.model_validate(contest_db)
 
     return contest_schema_return
 
 
 def _update_contest(contest_schema: ContestSchema, **kwargs) -> ContestSchema:
     """ update contest """
-    contest_db = __get_contests_db(id=contest_schema.id)
-    contest_db = __update_contest_db(contest_db, **kwargs)
-    contest_schema_return = ContestSchema.model_validate(contest_db)
+    with get_db() as session:
+        contest_db = __get_contests_db(session, id=contest_schema.id)
+        contest_db = __update_contest_db(session, contest_db, **kwargs)
+        contest_schema_return = ContestSchema.model_validate(contest_db)
 
     return contest_schema_return
 

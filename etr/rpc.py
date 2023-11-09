@@ -44,7 +44,10 @@ def update_submission_info(contest_id: int):
     )
     
     response["status"] = status
-    response["result"] = submissions_schema
+    response["result"] = [
+        submission.model_dump()
+        for submission in submissions_schema
+    ]
 
     return response
 
@@ -69,6 +72,5 @@ def sync_with_dl():
         sync_user_with_dl()
     except Exception as exp:
         raise
-        return {"status": "error"}
 
     return {"status": "ok"}
