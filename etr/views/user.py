@@ -18,6 +18,8 @@ def new_user():
 
     elif request.method == "POST":
         handle = request.form.get("handle")
+        if handle is None:
+            redirect("/etr")
         response = requests.get(
             f"https://codeforces.com/api/user.info?handles={handle}"
         )
