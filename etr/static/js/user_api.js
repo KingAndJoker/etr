@@ -38,6 +38,7 @@ async function create_users_table() {
     head_row.insertCell().outerHTML = `<th>фамилия</th>`
     head_row.insertCell().outerHTML = `<th>имя</th>`
     head_row.insertCell().outerHTML = `<th>организация</th>`
+    head_row.insertCell().outerHTML = `<th>город</th>`
     head_row.insertCell().outerHTML = `<th>класс</th>`
 
 
@@ -60,6 +61,7 @@ function get_header() {
         "last_name",
         "first_name",
         "organization",
+        "city",
         "grade",
     ]
 }
@@ -85,4 +87,18 @@ async function show_table() {
     }
 
     create_users_table()
+}
+
+
+async function send_request_sync_user_with_codeforces() {
+    let response = await fetch("/etr/api/user")
+    if (!response.ok) {
+        return
+    }
+    let users = await response.json()
+
+    for(var i=0; i<users.users.length; i++) {
+        let response_user_update = await fetch(`/etr/api/user/update_codeforces/${users.users[i].handle}`)
+        console.log(`update codeforces: /etr/api/user/update_codeforces/${users.users[i].handle}; status: ${response_user_update.ok}`)``
+    }
 }
