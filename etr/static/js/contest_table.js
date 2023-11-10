@@ -11,6 +11,14 @@ function create_table_head(data) {
     tr.appendChild(th)
 
     th = document.createElement("th")
+    th.innerText = "организация"
+    tr.appendChild(th)
+
+    th = document.createElement("th")
+    th.innerText = "класс"
+    tr.appendChild(th)
+
+    th = document.createElement("th")
     th.innerHTML = '<div class="attempt_cell">задачи</div><div class="none">баллы</div>'
     tr.appendChild(th)
 
@@ -50,11 +58,20 @@ async function create_table_body(data, contest_id) {
         index++
 
         let td = document.createElement("td")
-        let user_name = `${row.user.last_name} ${row.user.first_name}, ${row.user.organization}`
-        if (row.user.grade) {
-            user_name = `${user_name}, ${row.user.grade} класс`
-        }
+        let user_name = `${row.user.last_name} ${row.user.first_name}`
         td.innerHTML = user_name
+        tr.appendChild(td)
+
+        td = document.createElement("td")
+        td.innerHTML = `${row.user.organization}`
+        tr.appendChild(td)
+
+        td = document.createElement("td")
+        let grade = `-`
+        if (row.user.grade) {
+            grade = `${row.user.grade} класс`
+        }
+        td.innerHTML = grade
         tr.appendChild(td)
 
         let td_sum = document.createElement("td")
