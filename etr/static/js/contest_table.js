@@ -11,6 +11,10 @@ function create_table_head(data) {
     tr.appendChild(th)
 
     th = document.createElement("th")
+    th.innerText = "город"
+    tr.appendChild(th)
+
+    th = document.createElement("th")
     th.innerText = "организация"
     tr.appendChild(th)
 
@@ -63,13 +67,19 @@ async function create_table_body(data, contest_id) {
         tr.appendChild(td)
 
         td = document.createElement("td")
+        let city = `${row.user.city}`
+        td.innerHTML = city
+        tr.appendChild(td)
+
+        td = document.createElement("td")
         td.innerHTML = `${row.user.organization}`
         tr.appendChild(td)
 
         td = document.createElement("td")
+        td.style = "text-align: center;"
         let grade = `-`
         if (row.user.grade) {
-            grade = `${row.user.grade} класс`
+            grade = `${row.user.grade}`
         }
         td.innerHTML = grade
         tr.appendChild(td)
@@ -135,7 +145,7 @@ async function create_table_body(data, contest_id) {
             tr.appendChild(td)
         }
 
-        td_sum.innerHTML = `<div class="attempt_cell">${sum_successful_tasks}</div><div class="none">${sum_points}</div>`
+        td_sum.innerHTML = `<div class="attempt_cell">${sum_successful_tasks}</div><div class="none" style="float: right;">${sum_points}</div>`
 
         tbody.appendChild(tr)
     })
