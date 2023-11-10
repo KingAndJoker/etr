@@ -40,7 +40,7 @@ async function show_contest_table() {
         let table_contest_response = await fetch(`/etr/api/contest/${contest["id"]}/table`)
         if(table_contest_response.ok) {
             let table_contest = await table_contest_response.json()
-            cell.innerHTML = `x${table_contest.rows.length}`
+            cell.innerHTML = `${table_contest.rows.length}`
         } else {
             cell.innerHTML = `error`
         }
