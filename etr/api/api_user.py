@@ -5,6 +5,7 @@ from etr.services.user import get_users
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 from etr.services.user import add_user
 from etr.services.user import update_user
+from etr.services.user import update_user_info_from_codeforces as services_update_user_info_from_codeforces
 
 
 bp = Blueprint("api_user", __name__)
@@ -83,4 +84,16 @@ def patch_user(user_id: int):
     return {
         "status": "ok",
         "result": user_schema.model_dump()
+    }
+
+
+@bp.get("/user/update_codeforces/<handle>")
+def update_user_from_codeforces(handle: str):
+    user = services_update_user_info_from_codeforces(handle)
+    if user is None:
+        return {"status": "error"}
+
+    return {
+        "status": "ok",
+        "user": user.model_dump()
     }

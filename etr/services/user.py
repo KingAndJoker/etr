@@ -119,7 +119,7 @@ def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
 
         if user_db is None:
             return None
-        
+
         user_schema = UserSchema.model_validate(user_db)
 
     return user_schema
@@ -167,8 +167,10 @@ def __update_user_with_id(session: Session, user_id: int, **kwargs) -> User | No
 
 def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
     with get_db() as session:
-        user_db = __update_user_with_id(session, user_id=user_schema.id, **kwargs)
-        user_schema = UserSchema.model_validate(user_db) if user_db is not None else None
+        user_db = __update_user_with_id(
+            session, user_id=user_schema.id, **kwargs)
+        user_schema = UserSchema.model_validate(
+            user_db) if user_db is not None else None
     return user_schema
 
 
@@ -178,7 +180,31 @@ def sync_user_with_dl():
     users_schema = get_users()
     for dl_user in sync_users_schema:
         if dl_user.handle in (user_schema.handle for user_schema in users_schema):
-            update_user_schema = _get_user_db_with_kwargs(handle=dl_user.handle)
-            _update_user_with_kwargs(update_user_schema, **dl_user.model_dump())
+            update_user_schema = _get_user_db_with_kwargs(
+                handle=dl_user.handle
+            )
+            params = {
+                key: value
+                for key, value in dl_user.model_dump(exclude=("id")).items() if value is not None
+            }
+            _update_user_with_kwargs(update_user_schema, **params)
         else:
             _add_new_user_with_schema(dl_user)
+
+
+def update_user_info_from_codeforces(handle: str) -> UserSchema | None:
+    user_new = convert_codeforces_user_schema(
+        get_codeforces_user(handle, lang="ru"))
+    if user_new is None:
+        return None
+
+    user_etr = get_user(handle=handle)
+    if user_etr is None:
+        return None
+
+    params = {
+        key: value
+        for key, value in user_new.model_dump(exclude=("id")).items() if value is not None
+    }
+    return_user = update_user(user_etr.id, **params)
+    return return_user
