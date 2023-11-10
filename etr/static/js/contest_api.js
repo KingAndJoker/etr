@@ -9,7 +9,7 @@ async function show_contest_table() {
 
     contests = json["contests"]
     let index = 1
-    contests.forEach(contest => {
+    contests.forEach(async contest => {
         let row = contest_table.insertRow()
         let cell = row.insertCell()
         // cell.innerHTML = `${contest["id"]}`
@@ -35,5 +35,14 @@ async function show_contest_table() {
             "Декабрь"
         ]
         cell.innerHTML = `${month[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
+
+        cell = row.insertCell()
+        let table_contest_response = await fetch(`/etr/api/contest/${contest["id"]}/table`)
+        if(table_contest_response.ok) {
+            let table_contest = await table_contest_response.json()
+            cell.innerHTML = `x${table_contest.rows.length}`
+        } else {
+            cell.innerHTML = `error`
+        }
     })
 }
