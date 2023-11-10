@@ -99,6 +99,6 @@ async function send_request_sync_user_with_codeforces() {
 
     for(var i=0; i<users.users.length; i++) {
         let response_user_update = await fetch(`/etr/api/user/update_codeforces/${users.users[i].handle}`)
-        console.log(`update codeforces: /etr/api/user/update_codeforces/${users.users[i].handle}; status: ${response_user_update.ok}`)``
+        console.log(`update codeforces: /etr/api/user/update_codeforces/${users.users[i].handle}; status: ${response_user_update.ok}`)
     }
 }
