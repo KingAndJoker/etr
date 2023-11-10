@@ -10,6 +10,10 @@ function create_table_head(data) {
     th.innerText = "ученик"
     tr.appendChild(th)
 
+    th = document.createElement("th")
+    th.innerHTML = '<div class="attempt_cell">задачи</div><div class="none">баллы</div>'
+    tr.appendChild(th)
+
     for (var i = 0; i < data.contest.problems.length; i++) {
         th = document.createElement("th")
         th.innerText = data.contest.problems[i].index
@@ -53,6 +57,9 @@ async function create_table_body(data, contest_id) {
         td.innerHTML = user_name
         tr.appendChild(td)
 
+        let td_sum = document.createElement("td")
+        tr.appendChild(td_sum)
+
         let task_result = {}
         for (var i = 0; i < data.contest.problems.length; i++) {
             task_result[data.contest.problems[i].index] = {
@@ -85,12 +92,17 @@ async function create_table_body(data, contest_id) {
             }
         })
 
+        let sum_points = 0
+        let sum_successful_tasks = 0
+
         for (var i = 0; i < data.contest.problems.length; i++) {
             let td = document.createElement("td")
             let problem_index = data.contest.problems[i].index
 
             if (task_result[problem_index].count) {
                 if (task_result[problem_index].solved) {
+                    sum_points += task_result[problem_index].max_point
+                    sum_successful_tasks++
                     let attempt_cell = `<p class="attempt_cell">+${task_result[problem_index].count}</p>`
                     let scores_cell = `<p class="none">${task_result[problem_index].max_point}</p>`
                     let cell = `<div class="successfully">${attempt_cell}${scores_cell}</div>`
@@ -105,6 +117,8 @@ async function create_table_body(data, contest_id) {
             }
             tr.appendChild(td)
         }
+
+        td_sum.innerHTML = `<div class="attempt_cell">${sum_successful_tasks}</div><div class="none">${sum_points}</div>`
 
         tbody.appendChild(tr)
     })
