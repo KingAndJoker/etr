@@ -43,6 +43,10 @@ function get_handles(data) {
 
 
 async function create_table_body(data, contest_id) {
+    if (data.contest.problems[0].points === null) {
+        document.getElementById("btn-switch-points").remove()
+    }
+
     let tbody = document.createElement("tbody")
 
     handles = get_handles(data).join(";")
