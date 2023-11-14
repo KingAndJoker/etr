@@ -318,12 +318,12 @@ def seeding(engine: Engine):
         teams = [
             Team(
                 id=1,
-                teamName="Team #1",
+                team_name="Team #1",
                 users=[users[0], users[1]]
             ),
             Team(
                 id=2,
-                teamName="Team #2",
+                team_name="Team #2",
                 users=[users[3], users[4]]
             ),
         ]
