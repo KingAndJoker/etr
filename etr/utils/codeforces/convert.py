@@ -39,7 +39,14 @@ def convert_codeforces_submission_schema(codeforces_submission: CodeforcesSubmis
     if codeforces_submission is None:
         return None
 
-    submission = SubmissionSchema(**codeforces_submission.model_dump())
+    codeforces_sub = codeforces_submission.model_copy()
+    if isinstance(codeforces_sub.author, CodeforcesUserSchema):
+        codeforces_sub.author = convert_codeforces_user_schema(codeforces_sub.author)
+    else:
+        codeforces_sub.author = convert_codeforces_team_schema(codeforces_sub.author)
+        
+
+    submission = SubmissionSchema(**codeforces_sub.model_dump())
 
     return submission
 
