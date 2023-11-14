@@ -43,7 +43,7 @@ def get_teams(**kwargs) -> list[TeamSchema]:
 
     Example::
     =====
-    >>> get_teams(teamName="teamName")
+    >>> get_teams(team_name="team_name")
     """
 
     teams_schema = _get_teams_with_kwargs(**kwargs)
