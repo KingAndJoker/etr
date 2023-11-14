@@ -76,7 +76,7 @@ def get_users(
     return users_schema
 
 
-def add_user(handle: str, lang: str = "en") -> UserSchema | None:
+def add_user(handle: str, lang: str = "en", watch: bool = True) -> UserSchema | None:
     user_db = _get_user_db_with_kwargs(handle=handle)
 
     if user_db is not None:
@@ -90,7 +90,7 @@ def add_user(handle: str, lang: str = "en") -> UserSchema | None:
     if user_schema is None:
         return None
 
-    user_schema = _add_new_user_with_schema(user_schema)
+    user_schema = _add_new_user_with_schema(user_schema, watch=watch)
     if user_schema is None:
         return None
 
@@ -108,9 +108,9 @@ def __add_user_with_kwargs(session, **kwargs) -> User | None:
         return None
 
 
-def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
+def _add_new_user_with_schema(user_schema: UserSchema, watch: bool = True) -> UserSchema | None:
     with get_db() as session:
-        user_db = __add_user_with_kwargs(session, **user_schema.model_dump())
+        user_db = __add_user_with_kwargs(session, **user_schema.model_dump(), watch=watch)
         users_db = __get_users_filter_by(session, handle=user_schema.handle)
         if users_db == []:
             user_db = None
