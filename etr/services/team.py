@@ -3,7 +3,10 @@ from sqlalchemy.orm.session import Session
 
 from etr.db import get_db
 from etr.models.team import Team
+from etr.models.user import User
 from etr.schemas.team import TeamSchema
+from etr.services.user import get_user
+from etr.services.user import add_user
 
 
 def __get_teams_db(session: Session, **kwargs) -> list[Team] | None:
@@ -49,3 +52,67 @@ def get_teams(**kwargs) -> list[TeamSchema]:
     teams_schema = _get_teams_with_kwargs(**kwargs)
 
     return teams_schema
+
+
+def __add_team(session: Session, **kwargs) -> Team | None:
+    """ add team to db """
+    team = Team(**kwargs)
+
+    session.add(team)
+    session.commit()
+
+    return team
+
+
+def _check_members(team_schema: TeamSchema) -> None:
+    """
+    check members in team
+    if user not in db, add him
+    """
+    missing_users = []
+    members = team_schema.users
+    for member in members:
+        user_schema = get_user(
+            handle=member.handle
+        )
+        if user_schema is None:
+            missing_users.append(member.handle)
+        user_schema = add_user(
+            handle=member.handle, lang="ru", watch=False
+        )
+
+
+def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
+    """ add team to db """
+    with get_db() as session:
+        team_dump = team_schema.model_dump()
+        for i, member in enumerate(team_dump["users"]):
+            # TODO: rewrite without session.query ...
+            team_dump["users"][i] = session.query(User).filter_by(handle=member["handle"]).one()
+        team_db = __add_team(session, **team_dump)
+        team_schema = TeamSchema.model_validate(team_db)
+
+        return team_schema
+
+
+def add_team_with_schema(team: TeamSchema) -> TeamSchema:
+    """
+    etr.services.team.add_team_with_schema
+    =====
+    Add team to db
+
+    :param team: team schema
+    :type team: TeamSchema
+    :return: added team
+    :rtype: TeamSchema
+    :raises: None
+
+    Example::
+    =====
+    >>> add_team_with_schema(team_schema)
+    """
+
+    _check_members(team)
+    team_schema = _add_team_db(team)
+
+    return team_schema
