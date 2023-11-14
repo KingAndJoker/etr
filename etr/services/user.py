@@ -55,10 +55,10 @@ def _get_users_db_with_handles(handles: list[str], **kwargs):
     return users_schema
 
 
-def get_user(handle: str, watch: bool = True) -> UserSchema | None:
+def get_user(handle: str, **kwargs) -> UserSchema | None:
     user_schema = _get_user_db_with_kwargs(
         handle=handle,
-        watch=watch
+        **kwargs
     )
 
     return user_schema
