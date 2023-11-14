@@ -151,7 +151,7 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         users = session.query(User).all()
         team = Team(
             id=1,
-            teamName="Cool Team",
+            team_name="Cool Team",
             users=users
         )
         session.add(team)
@@ -200,7 +200,7 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         assert submission.points == 545, "submission.points != 545."
 
         assert submission.team is not None, "submission.team is None."
-        assert submission.team.teamName == "Cool Team", "submission.team.teamName != Cool Team."
+        assert submission.team.team_name == "Cool Team", "submission.team.team_name != Cool Team."
         assert len(submission.team.users) == 2, "len(submission.team.users) != 2."
         assert submission.team.users[0].handle == "cool_proger", "submission.team.users[0].handle != cool_proger."
         assert submission.team.users[1].handle == "cool_proger2", "submission.team.users[1].handle != cool_proger2."

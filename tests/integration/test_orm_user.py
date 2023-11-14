@@ -96,7 +96,7 @@ def test_user_team(in_memory_db_empty: Engine):
             User.handle == "tourist"
         ).one_or_none()
         user2 = session.query(User).filter(User.handle == "zxc").one_or_none()
-        team = Team(teamName="team")
+        team = Team(team_name="team")
         team.users.append(user)
         team.users.append(user2)
         session.add(team)
@@ -104,7 +104,7 @@ def test_user_team(in_memory_db_empty: Engine):
 
     with Session(engine) as session:
         team = session.query(Team).filter(
-            Team.teamName == "team"
+            Team.team_name == "team"
         ).one_or_none()
         assert len(team.users) == 2, "Incorrectly added users to the team."
 
@@ -119,6 +119,6 @@ def test_user_team(in_memory_db_empty: Engine):
 
     with Session(engine) as session:
         team = session.query(Team).filter(
-            Team.teamName == "team"
+            Team.team_name == "team"
         ).one_or_none()
         assert len(team.users) == 0, "Incorrectly deleted users from the team."
