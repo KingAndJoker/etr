@@ -6,9 +6,14 @@ from sqlalchemy.orm import Session
 from etr.db import get_db
 from etr.models.submission import Submission
 from etr.schemas.submission import SubmissionSchema
+from etr.schemas.team import TeamSchema
+from etr.schemas.user import UserSchema
 from etr.utils.factory import create_submission_model
 from etr.services.user import get_users
 from etr.services.problem import get_problems_with_contest_id
+from etr.services.team import get_teams
+from etr.services.team import add_team_with_schema
+from etr.services.user import get_user
 from etr.library.codeforces.codeforces_utils import get_submission as cf_get_submission
 from etr.utils.codeforces.convert import convert_codeforces_submission_schema
 
@@ -102,6 +107,25 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
         problem = [problem for problem in problems if problem.index==submission_schema.problem.index][0]
         params["problem_id"] = problem.id
         params.pop("problem")
+    
+    if isinstance(submission_schema.author, TeamSchema):
+        teams = get_teams(team_name=submission_schema.author.team_name)
+        if teams == []:
+            team = add_team_with_schema(submission_schema.author)
+        else:
+            team = teams[0]
+        params["team_id"] = team.id
+        params.pop("author")
+    elif isinstance(submission_schema.author, UserSchema):
+        user = get_user(submission_schema.author.handle)
+        params["author_id"] = user.id
+        params.pop("author")
+
+    author_id = params.get("author_id", None)
+    team_id = params.get("team_id", None)
+    if author_id is None and team_id is None:
+        # TODO: raise Exception
+        return None
 
     with get_db() as session:
         __add_submission_db(session, **params)
