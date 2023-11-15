@@ -8,6 +8,7 @@ from etr.library.codeforces.codeforces_utils import get_contest as get_contest_w
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 from etr.services.problem import add_problems
 from etr.services.user import get_users
+from etr.services.team import get_teams_with_handle_member
 from etr.services.submission import get_submissions
 from etr.utils.factory import create_contest_model
 
@@ -99,7 +100,7 @@ def add_contest(contest_id: int) -> ContestSchema:
     """ add contest with contest_id """
 
     contests_schema = _get_contests_schema_with_db(id=contest_id)
-    
+
     if len(contests_schema) > 0:
         return contests_schema[0]
 
@@ -132,7 +133,7 @@ def update_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
 def get_contest_table_rows(contest_id: int) -> list:
     # TODO: write tests
     rows = list()
-    
+
     users = get_users()
 
     # TODO: rewrite, if user is contestant, but he has no submissions
@@ -145,5 +146,15 @@ def get_contest_table_rows(contest_id: int) -> list:
             "user": user,
             "submissions": submissions
         })
+
+        teams = get_teams_with_handle_member(handle=user.handle)
+        for team in teams:
+            submissions = get_submissions(contest_id=contest_id, team_id=team.id)
+            if len(submissions) == 0:
+                continue
+            rows.append({
+                "team": team,
+                "submissions": submissions
+            })
 
     return rows
