@@ -54,6 +54,28 @@ def get_teams(**kwargs) -> list[TeamSchema]:
     return teams_schema
 
 
+def get_teams_with_handle_member(handle: str) -> list[TeamSchema]:
+    """
+    get_teams_with_handle_member
+    =====
+    return all teams for user with handle.
+    :param handle: str, handle of user
+    :return: list of TeamSchema
+    :rtype: list[TeamSchema]
+    :raises: None
+
+    Example::
+    =====
+    >>> get_teams_with_handle_member("tourist")
+    """
+    teams = []
+    for team in get_teams():
+        if handle in (user.handle for user in team.users):
+            teams.append(teams)
+
+    return teams
+
+
 def __add_team(session: Session, **kwargs) -> Team | None:
     """ add team to db """
     team = Team(**kwargs)
