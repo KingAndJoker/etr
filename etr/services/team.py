@@ -71,7 +71,7 @@ def get_teams_with_handle_member(handle: str) -> list[TeamSchema]:
     teams = []
     for team in get_teams():
         if handle in (user.handle for user in team.users):
-            teams.append(teams)
+            teams.append(team)
 
     return teams
 
