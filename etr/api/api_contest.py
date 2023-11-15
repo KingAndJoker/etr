@@ -27,9 +27,11 @@ def api_get_table_contest(contest_id: int):
     rows = get_contest_table_rows(contest_id)
 
     decorated = [
-        (get_count_success_tasks(row["submissions"]),
-         i,
-         row)
+        (
+            get_count_success_tasks(row["submissions"]),
+            i,
+            row
+        )
         for i, row in enumerate(rows)
     ]
     decorated.sort()
@@ -39,17 +41,22 @@ def api_get_table_contest(contest_id: int):
         for _, _, row in decorated
     ]
 
-    return {
+    response = {
         "status": "ok",
         "contest": contest.model_dump(),
-        "rows": [
-            {
-                "user": row["user"].model_dump(),
-                "submissions": [
-                    submission.model_dump()
-                    for submission in row["submissions"]
-                ]
-            }
-            for row in rows
-        ]
+        "rows": []
     }
+
+    for row in rows:
+        if "user" in row:
+            response["rows"].append({
+                "user": row["user"].model_dump(),
+                "submissions": [sub.model_dump() for sub in row["submissions"]]
+            })
+        else:
+            response["rows"].append({
+                "team": row["team"].model_dump(),
+                "submissions": [sub.model_dump() for sub in row["submissions"]]
+            })
+
+    return response
