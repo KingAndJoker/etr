@@ -37,7 +37,14 @@ function create_table_head(data) {
 
 
 function get_handles(data) {
-    handles = data.rows.map(row => row.user.handle)
+    handles = data.rows.map(row => {
+        if (row.user)
+            return row.user.handle
+        else
+            return null
+    })
+    handles.filter(n => n)
+
     return handles
 }
 
@@ -66,24 +73,39 @@ async function create_table_body(data, contest_id) {
         index++
 
         let td = document.createElement("td")
-        let user_name = `${row.user.last_name} ${row.user.first_name}`
-        td.innerHTML = user_name
+        if (row.user) {
+            let user_name = `${row.user.last_name} ${row.user.first_name}`
+            td.innerHTML = user_name
+        }
+        else {
+            let user_name = `
+            <b>${row.team.team_name}</b><br>
+            ${row.team.users.map(member => member.last_name + " " + member.first_name).join(", ")}
+            `
+            td.innerHTML = user_name
+        }
         tr.appendChild(td)
 
         td = document.createElement("td")
-        let city = `${row.user.city}`
-        td.innerHTML = city
+        if (row.user) {
+            let city = `${row.user.city}`
+            td.innerHTML = city
+        }
         tr.appendChild(td)
 
         td = document.createElement("td")
-        td.innerHTML = `${row.user.organization}`
+        if (row.user) {
+            td.innerHTML = `${row.user.organization}`
+        }
         tr.appendChild(td)
 
         td = document.createElement("td")
         td.style = "text-align: center;"
         let grade = `-`
-        if (row.user.grade) {
-            grade = `${row.user.grade}`
+        if (row.user) {
+            if (row.user.grade) {
+                grade = `${row.user.grade}`
+            }
         }
         td.innerHTML = grade
         tr.appendChild(td)
@@ -119,7 +141,7 @@ async function create_table_body(data, contest_id) {
                         task_result[submission.problem.index].max_point = cf_row.problemResults[cf_problem_index].points
                     }
                 }
-                catch {}
+                catch { }
             }
         })
 
