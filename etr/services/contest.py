@@ -139,16 +139,16 @@ def get_contest_table_rows(contest_id: int) -> list:
     # TODO: rewrite, if user is contestant, but he has no submissions
     for user in users:
         submissions = get_submissions(contest_id=contest_id, author_id=user.id)
-        if len(submissions) == 0:
-            continue
-
-        rows.append({
-            "user": user,
-            "submissions": submissions
-        })
+        if len(submissions):
+            rows.append({
+                "user": user,
+                "submissions": submissions
+            })
 
         teams = get_teams_with_handle_member(handle=user.handle)
         for team in teams:
+            if team in (row.get("team", None) for row in rows):
+                continue
             submissions = get_submissions(contest_id=contest_id, team_id=team.id)
             if len(submissions) == 0:
                 continue
