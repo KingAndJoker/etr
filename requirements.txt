@@ -5,3 +5,4 @@ SQLAlchemy==2.0.20
 python-dotenv
 PyMySQL
 mysql-connector-python
+alembic
