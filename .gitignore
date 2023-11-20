@@ -164,3 +164,7 @@ cython_debug/
 
 # Database file
 users.db
+
+# Alembic
+alembic.ini
+alembic/versions/
