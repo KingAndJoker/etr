@@ -52,3 +52,4 @@ class SubmissionSchema(BaseModel):
         alias="memoryConsumedBytes"
     )
     points: int | None = None
+    type_of_member: str | None = None
