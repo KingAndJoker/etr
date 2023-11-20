@@ -40,3 +40,44 @@ DATABASE_ECHO=true
 CODEFORCES_API_KEY=0123456789abcdef0123456789abcdef01234567
 CODEFORCES_API_SECRET=0123456789abcdef0123456789abcdef01234567
 ```
+
+## Example ```alembic.ini```
+
+```apacheconf
+...
+sqlalchemy.url = driver://user:pass@localhost/dbname
+...
+```
+
+Alembic.ini file generate automatically. But you don`t forget to set sqlalchemy.url - the url for the database.
+
+## Run migrations
+
+Before performing the migration you must run the command:
+
+```shell
+alembic init "folder"
+```
+
+In `alembic/env.py` you have to write the code:
+
+```python
+...
+from etr.models.base import Base
+from etr.models.problem import Problem, problems_tags, Tag
+from etr.models.user import User
+from etr.models.team import Team, teams_users
+from etr.models.submission import Submission
+from etr.models.contest import Contest
+target_metadata = Base.metadata
+...
+```
+
+This code sets the metadata for alembic.
+
+After you do something in the database models you have to perform the migration.
+
+```shell
+alembic revision --autogenerate -m "add submissions.type_of_member"
+alembic upgrade head
+```
