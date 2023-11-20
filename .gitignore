@@ -167,4 +167,4 @@ users.db
 
 # Alembic
 alembic.ini
-alembic/versions/
+alembic/
