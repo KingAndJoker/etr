@@ -234,3 +234,34 @@ def make_params_for_submission(submission: SubmissionSchema) -> dict:
     if "author" in params: params.pop("author")
 
     return params
+
+
+def __delete_submissions(session: Session, **kwargs) -> list[SubmissionSchema]:
+    cnt_deleted = session.query(Submission).filter_by(**kwargs).delete()
+    return cnt_deleted
+
+
+def _delete_submissions(**kwargs) -> int:
+    with get_db() as session:
+        cnt = __delete_submissions(session, **kwargs)
+        session.commit()
+    return cnt
+
+
+def delete_submissions(**kwargs) -> int:
+    """delete submissions from db
+
+    Args:
+        id (int): id of submission
+        contest_id (int): id of contest
+        author_id (int): id of author
+        team_id (int): id of team
+        problem_id (int): id of problem
+        programming_language (str): programming language
+        type_of_member (str): type of member
+
+    Returns:
+        int: count of deleted submissions
+    """
+    cnt_deleted_submissions = _delete_submissions(**kwargs)
+    return cnt_deleted_submissions
