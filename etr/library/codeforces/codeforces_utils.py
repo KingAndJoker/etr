@@ -92,6 +92,7 @@ def get_submission(
         print(f"length submissions answer: {len(response_json['result'])}")
 
         for i, submission in enumerate(response_json["result"]):
+            response_json["result"][i]["type_of_member"] = submission["author"]["participantType"]
             if "teamName" in response_json["result"][i]["author"]:
                 team_users = [
                     CodeforcesUserSchema(handle=user["handle"])
@@ -107,7 +108,9 @@ def get_submission(
                 )
 
         submissions = [
-            CodeforcesSubmissionSchema(**submission)
+            CodeforcesSubmissionSchema(
+                **submission
+            )
             for submission in response_json["result"]
         ]
 

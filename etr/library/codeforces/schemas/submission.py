@@ -33,3 +33,4 @@ class CodeforcesSubmissionSchema(BaseModel):
     timeConsumedMillis: int | None = None
     memoryConsumedBytes: int | None = None
     points: int | None = None
+    type_of_member: str | None = None
