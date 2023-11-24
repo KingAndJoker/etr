@@ -1,8 +1,9 @@
-let status = 1
+let type_of_view_points = 1
 
-function switch_view_cell() {
-    if (status) {
-        status = 0
+async function switch_view_cell() {
+    if (type_of_view_points) {
+        type_of_view_points = 0
+        await show_table()
         let cells = document.getElementsByClassName("none")
         while (cells.length > 0) {
             cells[0].className = "score_cell"
@@ -14,7 +15,8 @@ function switch_view_cell() {
         }
     }
     else {
-        status = 1
+        type_of_view_points = 1
+        await show_table()
         let cells = document.getElementsByClassName("none")
         while (cells.length > 0) {
             cells[0].className = "attempt_cell"

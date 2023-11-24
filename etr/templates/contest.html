@@ -14,7 +14,7 @@
     {{ contest.type }}
     {% if contest.kind %}
     , {{ contest.kind }}
-    {% endif%}
+    {% endif %}
 </div>
 <div>
     продолжительность: {{ contest.duration_time }}<br>
@@ -35,12 +35,40 @@
 <br>
 <button onclick="switch_view_cell()" class="btn btn-info" id="btn-switch-points">переключить баллы</button>
 <button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">обновить отправки</button>
+<div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="type_of_submissions" value="all" id="all_type_of_submissions">
+        <label class="form-check-label" for="all_type_of_submissions">
+            Все
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="type_of_submissions" value="contest" id="contest_type_of_submissions">
+        <label class="form-check-label" for="contest_type_of_submissions">
+            Во время контеста
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="type_of_submissions" value="virtual" id="virtual_type_of_submissions">
+        <label class="form-check-label" for="virtual_type_of_submissions">
+            Виртуальный контест
+        </label>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="radio" name="type_of_submissions" value="other" id="other_type_of_submissions">
+        <label class="form-check-label" for="other_type_of_submissions">
+            Дорешивание
+        </label>
+    </div>
+</div>
 <br>
 
 <div id="div-contest-table" class="container" align="center">
 </div>
 
 <script>
-    create_table({{ contest.id }})
+    contest_id = {{ contest.id }}
+    type_of_submisions = get_type_of_submissions()
+    start()
 </script>
 {% endblock %}
