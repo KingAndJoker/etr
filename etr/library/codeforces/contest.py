@@ -18,12 +18,6 @@ def standings(contest_id: int,
     pass
 
 
-# contestId
-# asManager
-# handle
-# from_
-# count
-# lang
 def status(contestId: int, *,
            asManager: bool | None = None,
            handle: str | None = None,
@@ -47,14 +41,45 @@ def status(contestId: int, *,
 
     if response.status_code != 200:
         return None
-    
+
     data = response.json()
     if data["status"] != "OK":
         return None
-    
+
     submissions = []
     for submission_data in data["result"]:
         submission = CodeforcesSubmissionSchema(**submission_data)
         submissions.append(submission)
 
     return submissions
+
+
+def status_json(contestId: int, *,
+                asManager: bool | None = None,
+                handle: str | None = None,
+                from_: int | None = None,
+                count: int | None = None,
+                lang: str = "ru") -> list[dict] | None:
+    kwargs = {
+        "contestId": contestId,
+        "asManager": asManager,
+        "handle": handle,
+        "from": from_,
+        "count": count,
+        "lang": lang
+    }
+    kwargs = {key: value for key, value in kwargs.items() if value is not None}
+    contest_status_url = generate_url(
+        "contest.status",
+        **kwargs
+    )
+    response = requests.get(contest_status_url)
+
+    if response.status_code != 200:
+        return None
+
+    data = response.json()
+    if data["status"] != "OK":
+        return None
+
+    return data["result"]
