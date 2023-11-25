@@ -14,7 +14,8 @@ from etr.services.problem import get_problems_with_contest_id
 from etr.services.team import get_teams
 from etr.services.team import add_team_with_schema
 from etr.services.user import get_user
-from etr.library.codeforces.codeforces_utils import get_submission as cf_get_submission
+from etr.library.codeforces import contest
+from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.utils.codeforces.convert import convert_codeforces_submission_schema
 
 
@@ -60,7 +61,8 @@ def __update_submission_db(session: Session, submission: Submission, **kwargs) -
     session.add(submission)
     session.commit()
 
-    submission = session.query(Submission).filter_by(id=submission.id, **kwargs).one_or_none()
+    submission = session.query(Submission).filter_by(
+        id=submission.id, **kwargs).one_or_none()
 
     return submission
 
@@ -71,8 +73,9 @@ def _check_submission_update(submission_schema: SubmissionSchema, **kwargs) -> b
         copy_submission_schema = copy.deepcopy(submission_schema)
         for key, value in kwargs.items():
             setattr(copy_submission_schema, key, value)
-        
-        check_submission_schema = SubmissionSchema(**copy_submission_schema.model_dump())
+
+        check_submission_schema = SubmissionSchema(
+            **copy_submission_schema.model_dump())
     except:
         return False
 
@@ -84,17 +87,19 @@ def _update_submission_db(submission_schema: SubmissionSchema, **kwargs) -> Subm
 
     if not _check_submission_update(submission_schema, **kwargs):
         return None
-    
+
     with get_db() as session:
         submission_db = __get_submission_db(session, id=submission_schema.id)
 
         if submission_db is None:
             return None
 
-        submission_db = __update_submission_db(session, submission_db, **kwargs)
+        submission_db = __update_submission_db(
+            session, submission_db, **kwargs)
 
         submission_db = __get_submission_db(session, id=submission_schema.id)
-        submission_return_schema = SubmissionSchema.model_validate(submission_db)
+        submission_return_schema = SubmissionSchema.model_validate(
+            submission_db)
 
     return submission_return_schema
 
@@ -104,10 +109,11 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
     params = submission_schema.model_dump()
     if "problem" in params:
         problems = get_problems_with_contest_id(params["contest_id"])
-        problem = [problem for problem in problems if problem.index==submission_schema.problem.index][0]
+        problem = [problem for problem in problems if problem.index ==
+                   submission_schema.problem.index][0]
         params["problem_id"] = problem.id
         params.pop("problem")
-    
+
     if isinstance(submission_schema.author, TeamSchema):
         teams = get_teams(team_name=submission_schema.author.team_name)
         if teams == []:
@@ -132,7 +138,8 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
         submission_db = __get_submission_db(session, id=params["id"])
         if submission_db is None:
             return None
-        submission_return_schema = SubmissionSchema.model_validate(submission_db)
+        submission_return_schema = SubmissionSchema.model_validate(
+            submission_db)
     return submission_return_schema
 
 
@@ -154,15 +161,15 @@ def _get_submission_with_kwargs(**kwargs) -> SubmissionSchema | None:
 
         if submission_db is None:
             return None
-        
+
         submission_schema = SubmissionSchema.model_validate(submission_db)
 
     return submission_schema
 
 
 def get_submissions(
-        **kwargs
-    ) -> list[SubmissionSchema]:
+    **kwargs
+) -> list[SubmissionSchema]:
     """ get submissions from db """
     submissions_schema = _get_submissions_with_kwargs(**kwargs)
 
@@ -186,43 +193,64 @@ def update_submission(
 
     if submission_schema is None:
         return None
-    
+
     submission_schema = _update_submission_db(submission_schema, **kwargs)
 
     return submission_schema
 
 
-def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema]:
-    users = get_users()
+def is_our_submission(
+        submission: dict,
+        handles: list[str],
+        teams_name: list[str]
+) -> bool:
+    """return True if the submission contains a user or team from the database
+
+    Args:
+        submission (SubmissionSchema): checking submission
+
+    Returns:
+        bool: True if the submission contains user or team from the database
+    """
+    if "teamName" not in submission["author"]:
+        return submission["author"]["members"][0]["handle"] in handles
+    else:
+        return submission["author"]["teamName"] in teams_name
+    return False
+
+
+def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema] | None:
 
     added_submissions = list()
 
-    for user in users:
-        cf_subs = cf_get_submission(contest_id, handle=user.handle)
-        count_requests = 20
-        delay_between_requests = 0.5
-        while cf_subs is None and count_requests > 0:
-            time.sleep(delay_between_requests)
-            cf_subs = cf_get_submission(contest_id, handle=user.handle)
-            count_requests -= 1
-        if cf_subs is None:
-            continue
-        submissions = []
-        if cf_subs:
-            submissions = [
-                convert_codeforces_submission_schema(cf_sub)
-                for cf_sub in cf_subs
-            ]
+    handles = [user.handle for user in get_users()]
+    teams_name = [team.team_name for team in get_teams()]
 
-        for submission in submissions:
-            params = make_params_for_submission(submission)
-            sub_is_exist = get_submission(**params)
-            if sub_is_exist is not None:
-                continue
-            sub_add = _add_submission_with_schema(submission)
-            if sub_add is None:
-                continue
-            added_submissions.append(sub_add)
+    cf_subs_json = contest.status_json(contestId=contest_id)
+    count_requests = 20
+    delay_between_requests = 0.5
+    while cf_subs_json is None and count_requests > 0:
+        time.sleep(delay_between_requests)
+        cf_subs_json = contest.status_json(contest_id)
+        count_requests -= 1
+    if cf_subs_json is None:
+        return None
+
+    for submission_json in cf_subs_json:
+        if not is_our_submission(submission_json, handles, teams_name):
+            continue
+        submission = convert_codeforces_submission_schema(
+            CodeforcesSubmissionSchema(**submission_json))
+        if submission is None:
+            continue
+        params = make_params_for_submission(submission)
+        sub_is_exist = get_submission(**params)
+        if sub_is_exist is not None:
+            continue
+        sub_add = _add_submission_with_schema(submission)
+        if sub_add is None:
+            continue
+        added_submissions.append(sub_add)
 
     return added_submissions
 
@@ -230,8 +258,10 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
 def make_params_for_submission(submission: SubmissionSchema) -> dict:
     params = submission.model_dump()
 
-    if "problem" in params: params.pop("problem")
-    if "author" in params: params.pop("author")
+    if "problem" in params:
+        params.pop("problem")
+    if "author" in params:
+        params.pop("author")
 
     return params
 
