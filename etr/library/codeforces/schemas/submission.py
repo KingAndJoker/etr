@@ -1,7 +1,9 @@
 """Codeforces Submission schema file"""
 from pydantic import (
     BaseModel,
-    ConfigDict
+    ConfigDict,
+    validator,
+    ValidationError
 )
 
 from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
@@ -34,3 +36,16 @@ class CodeforcesSubmissionSchema(BaseModel):
     memoryConsumedBytes: int | None = None
     points: int | None = None
     type_of_member: str | None = None
+
+    @validator("author", pre=True)
+    def validate_author(
+        data: dict | CodeforcesTeamSchema | CodeforcesUserSchema
+    ) -> CodeforcesTeamSchema | CodeforcesUserSchema:
+        if isinstance(data, CodeforcesTeamSchema) or isinstance(data, CodeforcesUserSchema):
+            return data
+
+        if "teamName" in data:
+            team = CodeforcesTeamSchema(**data)
+            return team
+        user = CodeforcesUserSchema(**data, handle=data["members"][0]["handle"])
+        return user
