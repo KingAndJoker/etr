@@ -34,7 +34,7 @@ class CodeforcesSubmissionSchema(BaseModel):
     passedTestCount: int | None = None
     timeConsumedMillis: int | None = None
     memoryConsumedBytes: int | None = None
-    points: int | None = None
+    points: float | None = None
     type_of_member: str | None = None
 
     @validator("author", pre=True)
