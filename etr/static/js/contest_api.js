@@ -12,7 +12,6 @@ async function show_contest_table() {
     contests.forEach(async contest => {
         let row = contest_table.insertRow()
         let cell = row.insertCell()
-        // cell.innerHTML = `${contest["id"]}`
         cell.innerHTML = `${index}`
         index++
 
@@ -21,7 +20,8 @@ async function show_contest_table() {
 
         let date = new Date(contest["start_time_seconds"] * 1000);
         cell = row.insertCell()
-        let month = ["январь",
+        let month = [
+            "январь",
             "Февраль",
             "Март",
             "Апрель",
@@ -44,5 +44,11 @@ async function show_contest_table() {
         } else {
             cell.innerHTML = `error`
         }
+
+        cell = row.insertCell()
+        cell.innerHTML = `
+            <a href="/etr/contest/${contest.id}?type_sub=contest">контест</a>
+            <a href="/etr/contest/${contest.id}?type_sub=virtual">виртуально</a>
+        `
     })
 }
