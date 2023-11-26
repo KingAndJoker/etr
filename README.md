@@ -78,6 +78,6 @@ This code sets the metadata for alembic.
 After you do something in the database models you have to perform the migration.
 
 ```shell
-alembic revision --autogenerate -m "add submissions.type_of_member"
+alembic revision --autogenerate -m "some message..."
 alembic upgrade head
 ```
