@@ -13,10 +13,13 @@ from etr.services.user import get_users
 from etr.services.problem import get_problems_with_contest_id
 from etr.services.team import get_teams
 from etr.services.team import add_team_with_schema
+from etr.services.team import is_our_team_json
 from etr.services.user import get_user
 from etr.library.codeforces import contest
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
+from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
 from etr.utils.codeforces.convert import convert_codeforces_submission_schema
+from etr.utils.codeforces.convert import convert_codeforces_team_schema
 
 
 def __get_submissions_db(session: Session, **kwargs) -> list[Submission] | None:
@@ -202,21 +205,25 @@ def update_submission(
 def is_our_submission(
         submission: dict,
         handles: list[str],
-        teams_name: list[str]
+        teams_id: list[int]
 ) -> bool:
     """return True if the submission contains a user or team from the database
 
     Args:
         submission (SubmissionSchema): checking submission
+        handles (list[str]): handles users
+        teams_id (list[int]): id of teams
 
     Returns:
         bool: True if the submission contains user or team from the database
     """
-    if "teamName" not in submission["author"]:
-        return submission["author"]["members"][0]["handle"] in handles
+    if "teamId" not in submission["author"]:
+        if submission["author"]["members"] != []:
+            return submission["author"]["members"][0]["handle"] in handles
+        else:
+            return False
     else:
-        return submission["author"]["teamName"] in teams_name
-    return False
+        return submission["author"]["teamId"] in teams_id
 
 
 def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema] | None:
@@ -224,7 +231,7 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
     added_submissions = list()
 
     handles = [user.handle for user in get_users()]
-    teams_name = [team.team_name for team in get_teams()]
+    teams_id = [team.id for team in get_teams()]
 
     cf_subs_json = contest.status_json(contestId=contest_id)
     count_requests = 20
@@ -237,7 +244,16 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
         return None
 
     for submission_json in cf_subs_json:
-        if not is_our_submission(submission_json, handles, teams_name):
+        if "teamId" in submission_json["author"] \
+                and submission_json["author"]["teamId"] not in teams_id \
+                and is_our_team_json(submission_json["author"]):
+            team = add_team_with_schema(
+                convert_codeforces_team_schema(
+                    CodeforcesTeamSchema(**submission_json["author"])
+                )
+            )
+            teams_id.append(team.id)
+        if not is_our_submission(submission_json, handles, teams_id):
             continue
         submission = convert_codeforces_submission_schema(
             CodeforcesSubmissionSchema(**submission_json))
