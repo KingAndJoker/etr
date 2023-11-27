@@ -1,4 +1,21 @@
-let type_of_view_points = 1
+const get_type_of_view = () => {
+    let url = new URL(window.location.href)
+    let type = url.searchParams.get("view_point")
+    if (type == null) {
+        type = "1"
+    }
+    type = parseInt(type)
+
+    return type
+}
+
+
+const show_selected_type_of_view = () => {
+    let url = new URL(window.location.href)
+    url.searchParams.set('view_point', `${type_of_view_points}`)
+    window.history.replaceState(null, null, url)
+}
+
 
 async function switch_view_cell() {
     if (type_of_view_points) {
@@ -27,6 +44,7 @@ async function switch_view_cell() {
             cells[0].className = "none"
         }
     }
+    show_selected_type_of_view()
 }
 
 
