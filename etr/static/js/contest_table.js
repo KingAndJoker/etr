@@ -55,6 +55,12 @@ function set_checkboxes_type_of_submissions(type_sub) {
 }
 
 
+const set_checkboxes_type_of_user_name = (type_name) => {
+    let radiobtn = document.getElementById(`user_${type_name}`)
+    radiobtn.checked = true;
+}
+
+
 function get_type_of_submissions() {
     let url = new URL(window.location.href)
     let type_sub = url.searchParams.get("type_sub")
@@ -62,6 +68,17 @@ function get_type_of_submissions() {
         type_sub = "all"
     }
     set_checkboxes_type_of_submissions(type_sub)
+    return type_sub
+}
+
+
+const get_type_of_user_name = () => {
+    let url = new URL(window.location.href)
+    let type_sub = url.searchParams.get("type_usr_name")
+    if (type_sub == null) {
+        type_sub = "name"
+    }
+    set_checkboxes_type_of_user_name(type_sub)
     return type_sub
 }
 
@@ -85,10 +102,20 @@ function get_thead(problems) {
 
 const get_author = (row) => {
     if (row.user != undefined) {
+        if (type_of_user_name == "handle") {
+            return `${row.user.handle}`
+        }
         return `${row.user.first_name} ${row.user.last_name}`
     }
     if (row.team != undefined) {
-        return `<b>${row.team.team_name}</b><br>${row.team.users.map(user => user.handle).join(", ")}`
+        return `<b>${row.team.team_name}</b><br>${row.team.users.map(user => {
+            if (type_of_user_name == "handle") {
+                return user.handle
+            }
+            else {
+                return `${user.first_name} ${user.last_name}`
+            }
+        }).join(", ")}`
     }
 }
 
@@ -243,11 +270,11 @@ const create_table = (contest, rows) => {
 }
 
 
-const correct_submissions_list = ({ submissions }, types_of_sub) => {
-    return submissions.filter((submission) => {
-        return types_of_sub.includes(submission.type_of_member)
-    })
-}
+// const correct_submissions_list = ({ submissions }, types_of_sub) => {
+//     return submissions.filter((submission) => {
+//         return types_of_sub.includes(submission.type_of_member)
+//     })
+// }
 
 
 const all_submissions_rows = ({ rows }) => {
@@ -307,17 +334,28 @@ async function setting_table() {
     await get_etr_data()
     await get_codeforces_data()
     change_type_of_submissions()
+    change_type_of_user_name()
 }
+
+
+const change_type_of_user_name = () => {
+    const radioButtons = document.querySelectorAll("input[name=type_of_users_name]")
+
+    for (const radioButton of radioButtons) {
+        radioButton.addEventListener('change', show_selected_user_name)
+    }
+}
+
 
 function change_type_of_submissions() {
     const radioButtons = document.querySelectorAll("input[name=type_of_submissions]")
 
     for (const radioButton of radioButtons) {
-        radioButton.addEventListener('change', show_selected)
+        radioButton.addEventListener('change', show_selected_sub_type)
     }
 }
 
-function show_selected(event) {
+function show_selected_sub_type(event) {
     let url = new URL(window.location.href)
     url.searchParams.set('type_sub', `${event.target.value}`)
     window.history.replaceState(null, null, url)
@@ -325,6 +363,17 @@ function show_selected(event) {
     type_of_submisions = event.target.value
     show_table()
 }
+
+
+const show_selected_user_name = (event) => {
+    let url = new URL(window.location.href)
+    url.searchParams.set('type_usr_name', `${event.target.value}`)
+    window.history.replaceState(null, null, url)
+
+    type_of_user_name = event.target.value
+    show_table()
+}
+
 
 async function start() {
     await setting_table()

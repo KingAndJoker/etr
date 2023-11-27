@@ -35,30 +35,54 @@
 <br>
 <button onclick="switch_view_cell()" class="btn btn-info" id="btn-switch-points">переключить баллы</button>
 <button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">обновить отправки</button>
-<div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="type_of_submissions" value="all" id="all_type_of_submissions">
-        <label class="form-check-label" for="all_type_of_submissions">
-            Все
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="type_of_submissions" value="contest" id="contest_type_of_submissions">
-        <label class="form-check-label" for="contest_type_of_submissions">
-            Во время контеста
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="type_of_submissions" value="virtual" id="virtual_type_of_submissions">
-        <label class="form-check-label" for="virtual_type_of_submissions">
-            Виртуальный контест
-        </label>
-    </div>
-    <div class="form-check">
-        <input class="form-check-input" type="radio" name="type_of_submissions" value="other" id="other_type_of_submissions">
-        <label class="form-check-label" for="other_type_of_submissions">
-            Дорешивание
-        </label>
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-auto">
+            <h2>тип отправки</h2>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_submissions" value="all"
+                    id="all_type_of_submissions">
+                <label class="form-check-label" for="all_type_of_submissions">
+                    Все
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_submissions" value="contest"
+                    id="contest_type_of_submissions">
+                <label class="form-check-label" for="contest_type_of_submissions">
+                    Во время контеста
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_submissions" value="virtual"
+                    id="virtual_type_of_submissions">
+                <label class="form-check-label" for="virtual_type_of_submissions">
+                    Виртуальный контест
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_submissions" value="other"
+                    id="other_type_of_submissions">
+                <label class="form-check-label" for="other_type_of_submissions">
+                    Дорешивание
+                </label>
+            </div>
+        </div>
+        <div class="col-auto">
+            <h2>имя пользователя</h2>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_users_name" value="handle" id="user_handle">
+                <label class="form-check-label" for="user_handle">
+                    хендлы
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_users_name" value="name" id="user_name">
+                <label class="form-check-label" for="user_name">
+                    имя, фамилия
+                </label>
+            </div>
+        </div>
     </div>
 </div>
 <br>
@@ -69,6 +93,7 @@
 <script>
     contest_id = {{ contest.id }}
     type_of_submisions = get_type_of_submissions()
+    type_of_user_name = get_type_of_user_name()
     start()
 </script>
 {% endblock %}
