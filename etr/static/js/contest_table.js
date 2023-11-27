@@ -105,7 +105,7 @@ const get_author = (row) => {
         if (type_of_user_name == "handle") {
             return `${row.user.handle}`
         }
-        return `${row.user.first_name} ${row.user.last_name}`
+        return `${row.user.last_name} ${row.user.first_name}`
     }
     if (row.team != undefined) {
         return `<b>${row.team.team_name}</b><br>${row.team.users.map(user => {
@@ -113,7 +113,7 @@ const get_author = (row) => {
                 return user.handle
             }
             else {
-                return `${user.first_name} ${user.last_name}`
+                return `${user.last_name} ${user.first_name}`
             }
         }).join(", ")}`
     }
@@ -268,13 +268,6 @@ const create_table = (contest, rows) => {
 
     return table
 }
-
-
-// const correct_submissions_list = ({ submissions }, types_of_sub) => {
-//     return submissions.filter((submission) => {
-//         return types_of_sub.includes(submission.type_of_member)
-//     })
-// }
 
 
 const all_submissions_rows = ({ rows }) => {
