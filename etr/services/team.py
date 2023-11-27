@@ -138,3 +138,19 @@ def add_team_with_schema(team: TeamSchema) -> TeamSchema:
     team_schema = _add_team_db(team)
 
     return team_schema
+
+
+def is_our_team_json(author: dict) -> bool:
+    """check team is our
+
+    Args:
+        author (dict): https://codeforces.com/apiHelp/objects#Party
+
+    Returns:
+        bool: if user (one or more) is ours then returns True
+    """
+    for member in author["members"]:
+        user = get_user(handle=member["handle"])
+        if user is not None:
+            return True
+    return False
