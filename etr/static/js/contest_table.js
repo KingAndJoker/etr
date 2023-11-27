@@ -156,14 +156,17 @@ const create_row = (id, author, city, organization, grade, points, problems) => 
 
 
 function get_value_from_dict(obj, keys, default_value) {
+    if(keys == "") {
+        return obj
+    }
     let key = keys.split(".")[0]
     if (obj[key] == undefined) {
         return default_value
     }
     else {
         let k = keys.split(".")
-        k.pop()
-        return get_value_from_dict(obj, k.join("."), default_value)
+        k.shift()
+        return get_value_from_dict(obj[key], k.join("."), default_value)
     }
 }
 
