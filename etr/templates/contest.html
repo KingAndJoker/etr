@@ -32,6 +32,17 @@
 </div>
 {% endif %}
 
+<!-- TODO: rewrite -->
+{% if contest.id<100000 %}
+<div>
+    <a href="https://codeforces.com/contest/{{ contest.id }}">codeforces</a>
+</div>
+{% else %}
+<div>
+    <a href="https://codeforces.com/gym/{{ contest.id }}/standings">codeforces</a>
+</div>
+{% endif %}
+
 <br>
 <button onclick="switch_view_cell()" class="btn btn-info" id="btn-switch-points">переключить баллы</button>
 <button onclick="update_submission_send_request({{ contest.id }})" class="btn btn-info">обновить отправки</button>
