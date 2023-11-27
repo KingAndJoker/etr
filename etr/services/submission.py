@@ -257,6 +257,7 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
             continue
         submission = convert_codeforces_submission_schema(
             CodeforcesSubmissionSchema(**submission_json))
+        submission.type_of_member = submission_json["author"]["participantType"]
         if submission is None:
             continue
         params = make_params_for_submission(submission)
