@@ -14,3 +14,4 @@ class StudentSchema(BaseModel):
     handle: str = Field(alias="nick_name")
     organization: str | None = Field(default=None, alias="school_name")
     grade: int | None = None
+    city: str | None = None
