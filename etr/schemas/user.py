@@ -1,4 +1,6 @@
 """User schema file"""
+from enum import Enum
+
 from pydantic import BaseModel, ConfigDict, Field
 
 
@@ -63,3 +65,11 @@ class UserPatch(BaseModel):
     avatar: str | None = None
     title_photo: str | None = None
     grade: int | None = None
+
+
+class ContestantType(str, Enum):
+    contestant = "CONTESTANT",
+    practice = "PRACTICE",
+    virtual = "VIRTUAL",
+    manager = "MANAGER",
+    out_of_compettion = "OUT_OF_COMPETITION"
