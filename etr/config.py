@@ -8,7 +8,7 @@ from .db import init_db
 
 load_dotenv()
 
-
+# TODO: https://fastapi.tiangolo.com/advanced/settings/
 class Config():
     URL_PREFIX: str
     DATABASE_URL: str
