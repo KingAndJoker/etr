@@ -1,10 +1,11 @@
 """Remote Procedure Call module"""
 from threading import Thread
 
-from flask import (
-    Blueprint,
-    request
-)
+# from flask import (
+#     Blueprint,
+#     request
+# )
+from fastapi import APIRouter
 
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.contest import update_contest_with_codeforces
@@ -13,29 +14,18 @@ from etr.services.user import sync_user_with_dl
 
 
 # TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
-bp = Blueprint("rpc", __name__)
+router = APIRouter()
+# bp = Blueprint("rpc", __name__)
 
 
-@bp.get("/contest/<contest_id>")
+@router.get("/contest/{contest_id}")
 def update_contest_info(contest_id: int):
     contest_schema = update_contest_with_codeforces(contest_id)
 
-    response = dict()
-    status = "ok"
-
-    if contest_schema is None:
-        status = "error"
-
-    else:
-        contest = contest_schema.model_dump()
-        response["result"] = contest
-
-    response["status"] = status
-
-    return response
+    return contest_schema
 
 
-@bp.get("/submission/<contest_id>")
+@router.get("/submission/{contest_id}")
 def update_submission_info(contest_id: int):
     """ update submissions with codeforces in db """
 
@@ -45,21 +35,13 @@ def update_submission_info(contest_id: int):
     return {"status": "ok"}
 
 
-@bp.get("/problem/<contest_id>")
+@router.get("/problem/{contest_id}")
 def update_missing_problems(contest_id: int):
     added_problems = add_missing_problem_with_contest(contest_id)
-    problems = [
-        added_problem.model_dump()
-        for added_problem in added_problems
-    ]
-
-    return {
-        "status": "ok",
-        "result": added_problems
-    }
+    return added_problems
 
 
-@bp.get("/user/swdl")
+@router.get("/user/swdl")
 def sync_with_dl():
     try:
         sync_user_with_dl()

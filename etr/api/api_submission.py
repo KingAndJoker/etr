@@ -1,55 +1,45 @@
-from flask import Blueprint, request
+from fastapi import APIRouter
 
 from etr.services.submission import get_submissions
 from etr.services.submission import delete_submissions
-from etr.services.user import get_users
-from etr.services.problem import get_problems_with_contest_id
+from etr.schemas.user import ContestantType
 from etr.utils.api.generate import generate_kwargs
 
 
-bp = Blueprint("api_submission", __name__)
+router = APIRouter(
+    prefix="/submissions",
+    tags=["submissions"]
+)
 
 
-@bp.get("/submission")
-def api_get_submissions():
-    handle = request.args.get("handle", None)
-    contest_id = int(request.args.get("contest_id", None))
-    problem_index = request.args.get("problem_index", None)
-
-    kwargs = dict()
-    # TODO: DRY
-    if handle:
-        kwargs["author_id"] = get_users(handle=handle)[0].id
-    if contest_id:
-        kwargs["contest_id"] = contest_id
-        if problem_index:
-            problems = get_problems_with_contest_id(contest_id)
-            problem = [problem for problem in problems if problem.index==problem_index][0]
-            kwargs["problem_id"] = problem.id
-
+@router.get("/")
+def api_get_submissions(
+    handle: str | None = None,
+    contest_id: int | None = None,
+    problem_index: str | None = None
+):
+    kwargs = generate_kwargs(
+        handle=handle,
+        contest_id=contest_id,
+        problem_index=problem_index
+    )
     submissions = get_submissions(**kwargs)
 
-    return {
-        "status": "ok",
-        "submissions": [
-            submission.model_dump()
-            for submission in submissions
-        ]
-    }
+    return submissions
 
 
-@bp.delete("/submissions")
-def api_delete_submissions():
-    id_ = request.args.get("id", None)
-    contest_id = request.args.get("contest_id", None)
-    author_id = request.args.get("author_id", None)
-    team_id = request.args.get("team_id", None)
-    problem_id = request.args.get("problem_id", None)
-    programming_language = request.args.get("programming_language", None)
-    type_of_member = request.args.get("type_of_member", None)
-
+@router.delete("/")
+def api_delete_submissions(
+    id_: int | None = None,
+    contest_id: int | None = None,
+    author_id: int | None = None,
+    team_id: int | None = None,
+    problem_id: int | None = None,
+    programming_language: str | None = None,
+    type_of_member: ContestantType | None = None
+):
     kwargs = generate_kwargs(
-        id=id_,
+        id_=id_,
         contest_id=contest_id,
         author_id=author_id,
         team_id=team_id,
