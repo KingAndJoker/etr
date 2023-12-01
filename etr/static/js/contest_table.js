@@ -156,7 +156,7 @@ const create_row = (id, author, city, organization, grade, points, problems) => 
 
 
 function get_value_from_dict(obj, keys, default_value) {
-    if(keys == "") {
+    if (keys == "") {
         return obj
     }
     let key = keys.split(".")[0]
@@ -204,10 +204,12 @@ const create_table = (contest, rows) => {
             organization: get_value_from_dict(row, "user.organization", "-"),
             grade: get_value_from_dict(row, "user.grade", "-"),
             score: 0,
+            has_submissions: false,
             problems: contest.problems.map((problem) => ({ score: 0, status: 0, index: problem.index }))
         }
 
         row.submissions.forEach((submission) => {
+            table_row.has_submissions = true
             if (submission.verdict == "OK") {
                 if (type_of_view_points) {
                     table_row.problems = table_row.problems.map((problem) => {
@@ -259,9 +261,12 @@ const create_table = (contest, rows) => {
     tbody.sort((a, b) => a.score < b.score)
     let id = 1
     tbody = tbody.map((row) => {
-        row.id = id
-        id++
-        return create_row(row.id, row.author, row.city, row.organization, row.grade, row.score, row.problems)
+        if (row.has_submissions) {
+            row.id = id
+            id++
+            return create_row(row.id, row.author, row.city, row.organization, row.grade, row.score, row.problems)
+        }
+        return ""
     }).join("")
 
     table = `<table id="acm_result" class="table table-striped table-hover table-bordered w-auto">
