@@ -37,3 +37,4 @@ class UserSchema(BaseModel):
     avatar: str | None = None
     title_photo: str | None = Field(default=None, alias="titlePhoto")
     grade: int | None = None
+    dl_id: str | None = None

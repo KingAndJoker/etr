@@ -34,6 +34,7 @@ class User(Base):
 
     watch: Mapped[bool] = mapped_column(default=True)  # Update user info?
     grade: Mapped[int] = mapped_column(nullable=True, default=None)
+    dl_id: Mapped[str] = mapped_column(nullable=True)
 
     teams: Mapped[list["Team"]] = relationship(secondary="teams_users", lazy="selectin")
     submissions: Mapped[list["Submission"]] = relationship(
