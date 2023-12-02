@@ -256,7 +256,8 @@ def update_submissions_with_codeforces(contest_id: int) -> list[SubmissionSchema
         if not is_our_submission(submission_json, handles, teams_id):
             continue
         submission = convert_codeforces_submission_schema(
-            CodeforcesSubmissionSchema(**submission_json))
+            CodeforcesSubmissionSchema(**submission_json)
+        )
         submission.type_of_member = submission_json["author"]["participantType"]
         if submission is None:
             continue
