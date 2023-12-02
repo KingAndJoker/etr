@@ -118,6 +118,11 @@ def add_contest(contest_id: int) -> ContestSchema:
     return contest_schema
 
 
+def add_contest_with_schema(contest: ContestSchema) -> ContestSchema:
+    contest_schema = _add_contest_db(contest)
+    return contest_schema
+
+
 def update_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
     contest_cf_schema = _get_contest_with_codeforces(contest_id)
 
