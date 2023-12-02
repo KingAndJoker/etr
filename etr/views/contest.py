@@ -10,7 +10,7 @@ from flask import (
 from etr.db import get_db
 from etr.models.contest import Contest
 from etr.schemas.contest import ContestSchema
-from etr.services.contest import add_contest
+from etr.services.contest import add_contest_from_url
 
 
 bp = Blueprint("contest", __name__)
@@ -27,9 +27,9 @@ def new_contest():
         return render_template("new_contest.html")
 
     elif request.method == "POST":
-        contest_id = request.form.get("contest-id")
-        
-        add_contest(contest_id)
+        contest_url = request.form.get("contest-url")
+
+        add_contest_from_url(contest_url)
 
         return redirect("/etr")
 
@@ -40,7 +40,7 @@ def get_contest(contest_id: int):
         contest_db: Contest = session.query(Contest).filter(
             Contest.id == contest_id).\
             one_or_none()
-        
+
         contest = ContestSchema.model_validate(contest_db)
 
     return render_template("contest.html", contest=contest)
