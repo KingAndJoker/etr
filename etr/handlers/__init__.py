@@ -3,13 +3,21 @@ from typing import Callable
 from etr.events import Event, ResultOfHandleEvent
 from etr.events.contest import UpdateContest
 from etr.events.contest import ParseCodeforces
+from etr.events.contest import ParseCodeforcesContest
+from etr.events.contest import ParseCodeforcesGym
+from etr.events.contest import AddContest
 from etr.handlers.contest import handle_contest_type
 from etr.handlers.contest import handle_codeforces_type_contest
+from etr.handlers.contest import handle_codeforces_contest
+from etr.handlers.contest import handle_codeforces_gym
 
 
 HANDLERS: dict[Event, list[Callable[[Event], ResultOfHandleEvent]]] = {
     UpdateContest: [handle_contest_type],
-    ParseCodeforces: [handle_codeforces_type_contest]
+    ParseCodeforces: [handle_codeforces_type_contest],
+    ParseCodeforcesContest: [handle_codeforces_contest],
+    ParseCodeforcesGym: [handle_codeforces_gym],
+    AddContest: []
 }
 
 
