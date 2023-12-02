@@ -12,3 +12,8 @@ class UpdateContest(Event):
 @dataclass
 class ParseContestBeforeUpdate(Event):
     contest_url: ContestUrl
+
+
+@dataclass
+class ParseCodeforcesContest(Event):
+    contest_url: ContestUrl
