@@ -17,3 +17,13 @@ class ParseContestBeforeUpdate(Event):
 @dataclass
 class ParseCodeforces(Event):
     contest_url: ContestUrl
+
+
+@dataclass
+class ParseCodeforcesContest(Event):
+    contest_url: ContestUrl
+
+
+@dataclass
+class ParseCodeforcesGym(Event):
+    contest_url: ContestUrl
