@@ -64,11 +64,13 @@ def handle_codeforces_contest(
 
 
 def handle_codeforces_gym(
-    event: ParseCodeforcesContest
+    event: ParseCodeforcesGym
 ):
-    if not isinstance(event, ParseCodeforcesContest):
+    # TODO: DRY
+    if not isinstance(event, ParseCodeforcesGym):
         raise EventValueError
-
+    
+    # TODO: DRY with handle_codeforces_contest
     result_of_handle_event = ResultOfHandleEvent()
     contest_id = int(event.contest_url.path.split("/")[2])
     codeforces_contest = get_contest(contest_id=contest_id, lang="ru")
@@ -89,6 +91,6 @@ def handle_add_contest(
     result_of_handle_event = ResultOfHandleEvent()
 
     contest = add_contest_with_schema(event.contest)
-    result_of_handle_event.results.append(contest)
+    result_of_handle_event.results = [contest]
 
     return result_of_handle_event
