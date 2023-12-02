@@ -6,11 +6,6 @@ from etr.schemas.contest import ContestUrl
 
 
 @dataclass
-class UpdateContest(Event):
-    pass
-
-
-@dataclass
 class ParseContestBeforeUpdate(Event):
     contest_url: ContestUrl
 
