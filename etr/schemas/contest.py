@@ -53,3 +53,11 @@ class ContestSchema(BaseModel):
             local_time = utc_time.astimezone()
             return local_time.strftime("%d %m %Y %H:%M:%S")
         return None
+
+
+class ContestUrl(BaseModel):
+    protocol: str
+    host: str
+    port: str | None = None
+    path: str
+    params: str | None = None
