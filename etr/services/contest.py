@@ -1,6 +1,5 @@
 """ contest services """
 from sqlalchemy.orm import Session
-from pydantic import BaseModel
 
 from etr.db import get_db
 from etr.schemas.contest import ContestSchema
@@ -10,10 +9,7 @@ from etr.services.problem import add_problems
 from etr.services.user import get_users
 from etr.services.team import get_teams_with_handle_member
 from etr.services.submission import get_submissions
-from etr.events.contest import ParseContestBeforeUpdate
-from etr.handlers import handle
 from etr.utils.factory import create_contest_model
-from etr.utils.services.contest import parse_url
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 
 
@@ -168,9 +164,3 @@ def get_contest_table_rows(contest_id: int) -> list:
 
     return rows
 
-
-def add_contest_from_url(contest_url) -> list[BaseModel]:
-    url = parse_url(contest_url)
-    event = ParseContestBeforeUpdate(url)
-    results = handle(event)
-    return results
