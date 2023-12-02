@@ -53,5 +53,4 @@ class SubmissionSchema(BaseModel):
     )
     points: int | None = None
     type_of_member: str | None = None
-    type_of_contest: str | None = None
-    url: str | None = None
+

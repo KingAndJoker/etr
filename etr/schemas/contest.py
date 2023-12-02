@@ -40,6 +40,7 @@ class ContestSchema(BaseModel):
 
     url: str | None = None
     type_of_source: str | None = None
+    type_of_contest: str | None = None
 
     @computed_field
     @property
