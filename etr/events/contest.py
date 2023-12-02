@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from . import Event
+from etr.schemas.contest import ContestSchema
 from etr.schemas.contest import ContestUrl
 
 
@@ -27,3 +28,8 @@ class ParseCodeforcesContest(Event):
 @dataclass
 class ParseCodeforcesGym(Event):
     contest_url: ContestUrl
+
+
+@dataclass
+class AddContest(Event):
+    contest: ContestSchema
