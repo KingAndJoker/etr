@@ -38,6 +38,8 @@ class ContestSchema(BaseModel):
 
     problems: list[ProblemSchema] | None = None
 
+    type_of_source: str | None = None
+
     @computed_field
     @property
     def duration_time(self) -> str | None:

@@ -29,6 +29,7 @@ class Contest(Base):
     season: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     type_of_contest: Mapped[str] = mapped_column(nullable=True, type_=String(30))
     url: Mapped[str] = mapped_column(nullable=True, type_=String(255))
+    type_of_source: Mapped[str] = mapped_column(nullable=True, type_=String(255))
 
     problems: Mapped[list["Problem"]] = relationship(
         "Problem",
