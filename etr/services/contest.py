@@ -116,6 +116,10 @@ def add_contest(contest_id: int) -> ContestSchema:
 
 def add_contest_with_schema(contest: ContestSchema) -> ContestSchema:
     contest_schema = _add_contest_db(contest)
+    # TODO: rewrite problems get to event
+    problems_schema = add_problems(contest_schema.id)
+    contest_schema.problems = problems_schema
+
     return contest_schema
 
 
