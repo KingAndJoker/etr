@@ -38,6 +38,7 @@ class ContestSchema(BaseModel):
 
     problems: list[ProblemSchema] | None = None
 
+    url: str | None = None
     type_of_source: str | None = None
 
     @computed_field
