@@ -5,7 +5,31 @@
 <script src="{{ url_for('static', filename='js/contest_api.js') }}"></script>
 {% endblock %}
 {% block content %}
-<!-- TODO: rewrite to API requests -->
+<div class="container">
+    <div class="row align-items-start">
+        <div class="col-auto">
+            <h2>тип контеста</h2>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_contests" value="all" id="all_type_of_contests">
+                <label class="form-check-label" for="all_type_of_contests">
+                    Все
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_contests" value="codeforces_contest" id="codeforces_contest_type_of_contests">
+                <label class="form-check-label" for="codeforces_contest_type_of_contests">
+                    codeforces контесты
+                </label>
+            </div>
+            <div class="form-check">
+                <input class="form-check-input" type="radio" name="type_of_contests" value="codeforces_gym" id="codeforces_gym_type_of_contests">
+                <label class="form-check-label" for="codeforces_gym_type_of_contests">
+                    codeforces тренировки
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
 <div class="table-responsive">
     <table id="contests-table" class="table table-striped table-hover table-responsive">
         <thead class="table-dark">
@@ -24,6 +48,8 @@
 {% endblock %}
 {% block footer %}
 <script>
+    type_of_contests = get_type_of_contests()
+    change_type_of_contests()
     show_contest_table()
 </script>
 {% endblock%}
