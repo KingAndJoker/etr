@@ -82,7 +82,7 @@ def _add_contest_db(contest_schema: ContestSchema) -> ContestSchema:
 def _update_contest(contest_schema: ContestSchema, **kwargs) -> ContestSchema:
     """ update contest """
     with get_db() as session:
-        contest_db = __get_contests_db(session, id=contest_schema.id)
+        contest_db = __get_contests_db(session, id=contest_schema.id)[0]
         contest_db = __update_contest_db(session, contest_db, **kwargs)
         contest_schema_return = ContestSchema.model_validate(contest_db)
 
@@ -168,3 +168,11 @@ def get_contest_table_rows(contest_id: int) -> list:
 
     return rows
 
+
+def update_contest(contest_id: int, **kwargs):
+    contests = get_contests(id=contest_id)
+    if contests == []:
+        return None
+    contest = contests[0]
+    contest = _update_contest(contest, **kwargs)
+    return contest

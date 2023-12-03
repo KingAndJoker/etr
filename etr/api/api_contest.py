@@ -1,6 +1,7 @@
-from flask import Blueprint
+from flask import Blueprint, request
 
 from etr.services.contest import get_contests, get_contest_table_rows
+from etr.services.contest import update_contest
 from etr.utils.contest import get_count_success_tasks
 
 
@@ -60,3 +61,16 @@ def api_get_table_contest(contest_id: int):
             })
 
     return response
+
+
+@bp.patch("/contest/<int:contest_id>")
+def api_update_contest(contest_id: int):
+    data = request.get_json()
+    contest = update_contest(contest_id, **data)
+    if contest is None:
+        return {"status": "error"}
+
+    return {
+        "status": "ok",
+        "contest": contest.model_dump()
+    }
