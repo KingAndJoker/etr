@@ -1,5 +1,6 @@
 var type_of_submisions = null
 var contest_id = 0
+var contest_type = ""
 var codeforces_data = null
 var etr_data = null
 
@@ -65,7 +66,13 @@ function get_type_of_submissions() {
     let url = new URL(window.location.href)
     let type_sub = url.searchParams.get("type_sub")
     if (type_sub == null) {
-        type_sub = "contest"
+        type_sub = "all"
+        if (contest_type == "codeforces_contest") {
+            type_sub = "contest"
+        }
+        if (contest_type == "codeforces_gym") {
+            type_sub = "virtual"
+        }
     }
     set_checkboxes_type_of_submissions(type_sub)
     return type_sub
