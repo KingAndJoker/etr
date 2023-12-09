@@ -65,7 +65,7 @@ function get_type_of_submissions() {
     let url = new URL(window.location.href)
     let type_sub = url.searchParams.get("type_sub")
     if (type_sub == null) {
-        type_sub = "all"
+        type_sub = "contest"
     }
     set_checkboxes_type_of_submissions(type_sub)
     return type_sub
