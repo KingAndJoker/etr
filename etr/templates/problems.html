@@ -1,0 +1,26 @@
+{% extends "./base.html" %}
+
+{% block title %}задачи{% endblock %}
+
+{% block imports %}
+<script src="{{ url_for('static', filename='js/problem_api.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<table id="problems-table" class="table table-striped table-hover table-responsive">
+    <thead class="table-dark">
+        <tr>
+            <th>#</th>
+            <th>id контеста</th>
+            <th>индекс</th>
+            <th>название</th>
+            <th>баллы</th>
+            <th>рейтинг</th>
+        </tr>
+    </thead>
+    <tbody id="problems-table-tbody">
+
+    </tbody>
+</table>
+<script>create_table()</script>
+{% endblock %}
