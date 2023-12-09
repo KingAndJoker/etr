@@ -1,3 +1,5 @@
+from sqlalchemy.orm import Session
+
 from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 from etr.utils.factory import create_problem_model
 from etr.library.codeforces.codeforces_utils import get_problem_with_contest
@@ -95,3 +97,22 @@ def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
             pass
 
     return added_problems_schema
+
+
+def __get_problems(session: Session, **kwargs) -> list[Problem]:
+    problems = session.query(Problem).filter_by(**kwargs).all()
+    return problems
+
+
+def _get_problems(**kwargs):
+    with get_db() as session:
+        problems = __get_problems(session, **kwargs)
+        for i, _ in enumerate(problems):
+            problems[i].tags = [tag.tag for tag in problems[i].tags]
+        problems = [ProblemSchema.model_validate(problem) for problem in problems]
+    return problems
+
+
+def get_problems(**kwargs) -> list[ProblemSchema]:
+    problems = _get_problems(**kwargs)
+    return problems
