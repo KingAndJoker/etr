@@ -38,6 +38,7 @@ def create_app(engine: Engine | None = None) -> Flask:
     from etr.views import index
     from etr.views import contest
     from etr.views import contest_status
+    from etr.views import problem
     from etr.api import api_problem
     from etr.api import api_user
     from etr.api import api_submission
@@ -46,6 +47,7 @@ def create_app(engine: Engine | None = None) -> Flask:
     app.register_blueprint(index.bp, url_prefix=URL_PREFIX)
     app.register_blueprint(user.bp, url_prefix=URL_PREFIX + "/user")
     app.register_blueprint(contest.bp, url_prefix=URL_PREFIX + "/contest")
+    app.register_blueprint(problem.bp, url_prefix=URL_PREFIX + "/problem")
     app.register_blueprint(
         contest_status.bp,
         url_prefix=URL_PREFIX + "/status"
