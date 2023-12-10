@@ -1,10 +1,6 @@
 """Remote Procedure Call module"""
 from threading import Thread
 
-# from flask import (
-#     Blueprint,
-#     request
-# )
 from fastapi import APIRouter
 
 from etr.services.problem import add_missing_problem_with_contest
