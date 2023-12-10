@@ -6,26 +6,21 @@ from etr.schemas.user import ContestantType
 from etr.utils.api.generate import generate_kwargs
 
 
-router = APIRouter(
-    prefix="/submissions",
-    tags=["submissions"]
-)
+router = APIRouter(prefix="/submissions", tags=["submissions"])
 
 
 @router.get("/")
 def api_get_submissions(
     handle: str | None = None,
     contest_id: int | None = None,
-    problem_index: str | None = None
+    problem_index: str | None = None,
 ):
     kwargs = generate_kwargs(
-        handle=handle,
-        contest_id=contest_id,
-        problem_index=problem_index
+        handle=handle, contest_id=contest_id, problem_index=problem_index
     )
     submissions = get_submissions(**kwargs)
 
-    return submissions
+    return {"status": "ok", "submissions": submissions}
 
 
 @router.delete("/")
@@ -36,7 +31,7 @@ def api_delete_submissions(
     team_id: int | None = None,
     problem_id: int | None = None,
     programming_language: str | None = None,
-    type_of_member: ContestantType | None = None
+    type_of_member: ContestantType | None = None,
 ):
     kwargs = generate_kwargs(
         id_=id_,
@@ -50,7 +45,4 @@ def api_delete_submissions(
 
     deleted_count = delete_submissions(**kwargs)
 
-    return {
-        "status": "ok",
-        "count_submissions": deleted_count
-    }
+    return {"status": "ok", "count_submissions": deleted_count}
