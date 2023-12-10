@@ -1,50 +1,44 @@
 """run file"""
-import os
-
-# from flask import Flask
 from fastapi import FastAPI
-from sqlalchemy import create_engine
-from dotenv import load_dotenv
-from sqlalchemy import Engine
+from fastapi.staticfiles import StaticFiles
 
 from .config import config, Config
 
 
 def create_app(**kwargs):
-    """Create and configure an instance of the Flask application."""
+    """Create and configure an instance of the FastAPI application."""
 
+    global config
     config = Config(**kwargs)
 
     app = FastAPI(
         docs_url=config.URL_PREFIX + "/docs",
         redoc_url=config.URL_PREFIX + "/redoc",
     )
+    app.mount(
+        f"{config.URL_PREFIX}/static",
+        StaticFiles(directory="etr/static"),
+        name="static",
+    )
+
     from etr.api import api_user
     from etr.api import api_submission
     from etr.api import api_problem
     from etr.api import api_contest
+
+    app.include_router(api_user.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"])
     app.include_router(
-        api_user.router,
-        prefix=f"{config.URL_PREFIX}/api",
-        tags=["api"]
+        api_submission.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"]
     )
     app.include_router(
-        api_submission.router,
-        prefix=f"{config.URL_PREFIX}/api",
-        tags=["api"]
+        api_problem.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"]
     )
     app.include_router(
-        api_problem.router,
-        prefix=f"{config.URL_PREFIX}/api",
-        tags=["api"]
-    )
-    app.include_router(
-        api_contest.router,
-        prefix=f"{config.URL_PREFIX}/api",
-        tags=["api"]
+        api_contest.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"]
     )
 
     from etr import rpc
+
     app.include_router(
         rpc.router,
         prefix=f"{config.URL_PREFIX}/rpc",
@@ -52,23 +46,14 @@ def create_app(**kwargs):
     )
 
     from etr.views import user as user_view
-    app.include_router(
-        user_view.router,
-        prefix=f"{config.URL_PREFIX}"
-    )
+    from etr.views import index as index_view
+    from etr.views import contest as contest_view
+    from etr.views import problem as problem_view
 
-    # from etr.views import user
-    # from etr.views import index
-    # from etr.views import contest
-    # from etr.views import contest_status
-
-    # app.register_blueprint(index.bp, url_prefix=URL_PREFIX)
-    # app.register_blueprint(user.bp, url_prefix=URL_PREFIX + "/user")
-    # app.register_blueprint(contest.bp, url_prefix=URL_PREFIX + "/contest")
-    # app.register_blueprint(
-    #     contest_status.bp,
-    #     url_prefix=URL_PREFIX + "/status"
-    # )
+    app.include_router(contest_view.router, prefix=f"{config.URL_PREFIX}")
+    app.include_router(index_view.router, prefix=f"{config.URL_PREFIX}")
+    app.include_router(user_view.router, prefix=f"{config.URL_PREFIX}")
+    app.include_router(problem_view.router, prefix=f"{config.URL_PREFIX}")
 
     return app
 
