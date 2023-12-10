@@ -1,11 +1,9 @@
 """contest views"""
-import requests
-from flask import (
-    Blueprint,
-    render_template,
-    request,
-    redirect
-)
+from typing import Annotated
+
+from fastapi import APIRouter, Request, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 from etr.db import get_db
 from etr.models.contest import Contest
@@ -15,36 +13,38 @@ from etr.handlers import handle
 from etr.utils.services.contest import parse_url
 
 
-bp = Blueprint("contest", __name__)
+templates = Jinja2Templates(directory="etr/templates")
+router = APIRouter(prefix="/contest")
 
 
-@bp.route("/")
-def get_contests():
-    return render_template("contests.html")
+@router.get("/")
+def get_contests(request: Request):
+    return templates.TemplateResponse("contests.html", context={"request": request})
 
 
-@bp.route("/new", methods=["GET", "POST"])
-def new_contest():
-    if request.method == "GET":
-        return render_template("new_contest.html")
-
-    elif request.method == "POST":
-        contest_url = request.form.get("contest-url")
-
-        url = parse_url(contest_url)
-        event = ParseContestBeforeUpdate(url)
-        results = handle(event)
-
-        return redirect("/etr")
+@router.get("/new")
+def new_contest(request: Request):
+    return templates.TemplateResponse("new_contest.html", context={"request": request})
 
 
-@bp.route("/<contest_id>")
-def get_contest(contest_id: int):
+@router.post("/new")
+def new_contest(contest_url: Annotated[str, Form()], request: Request):
+    url = parse_url(contest_url)
+    event = ParseContestBeforeUpdate(url)
+    results = handle(event)
+
+    return RedirectResponse("/etr")
+
+
+@router.get("/{contest_id}")
+def get_contest(contest_id: int, request: Request):
     with get_db() as session:
-        contest_db: Contest = session.query(Contest).filter(
-            Contest.id == contest_id).\
-            one_or_none()
+        contest_db: Contest = (
+            session.query(Contest).filter(Contest.id == contest_id).one_or_none()
+        )
 
         contest = ContestSchema.model_validate(contest_db)
 
-    return render_template("contest.html", contest=contest)
+    return templates.TemplateResponse(
+        "contest.html", context={"request": request, "contest": contest}
+    )
