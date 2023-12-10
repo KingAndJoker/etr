@@ -1,6 +1,7 @@
 """run file"""
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
+from fastapi.middleware.cors import CORSMiddleware
 
 from .config import config, Config
 
@@ -19,6 +20,13 @@ def create_app(**kwargs):
         f"{config.URL_PREFIX}/static",
         StaticFiles(directory="etr/static"),
         name="static",
+    )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     from etr.api import api_user
