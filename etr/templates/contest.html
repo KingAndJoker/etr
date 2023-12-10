@@ -3,9 +3,9 @@
 {% block title %}{{ contest.name }}{% endblock %}
 
 {% block imports %}
-<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/style.css') }}">
-<script src="{{ url_for('static', filename='js/contest_table.js') }}"></script>
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', path='css/style.css') }}">
+<script src="{{ url_for('static', path='js/contest_table.js') }}"></script>
+<script src="{{ url_for('static', path='js/script.js') }}"></script>
 {% endblock %}
 
 {% block content %}
