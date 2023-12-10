@@ -6,7 +6,7 @@ from etr.services.contest import get_contests, get_contest_table_rows
 from etr.services.contest import update_contest
 
 
-router = APIRouter(prefix="/contests", tags=["contests"])
+router = APIRouter(prefix="/contest", tags=["contests"])
 
 
 @router.get("/")
