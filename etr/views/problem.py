@@ -1,9 +1,12 @@
-from flask import Blueprint, render_template
+from fastapi import APIRouter, Request
+from fastapi.templating import Jinja2Templates
 
-bp = Blueprint("problem", __name__)
+
+templates = Jinja2Templates(directory="etr/templates")
+router = APIRouter(prefix="/problem")
 
 
-@bp.get("/")
-def problems():
+@router.get("/")
+def problems(request: Request):
     """return problems.html template"""
-    return render_template("problems.html")
+    return templates.TemplateResponse("problems.html", context={"request": request})

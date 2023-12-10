@@ -1,26 +1,25 @@
 """index views"""
-from flask import (
-    Blueprint,
-    render_template
-)
+from fastapi import APIRouter, Request
+from fastapi.templating import Jinja2Templates
 
 
-bp = Blueprint("index", __name__)
+templates = Jinja2Templates(directory="etr/templates")
+router = APIRouter()
 
 
-@bp.get("/")
-def index():
+@router.get("/")
+def index(request: Request):
     """index page"""
-    return render_template("index.html")
+    return templates.TemplateResponse("index.html", context={"request": request})
 
 
-@bp.get("/about")
-def about():
+@router.get("/about")
+def about(request: Request):
     """about page"""
-    return render_template("about.html")
+    return templates.TemplateResponse("about.html", context={"request": request})
 
 
-@bp.get("/api")
-def api():
+@router.get("/api")
+def api(request: Request):
     """api page"""
-    return render_template("api.html")
+    return templates.TemplateResponse("api.html", context={"request": request})

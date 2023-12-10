@@ -1,36 +1,37 @@
 """views file"""
+from typing import Annotated
+
 import requests
-from sqlalchemy.orm import Session
-from flask import render_template, redirect, request, Blueprint
+from fastapi import APIRouter, Request, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
 from etr.models.user import User
-from etr.schemas.user import UserSchema
 from etr.db import get_db
 
 
-bp = Blueprint("user", __name__)
+templates = Jinja2Templates(directory="etr/templates")
+router = APIRouter(prefix="/user")
 
 
-@bp.route("/new", methods=["GET", "POST"])
-def new_user():
-    if request.method == "GET":
-        return render_template("new_user.html")
-
-    elif request.method == "POST":
-        handle = request.form.get("handle")
-        if handle is None:
-            redirect("/etr")
-        response = requests.get(
-            f"https://codeforces.com/api/user.info?handles={handle}"
-        )
-        response_json = response.json()
-        if response_json['status'] == "OK":
-            with get_db() as session:
-                session.add(User(handle=handle))
-                session.commit()
-        return redirect("/etr")
+@router.get("/new")
+def new_user(request: Request):
+    return templates.TemplateResponse("new_user.html", context={"request": request})
 
 
-@bp.route("/")
-def get_users():
-    return render_template("users.html")
+@router.post("/new")
+def new_user(handle: Annotated[str, Form()]):
+    if handle is None:
+        return RedirectResponse("/etr")
+    response = requests.get(f"https://codeforces.com/api/user.info?handles={handle}")
+    response_json = response.json()
+    if response_json["status"] == "OK":
+        with get_db() as session:
+            session.add(User(handle=handle))
+            session.commit()
+    return RedirectResponse("/etr")
+
+
+@router.get("/")
+def get_users(request: Request):
+    return templates.TemplateResponse("users.html", context={"request": request})
