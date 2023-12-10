@@ -10,6 +10,6 @@ class TeamSchema(BaseModel):
         populate_by_name=True
     )
 
-    id: int = Field(alias="teamId")
-    team_name: str = Field(alias="teamName")
+    id: int
+    team_name: str
     users: list["UserSchema"]

@@ -12,26 +12,20 @@ class ContestSchema(BaseModel):
         populate_by_name=True
     )
 
-    id: int = Field(alias="contestId")
-    name: str = Field(alias="contestName")
+    id: int
+    name: str
     type: str | None = None
     phase: str | None = None
     frozen: bool | None = None
-    duration_seconds: int | None = Field(default=None, alias="durationSeconds")
-    start_time_seconds: int | None = Field(
-        default=None,
-        alias="startTimeSeconds"
-    )
-    relative_time_seconds: int | None = Field(
-        default=None,
-        alias="relativeTimeSeconds"
-    )
-    prepared_by: str | None = Field(default=None, alias="preparedBy")
-    website_url: str | None = Field(default=None, alias="websiteUrl")
+    duration_seconds: int | None = None
+    start_time_seconds: int | None = None
+    relative_time_seconds: int | None = None
+    prepared_by: str | None = None
+    website_url: str | None = None
     description: str | None = None
     difficulty: int | None = None
     kind: str | None = None
-    icpc_region: str | None = Field(default=None, alias="icpcRegion")
+    icpc_region: str | None = None
     country: str | None = None
     city: str | None = None
     season: str | None = None

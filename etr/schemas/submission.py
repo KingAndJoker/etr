@@ -22,35 +22,16 @@ class SubmissionSchema(BaseModel):
     )
 
     id: int
-    contest_id: int | None = Field(default=None, alias="contestId")
-    creation_time_seconds: int | None = Field(
-        default=True,
-        alias="creationTimeSeconds"
-    )
-    relative_time_seconds: int | None = Field(
-        default=None,
-        alias="relativeTimeSeconds"
-    )
+    contest_id: int | None = None
+    creation_time_seconds: int | None = None
+    relative_time_seconds: int | None = None
     problem: ProblemSchema | None = None
     author: UserSchema | TeamSchema | None = None
-    programming_language: str | None = Field(
-        default=None,
-        alias="programmingLanguage"
-    )
+    programming_language: str | None = None
     verdict: str | None = None
     testset: str | None = None
-    passed_test_count: int | None = Field(
-        default=None,
-        alias="passedTestCount"
-    )
-    time_consumed_millis: int | None = Field(
-        default=None,
-        alias="timeConsumedMillis"
-    )
-    memory_consumed_bytes: int | None = Field(
-        default=None,
-        alias="memoryConsumedBytes"
-    )
+    passed_test_count: int | None = None
+    time_consumed_millis: int | None = None
+    memory_consumed_bytes: int | None = None
     points: int | None = None
     type_of_member: str | None = None
-

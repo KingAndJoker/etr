@@ -17,7 +17,28 @@ def convert_codeforces_user_schema(codeforces_user: CodeforcesUserSchema | None)
     if codeforces_user is None:
         return None
     
-    user = UserSchema(**codeforces_user.model_dump())
+    user = UserSchema(
+        id=codeforces_user.id,
+        handle=codeforces_user.handle,
+        email=codeforces_user.email,
+        vk_id=codeforces_user.vkId,
+        open_id=codeforces_user.openId,
+        first_name=codeforces_user.firstName,
+        last_name=codeforces_user.lastName,
+        country=codeforces_user.country,
+        city=codeforces_user.city,
+        organization=codeforces_user.organization,
+        contribution=codeforces_user.contribution,
+        rank=codeforces_user.rank,
+        rating=codeforces_user.rating,
+        max_rank=codeforces_user.maxRank,
+        max_rating=codeforces_user.maxRating,
+        last_online_time_seconds=codeforces_user.lastOnlineTimeSeconds,
+        registration_time_seconds=codeforces_user.registrationTimeSeconds,
+        friend_of_count=codeforces_user.friendOfCount,
+        avatar=codeforces_user.avatar,
+        title_photo=codeforces_user.titlePhoto,
+    )
 
     return user
 
@@ -28,7 +49,11 @@ def convert_codeforces_team_schema(codeforces_team: CodeforcesTeamSchema | None)
     if codeforces_team is None:
         return None
 
-    team = TeamSchema(**codeforces_team.model_dump())
+    team = TeamSchema(
+        id=codeforces_team.teamId,
+        team_name=codeforces_team.teamName,
+        users=codeforces_team.users,
+    )
 
     return team
 
@@ -46,7 +71,22 @@ def convert_codeforces_submission_schema(codeforces_submission: CodeforcesSubmis
         codeforces_sub.author = convert_codeforces_team_schema(codeforces_sub.author)
         
 
-    submission = SubmissionSchema(**codeforces_sub.model_dump())
+    submission = SubmissionSchema(
+        id=codeforces_sub.id,
+        contest_id=codeforces_sub.contestId,
+        creation_time_seconds=codeforces_sub.creationTimeSeconds,
+        relative_time_seconds=codeforces_sub.relativeTimeSeconds,
+        problem=codeforces_sub.problem,
+        author=codeforces_sub.author,
+        programming_language=codeforces_sub.programmingLanguage,
+        verdict=codeforces_sub.verdict,
+        testset=codeforces_sub.testset,
+        passed_test_count=codeforces_sub.passedTestCount,
+        time_consumed_millis=codeforces_sub.timeConsumedMillis,
+        memory_consumed_bytes=codeforces_sub.memoryConsumedBytes,
+        points=codeforces_sub.points,
+        type_of_member=codeforces_sub.type_of_member,
+    )
 
     return submission
 
@@ -71,7 +111,17 @@ def convert_codeforces_problem_schema(codeforces_problem: CodeforcesProblemSchem
     if codeforces_problem is None:
         return None
 
-    problem = ProblemSchema(**codeforces_problem.model_dump())
+    problem = ProblemSchema(
+        id=codeforces_problem.id,
+        contest_id=codeforces_problem.contestId,
+        problemset_name=codeforces_problem.problemsetName,
+        index=codeforces_problem.index,
+        name=codeforces_problem.name,
+        type=codeforces_problem.type,
+        points=codeforces_problem.points,
+        rating=codeforces_problem.rating,
+        tags=codeforces_problem.tags,
+    )
 
     return problem
 
@@ -96,6 +146,24 @@ def convert_codeforces_contest_schema(codeforces_contest: CodeforcesContestSchem
     if codeforces_contest is None:
         return None
 
-    contest = ContestSchema(**codeforces_contest.model_dump())
+    contest = ContestSchema(
+        id=codeforces_contest.id,
+        name=codeforces_contest.name,
+        type=codeforces_contest.type,
+        phase=codeforces_contest.phase,
+        frozen=codeforces_contest.frozen,
+        duration_seconds=codeforces_contest.durationSeconds,
+        start_time_seconds=codeforces_contest.startTimeSeconds,
+        relative_time_seconds=codeforces_contest.relativeTimeSeconds,
+        prepared_by=codeforces_contest.preparedBy,
+        website_url=codeforces_contest.websiteUrl,
+        description=codeforces_contest.description,
+        difficulty=codeforces_contest.difficulty,
+        kind=codeforces_contest.kind,
+        icpc_region=codeforces_contest.icpcRegion,
+        country=codeforces_contest.country,
+        city=codeforces_contest.city,
+        season=codeforces_contest.season,
+    )
 
     return contest

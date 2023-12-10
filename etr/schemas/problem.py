@@ -17,8 +17,8 @@ class ProblemSchema(BaseModel):
     )
 
     id: int | None = None
-    contest_id: int | None = Field(default=None, alias="contestId")
-    problemset_name: str | None = Field(default=None, alias="problemsetName")
+    contest_id: int | None = None
+    problemset_name: str | None = None
     index: str
     name: str | None = None
     type: str | None = None
