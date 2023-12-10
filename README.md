@@ -7,7 +7,7 @@ Project handler Codeforces API and returns list of submissions some users.
 commant prompt:
 
 ```shell
-flask --app etr run
+uvicorn etr:app
 ```
 
 ### Docker run

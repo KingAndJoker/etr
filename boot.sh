@@ -1,2 +1,2 @@
 #!/bin/sh
-flask --app etr run --host=0.0.0.0
+uvicorn etr:app --host 0.0.0.0 --port 5000
