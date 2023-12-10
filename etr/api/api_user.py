@@ -5,16 +5,15 @@ from fastapi import APIRouter
 from etr.services.user import get_users
 from etr.services.user import add_user
 from etr.services.user import update_user
-from etr.services.user import update_user_info_from_codeforces as services_update_user_info_from_codeforces
+from etr.services.user import (
+    update_user_info_from_codeforces as services_update_user_info_from_codeforces,
+)
 from etr.schemas.user import UserRequestAddCodeforcesSchema
 from etr.schemas.user import UserPatch
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 
 
-router = APIRouter(
-    prefix="/user",
-    tags=["users"]
-)
+router = APIRouter(prefix="/user", tags=["users"])
 
 
 @router.get("/")
@@ -26,7 +25,7 @@ async def get_all_users(
     rank: str | None = None,
     max_rank: str | None = None,
     watch: bool | None = None,
-    lang: str | None = "en"
+    lang: str | None = "ru",
 ):
     kwargs = generate_kwargs_for_get_users(
         handles=handles,
@@ -36,7 +35,7 @@ async def get_all_users(
         rank=rank,
         max_rank=max_rank,
         watch=watch,
-        lang=lang
+        lang=lang,
     )
 
     users_schema = get_users(**kwargs)
@@ -44,15 +43,9 @@ async def get_all_users(
     if users_schema is None:
         return {"status": "error"}
 
-    users = [
-        user_schema.model_dump()
-        for user_schema in users_schema
-    ]
+    users = [user_schema.model_dump() for user_schema in users_schema]
 
-    return {
-        "status": "ok",
-        "users": users
-    }
+    return {"status": "ok", "users": users}
 
 
 @router.post("/")
@@ -60,20 +53,14 @@ def new_user(user: UserRequestAddCodeforcesSchema, lang: str | None = "ru"):
     handle = user.handle
 
     if handle is None:
-        return {
-            "status": "error",
-            "message": "handle is missing"
-        }
+        return {"status": "error", "message": "handle is missing"}
 
     user_schema = add_user(handle, lang)
 
     if user_schema is None:
-        return {
-            "status": "error",
-            "message": "user not added"
-        }
+        return {"status": "error", "message": "user not added"}
 
-    return user_schema
+    return {"status": "ok", "user": user_schema}
 
 
 @router.patch("/{user_id}")
@@ -85,10 +72,7 @@ def patch_user(user_id: int, user: UserPatch):
     if user_schema is None:
         return {"status": "error"}
 
-    return {
-        "status": "ok",
-        "result": user_schema.model_dump()
-    }
+    return {"status": "ok", "result": user_schema}
 
 
 @router.get("/update_codeforces/{handle}")
@@ -97,7 +81,4 @@ def update_user_from_codeforces(handle: str):
     if user is None:
         return {"status": "error"}
 
-    return {
-        "status": "ok",
-        "user": user.model_dump()
-    }
+    return {"status": "ok", "user": user}
