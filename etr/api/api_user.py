@@ -1,27 +1,33 @@
 """API problem"""
-from flask import Blueprint, request
+# from flask import Blueprint, request
+from fastapi import APIRouter
 
 from etr.services.user import get_users
-from etr.utils.api.api_user import generate_kwargs_for_get_users
 from etr.services.user import add_user
 from etr.services.user import update_user
 from etr.services.user import update_user_info_from_codeforces as services_update_user_info_from_codeforces
+from etr.schemas.user import UserRequestAddCodeforcesSchema
+from etr.schemas.user import UserPatch
+from etr.utils.api.api_user import generate_kwargs_for_get_users
 
 
-bp = Blueprint("api_user", __name__)
+router = APIRouter(
+    prefix="/user",
+    tags=["users"]
+)
 
 
-@bp.get("/user/")
-def get_all_users():
-    handles = request.args.get("handles", None)
-    country = request.args.get("country", None)
-    city = request.args.get("city", None)
-    organization = request.args.get("organization", None)
-    rank = request.args.get("rank", None)
-    max_rank = request.args.get("max_rank", None)
-    watch = request.args.get("watch", True)
-    lang = request.args.get("lang", "en")
-
+@router.get("/")
+async def get_all_users(
+    handles: str | None = None,
+    country: str | None = None,
+    city: str | None = None,
+    organization: str | None = None,
+    rank: str | None = None,
+    max_rank: str | None = None,
+    watch: bool | None = None,
+    lang: str | None = "en"
+):
     kwargs = generate_kwargs_for_get_users(
         handles=handles,
         country=country,
@@ -37,7 +43,7 @@ def get_all_users():
 
     if users_schema is None:
         return {"status": "error"}
-    
+
     users = [
         user_schema.model_dump()
         for user_schema in users_schema
@@ -49,32 +55,30 @@ def get_all_users():
     }
 
 
-@bp.post("/user/")
-def new_user():
-    lang = request.accept_languages.best_match(["ru", "en"], "en")
-    input_data = request.get_json()
-    handle = input_data.get("handle", None)
+@router.post("/")
+def new_user(user: UserRequestAddCodeforcesSchema, lang: str | None = "ru"):
+    handle = user.handle
 
-    if input_data is None:
-        return {"status": "error"}
-    
     if handle is None:
-        return {"status": "error"}
+        return {
+            "status": "error",
+            "message": "handle is missing"
+        }
 
     user_schema = add_user(handle, lang)
 
     if user_schema is None:
-        return {"status": "error"}
-    
-    return {
-        "status": "ok",
-        "user": user_schema.model_dump()
-    }
+        return {
+            "status": "error",
+            "message": "user not added"
+        }
+
+    return user_schema
 
 
-@bp.patch("/user/<int:user_id>")
-def patch_user(user_id: int):
-    data = request.get_json()
+@router.patch("/{user_id}")
+def patch_user(user_id: int, user: UserPatch):
+    data = user.model_dump(exclude_unset=True)
 
     user_schema = update_user(id=user_id, **data)
 
@@ -87,7 +91,7 @@ def patch_user(user_id: int):
     }
 
 
-@bp.get("/user/update_codeforces/<handle>")
+@router.get("/update_codeforces/{handle}")
 def update_user_from_codeforces(handle: str):
     user = services_update_user_info_from_codeforces(handle)
     if user is None:

@@ -1,76 +1,45 @@
-from flask import Blueprint, request
+from fastapi import APIRouter
 
+from etr.schemas.contest import ContestSchema
 from etr.services.contest import get_contests, get_contest_table_rows
 from etr.services.contest import update_contest
-from etr.utils.contest import get_count_success_tasks
 
 
-bp = Blueprint("api_contest", __name__)
+router = APIRouter(prefix="/contests", tags=["contests"])
 
 
-@bp.get("/contest")
+@router.get("/")
 def api_get_contests():
     """get contests"""
     contests_schema = get_contests()
 
-    return {
-        "status": "ok",
-        "contests": [
-            contest_schema.model_dump()
-            for contest_schema in contests_schema
-        ]
-    }
+    return contests_schema
 
 
-@bp.get("/contest/<int:contest_id>/table")
+@router.get("/{contest_id}/table")
 def api_get_table_contest(contest_id: int):
     contest = get_contests(id=contest_id)[0]
     rows = get_contest_table_rows(contest_id)
 
-    decorated = [
-        (
-            get_count_success_tasks(row["submissions"]),
-            i,
-            row
-        )
-        for i, row in enumerate(rows)
-    ]
-    decorated.sort()
-    decorated.reverse()
-    rows = [
-        row
-        for _, _, row in decorated
-    ]
-
-    response = {
-        "status": "ok",
-        "contest": contest.model_dump(),
-        "rows": []
-    }
+    response = {"status": "ok", "contest": contest.model_dump(), "rows": []}
 
     for row in rows:
         if "user" in row:
-            response["rows"].append({
-                "user": row["user"].model_dump(),
-                "submissions": [sub.model_dump() for sub in row["submissions"]]
-            })
+            response["rows"].append(
+                {"user": row["user"], "submissions": row["submissions"]}
+            )
         else:
-            response["rows"].append({
-                "team": row["team"].model_dump(),
-                "submissions": [sub.model_dump() for sub in row["submissions"]]
-            })
+            response["rows"].append(
+                {"team": row["team"], "submissions": row["submissions"]}
+            )
 
     return response
 
 
-@bp.patch("/contest/<int:contest_id>")
-def api_update_contest(contest_id: int):
-    data = request.get_json()
-    contest = update_contest(contest_id, **data)
+@router.patch("/contest/{contest_id}")
+def api_update_contest(contest_id: int, contest: ContestSchema):
+    contest = update_contest(contest_id, **contest.model_dump())
     if contest is None:
         return {"status": "error"}
 
-    return {
-        "status": "ok",
-        "contest": contest.model_dump()
-    }
+    return {"status": "ok", "contest": contest.model_dump()}
