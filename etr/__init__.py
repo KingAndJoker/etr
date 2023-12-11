@@ -13,6 +13,7 @@ def create_app(**kwargs):
     config = Config(**kwargs)
 
     app = FastAPI(
+        openapi_url=config.URL_PREFIX + "/openapi.json",
         docs_url=config.URL_PREFIX + "/docs",
         redoc_url=config.URL_PREFIX + "/redoc",
     )
