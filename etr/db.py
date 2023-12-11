@@ -17,6 +17,7 @@ Session_ = None
 
 
 # TODO: rewrite to class
+# TODO: fix bug sqlite:///:memory: not see
 def init_db(database_url: str, echo: bool = False) -> Engine:
     global engine
     engine = create_engine(database_url, echo=echo)
