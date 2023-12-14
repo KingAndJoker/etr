@@ -11,7 +11,7 @@ from sqlalchemy.orm import (
     relationship
 )
 
-from etr.models.base import Base
+from etr.db import Base
 from etr.models.user import UserOrm
 
 

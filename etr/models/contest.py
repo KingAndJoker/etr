@@ -2,7 +2,7 @@
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from etr.models.base import Base
+from etr.db import Base
 
 
 class ContestOrm(Base):

@@ -2,7 +2,7 @@
 from sqlalchemy import String, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from etr.models.base import Base
+from etr.db import Base
 
 
 class UserOrm(Base):
