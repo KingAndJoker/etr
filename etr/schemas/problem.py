@@ -6,7 +6,7 @@ from pydantic import (
     validator
 )
 
-from etr.models.problem import Tag
+from etr.models.problem import TagOrm
 
 
 class ProblemSchema(BaseModel):
@@ -27,7 +27,7 @@ class ProblemSchema(BaseModel):
     tags: list[str] | None = None
 
     @validator("tags", pre=True)
-    def check_tags(cls, tags: list[Tag] | list[str]):
+    def check_tags(cls, tags: list[TagOrm] | list[str]):
         """Check tags"""
         if len(tags) == 0:
             return tags

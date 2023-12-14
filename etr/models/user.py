@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from etr.models.base import Base
 
 
-class User(Base):
+class UserOrm(Base):
     """User model"""
 
     __tablename__ = "users"
@@ -21,10 +21,8 @@ class User(Base):
     city: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     organization: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     rank: Mapped[str] = mapped_column(nullable=True, type_=String(255))
-    # TODO: type of raing is int
     rating: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     max_rank: Mapped[str] = mapped_column(nullable=True, type_=String(255))
-    # TODO: type of rating is int
     max_rating: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     last_online_time_seconds: Mapped[int] = mapped_column(nullable=True)
     registration_time_seconds: Mapped[int] = mapped_column(nullable=True)
@@ -36,8 +34,8 @@ class User(Base):
     grade: Mapped[int] = mapped_column(nullable=True, default=None)
     dl_id: Mapped[str] = mapped_column(nullable=True, type_=String(255))
 
-    teams: Mapped[list["Team"]] = relationship(secondary="teams_users", lazy="selectin")
-    submissions: Mapped[list["Submission"]] = relationship(
-        "Submission",
+    teams: Mapped[list["TeamOrm"]] = relationship(secondary="teams_users", lazy="selectin")
+    submissions: Mapped[list["SubmissionOrm"]] = relationship(
+        "SubmissionOrm",
         back_populates="author"
     )

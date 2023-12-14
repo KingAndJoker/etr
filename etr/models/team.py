@@ -12,7 +12,7 @@ from sqlalchemy.orm import (
 )
 
 from etr.models.base import Base
-from etr.models.user import User
+from etr.models.user import UserOrm
 
 
 teams_users = Table(
@@ -23,7 +23,7 @@ teams_users = Table(
 )
 
 
-class Team(Base):
+class TeamOrm(Base):
     """ Team model """
 
     __tablename__ = "teams"
@@ -31,5 +31,5 @@ class Team(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     team_name: Mapped[str] = mapped_column(type_=String(255))
 
-    users: Mapped[list[User]] = relationship(secondary=teams_users, lazy="selectin")
-    submissions: Mapped[list["Submission"]] = relationship("Submission", back_populates="team")
+    users: Mapped[list[UserOrm]] = relationship(secondary=teams_users, lazy="selectin")
+    submissions: Mapped[list["SubmissionOrm"]] = relationship("SubmissionOrm", back_populates="team")

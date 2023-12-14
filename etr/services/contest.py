@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 
 from etr.db import get_db
 from etr.schemas.contest import ContestSchema
-from etr.models.contest import Contest
+from etr.models.contest import ContestOrm
 from etr.library.codeforces.codeforces_utils import get_contest as get_contest_with_codeforces
 from etr.services.problem import add_problems
 from etr.services.user import get_users
@@ -13,32 +13,32 @@ from etr.utils.factory import create_contest_model
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 
 
-def __get_contests_db(session: Session, **kwargs) -> list[Contest] | None:
+def __get_contests_db(session: Session, **kwargs) -> list[ContestOrm] | None:
     """ get contest from db """
     contest_db = session.query(
-        Contest
+        ContestOrm
     ).filter_by(
         **kwargs
     ).order_by(
-        Contest.start_time_seconds.desc()
+        ContestOrm.start_time_seconds.desc()
     ).all()
 
     return contest_db
 
 
-def __update_contest_db(session: Session, contest: Contest, **kwargs) -> Contest:
+def __update_contest_db(session: Session, contest: ContestOrm, **kwargs) -> ContestOrm:
     """ update contest in db """
     for field, value in kwargs.items():
         setattr(contest, field, value)
     session.add(contest)
     session.commit()
 
-    contest = session.query(Contest).filter_by(id=contest.id).one()
+    contest = session.query(ContestOrm).filter_by(id=contest.id).one()
 
     return contest
 
 
-def __add_contest_db(session: Session, contest_schema: ContestSchema) -> Contest:
+def __add_contest_db(session: Session, contest_schema: ContestSchema) -> ContestOrm:
     """ add contest to db """
     contest_db = create_contest_model(**contest_schema.model_dump())
     session.add(contest_db)

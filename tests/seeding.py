@@ -1,17 +1,17 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from etr.models.contest import Contest
-from etr.models.problem import Problem, Tag
-from etr.models.submission import Submission
-from etr.models.user import User
-from etr.models.team import Team
+from etr.models.contest import ContestOrm
+from etr.models.problem import ProblemOrm, TagOrm
+from etr.models.submission import SubmissionOrm
+from etr.models.user import UserOrm
+from etr.models.team import TeamOrm
 
 
 def seeding(engine: Engine):
     with Session(engine) as session:
         contests = [
-            Contest(
+            ContestOrm(
                 id=1234,
                 name="Test Contest #1. Codeforces Trainings Season",
                 type="CF",
@@ -30,7 +30,7 @@ def seeding(engine: Engine):
                 city="Minsk",
                 season="winter",
             ),
-            Contest(
+            ContestOrm(
                 id=1265,
                 name="Test Contest #2. Yandex Trainings Season",
                 type="CF",
@@ -49,7 +49,7 @@ def seeding(engine: Engine):
                 city="Moscow",
                 season="summer",
             ),
-            Contest(
+            ContestOrm(
                 id=1311,
                 name="Test Contest #3. VK Trainings Season",
                 type="CF",
@@ -68,7 +68,7 @@ def seeding(engine: Engine):
                 city="St. Petersburg",
                 season="summer",
             ),
-            Contest(
+            ContestOrm(
                 id=1353,
                 name="Test Contest #4. dl.gsu.by Trainings Season",
                 type="CF",
@@ -90,16 +90,16 @@ def seeding(engine: Engine):
         ]
 
         tags = [
-            Tag(tag="dp"),
-            Tag(tag="graphs"),
-            Tag(tag="math"),
-            Tag(tag="recursion"),
-            Tag(tag="trees"),
-            Tag(tag="dfs"),
+            TagOrm(tag="dp"),
+            TagOrm(tag="graphs"),
+            TagOrm(tag="math"),
+            TagOrm(tag="recursion"),
+            TagOrm(tag="trees"),
+            TagOrm(tag="dfs"),
         ]
 
         problems = [
-            Problem(
+            ProblemOrm(
                 contest_id=1234,
                 index="A",
                 name="A. Test Problem #1",
@@ -112,7 +112,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1234,
                 index="B",
                 name="B. Test Problem #2",
@@ -125,7 +125,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1234,
                 index="C",
                 name="C. Test Problem #3",
@@ -139,7 +139,7 @@ def seeding(engine: Engine):
                 ]
             ),
 
-            Problem(
+            ProblemOrm(
                 contest_id=1265,
                 index="A",
                 name="A. Test Problem #1",
@@ -152,7 +152,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1265,
                 index="B",
                 name="B. Test Problem #2",
@@ -165,7 +165,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1265,
                 index="C",
                 name="C. Test Problem #3",
@@ -179,7 +179,7 @@ def seeding(engine: Engine):
                 ]
             ),
 
-            Problem(
+            ProblemOrm(
                 contest_id=1311,
                 index="A",
                 name="A. Test Problem #1",
@@ -192,7 +192,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1311,
                 index="B",
                 name="B. Test Problem #2",
@@ -205,7 +205,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1311,
                 index="C",
                 name="C. Test Problem #3",
@@ -219,7 +219,7 @@ def seeding(engine: Engine):
                 ]
             ),
 
-            Problem(
+            ProblemOrm(
                 contest_id=1353,
                 index="A",
                 name="A. Test Problem #1",
@@ -232,7 +232,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1353,
                 index="B",
                 name="B. Test Problem #2",
@@ -245,7 +245,7 @@ def seeding(engine: Engine):
                     tags[4],
                 ]
             ),
-            Problem(
+            ProblemOrm(
                 contest_id=1353,
                 index="C",
                 name="C. Test Problem #3",
@@ -261,7 +261,7 @@ def seeding(engine: Engine):
         ]
 
         users = [
-            User(
+            UserOrm(
                 handle="Senior",
                 email="senior@mail.ru",
                 vk_id="vk.com/id0",
@@ -279,10 +279,10 @@ def seeding(engine: Engine):
                 avatar="https://dl.gsu.by/avatars/senior.png",
                 title_photo="https://dl.gsu.by/title_photos/senior.png",
             ),
-            User(
+            UserOrm(
                 handle="chelovek_secret"
             ),
-            User(
+            UserOrm(
                 handle="tourist",
                 vk_id="vk.com/id0",
                 first_name="Gennady",
@@ -293,7 +293,7 @@ def seeding(engine: Engine):
                 rank="legendary grandmaster",
                 max_rank="legendary grandmaster",
             ),
-            User(
+            UserOrm(
                 handle="Petr",
                 first_name="Petr",
                 last_name="Mitrichev",
@@ -303,7 +303,7 @@ def seeding(engine: Engine):
                 rank="legendary grandmaster",
                 max_rank="legendary grandmaster",
             ),
-            User(
+            UserOrm(
                 handle="Um_nik",
                 first_name="Nikita",
                 last_name="Belyh",
@@ -316,12 +316,12 @@ def seeding(engine: Engine):
         ]
 
         teams = [
-            Team(
+            TeamOrm(
                 id=1,
                 team_name="Team #1",
                 users=[users[0], users[1]]
             ),
-            Team(
+            TeamOrm(
                 id=2,
                 team_name="Team #2",
                 users=[users[3], users[4]]
@@ -329,7 +329,7 @@ def seeding(engine: Engine):
         ]
 
         submissions = [
-            Submission(
+            SubmissionOrm(
                 id=1,
                 contest_id=1234,
                 problem=problems[0],
@@ -342,7 +342,7 @@ def seeding(engine: Engine):
                 creation_time_seconds=1614552000,
                 relative_time_seconds=14400,
             ),
-            Submission(
+            SubmissionOrm(
                 id=2,
                 contest_id=1234,
                 problem=problems[0],
@@ -355,7 +355,7 @@ def seeding(engine: Engine):
                 creation_time_seconds=1614552000,
                 relative_time_seconds=14400,
             ),
-            Submission(
+            SubmissionOrm(
                 id=3,
                 contest_id=1234,
                 problem=problems[1],
@@ -368,7 +368,7 @@ def seeding(engine: Engine):
                 relative_time_seconds=14400,
                 team=teams[0]
             ),
-            Submission(
+            SubmissionOrm(
                 id=4,
                 contest_id=1234,
                 problem=problems[1],
@@ -381,7 +381,7 @@ def seeding(engine: Engine):
                 relative_time_seconds=14400,
                 team=teams[1]
             ),
-            Submission(
+            SubmissionOrm(
                 id=5,
                 contest_id=1234,
                 problem=problems[1],

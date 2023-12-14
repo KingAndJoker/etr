@@ -3,7 +3,7 @@ from etr.utils.factory import (
     create_problem_model,
     create_submission_model
 )
-from etr.models.problem import Problem
+from etr.models.problem import ProblemOrm
 from etr.schemas.problem import ProblemSchema
 
 
@@ -85,7 +85,7 @@ def test_factory_contest_none():
 
 
 def test_factory_problem_1():
-    problem: Problem | None = create_problem_model(
+    problem: ProblemOrm | None = create_problem_model(
         id=1,
         contest_id=1,
         index="A",
@@ -108,7 +108,7 @@ def test_factory_problem_1():
 
 
 def test_factory_problem_2():
-    problem: Problem | None = create_problem_model(
+    problem: ProblemOrm | None = create_problem_model(
         id=2,
         index="B",
         name="Test Problem #2",
@@ -124,13 +124,13 @@ def test_factory_problem_2():
 
 
 def test_factory_problem_none():
-    problem: Problem | None = create_problem_model()
+    problem: ProblemOrm | None = create_problem_model()
 
     assert problem is None, "problem is None. Check create_problem_model function."
 
 
 def test_factory_problem_with_missing_necessary_field():
-    problem: Problem | None = create_problem_model(
+    problem: ProblemOrm | None = create_problem_model(
         id=1
     )
 

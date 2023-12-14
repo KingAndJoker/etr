@@ -5,7 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from etr.models.base import Base
 
 
-class Contest(Base):
+class ContestOrm(Base):
     """Contest model"""
 
     __tablename__ = "contests"
@@ -31,7 +31,7 @@ class Contest(Base):
     url: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     type_of_source: Mapped[str] = mapped_column(nullable=True, type_=String(255))
 
-    problems: Mapped[list["Problem"]] = relationship(
-        "Problem",
+    problems: Mapped[list["ProblemOrm"]] = relationship(
+        "ProblemOrm",
         lazy="selectin"
     )

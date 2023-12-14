@@ -1,10 +1,10 @@
 """ factory methods """
 from sqlalchemy import inspect
 
-from etr.models.contest import Contest
-from etr.models.problem import Problem, Tag
-from etr.models.submission import Submission
-from etr.models.user import User
+from etr.models.contest import ContestOrm
+from etr.models.problem import ProblemOrm, TagOrm
+from etr.models.submission import SubmissionOrm
+from etr.models.user import UserOrm
 from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
 from etr.schemas.submission import SubmissionSchema
@@ -12,7 +12,7 @@ from etr.schemas.user import UserSchema
 from etr.db import get_db
 
 
-def create_contest_model(**kwargs) -> Contest | None:
+def create_contest_model(**kwargs) -> ContestOrm | None:
     """ factory method returns Contest model from fields equal to kwargs """
 
     try:
@@ -20,13 +20,13 @@ def create_contest_model(**kwargs) -> Contest | None:
     except:
         return None
 
-    inst = inspect(Contest)
+    inst = inspect(ContestOrm)
     attr_contest: set[str] = {
         c_attr.key for c_attr in inst.mapper.column_attrs
     }
 
     try:
-        contest = Contest()
+        contest = ContestOrm()
         for field, value in kwargs.items():
             if field in attr_contest:
                 setattr(contest, field, value)
@@ -36,7 +36,7 @@ def create_contest_model(**kwargs) -> Contest | None:
     return contest
 
 
-def create_problem_model(**kwargs) -> Problem | None:
+def create_problem_model(**kwargs) -> ProblemOrm | None:
     """ factory method returns Problem model from fields equal to kwargs """
 
     try:
@@ -46,13 +46,13 @@ def create_problem_model(**kwargs) -> Problem | None:
 
     # TODO: add Tags
 
-    inst = inspect(Problem)
+    inst = inspect(ProblemOrm)
     attr_problem: set[str] = {
         p_attr.key for p_attr in inst.mapper.column_attrs
     }
 
     try:
-        problem = Problem()
+        problem = ProblemOrm()
         for field, value in kwargs.items():
             if field in attr_problem:
                 setattr(problem, field, value)
@@ -62,7 +62,7 @@ def create_problem_model(**kwargs) -> Problem | None:
     return problem
 
 
-def create_submission_model(**kwargs) -> Submission | None:
+def create_submission_model(**kwargs) -> SubmissionOrm | None:
     """ factory method returns Submission model from fields equal to kwargs """
 
     try:
@@ -70,13 +70,13 @@ def create_submission_model(**kwargs) -> Submission | None:
     except:
         return None
 
-    inst = inspect(Submission)
+    inst = inspect(SubmissionOrm)
     attr_submission: set[str] = {
         s_attr.key for s_attr in inst.mapper.column_attrs
     }
 
     try:
-        submission = Submission()
+        submission = SubmissionOrm()
         for field, value in kwargs.items():
             if field in attr_submission:
                 setattr(submission, field, value)
@@ -86,7 +86,7 @@ def create_submission_model(**kwargs) -> Submission | None:
                 submission.problem_id = kwargs["problem"].id # get_problem(...)
             else:
                 with get_db() as session:
-                    problem = session.query(Problem).filter_by(
+                    problem = session.query(ProblemOrm).filter_by(
                         contest_id = submission.contest_id,
                         index = kwargs["problem"]["index"]
                     ).one_or_none()
@@ -97,7 +97,7 @@ def create_submission_model(**kwargs) -> Submission | None:
                 submission.team_id = kwargs["author"]["teamId"]
             else:
                 with get_db() as session:
-                    user = session.query(User).filter(User.handle == kwargs["author"]["handle"]).first()
+                    user = session.query(UserOrm).filter(UserOrm.handle == kwargs["author"]["handle"]).first()
                     submission.author_id = user.id
     except:
         return None
@@ -105,7 +105,7 @@ def create_submission_model(**kwargs) -> Submission | None:
     return submission
 
 
-def create_user_model(**kwargs) -> User | None:
+def create_user_model(**kwargs) -> UserOrm | None:
     """ factory method returns User model from fields equal to kwargs """
 
     try:
@@ -113,13 +113,13 @@ def create_user_model(**kwargs) -> User | None:
     except:
         return None
 
-    inst = inspect(User)
+    inst = inspect(UserOrm)
     attr_user: set[str] = {
         u_attr.key for u_attr in inst.mapper.column_attrs
     }
 
     try:
-        user = User()
+        user = UserOrm()
         for field, value in kwargs.items():
             if field in attr_user:
                 setattr(user, field, value)

@@ -3,7 +3,7 @@ import copy
 from sqlalchemy.orm import Session
 
 from etr.db import get_db
-from etr.models.user import User
+from etr.models.user import UserOrm
 from etr.schemas.user import UserSchema
 from etr.library.codeforces.codeforces_utils import get_user as get_codeforces_user
 from etr.library.dl_gsu_by_codeforces.parse_students import get_students
@@ -12,8 +12,8 @@ from etr.utils.factory import create_user_model
 from etr.utils.dl_gsu_by_codeforces.convert import convert_dl_to_etr
 
 
-def __get_users_filter_by(session: Session, **kwargs) -> list[User]:
-    users = session.query(User).filter_by(
+def __get_users_filter_by(session: Session, **kwargs) -> list[UserOrm]:
+    users = session.query(UserOrm).filter_by(
         **kwargs
     ).all()
 
@@ -97,7 +97,7 @@ def add_user(handle: str, lang: str = "en", watch: bool = True) -> UserSchema | 
     return user_schema
 
 
-def __add_user_with_kwargs(session, **kwargs) -> User | None:
+def __add_user_with_kwargs(session, **kwargs) -> UserOrm | None:
     try:
         user = create_user_model(**kwargs)
         session.add(user)
@@ -153,8 +153,8 @@ def _check_patch_with_kwargs(user_schema: UserSchema, **kwargs) -> bool:
     return True
 
 
-def __update_user_with_id(session: Session, user_id: int, **kwargs) -> User | None:
-    user_db = session.query(User).filter_by(id=user_id).one_or_none()
+def __update_user_with_id(session: Session, user_id: int, **kwargs) -> UserOrm | None:
+    user_db = session.query(UserOrm).filter_by(id=user_id).one_or_none()
     if user_db is None:
         return None
     for key, value in kwargs.items():

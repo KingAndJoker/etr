@@ -6,7 +6,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from etr.models.user import User
+from etr.models.user import UserOrm
 from etr.db import get_db
 
 
@@ -27,7 +27,7 @@ def new_user(handle: Annotated[str, Form()]):
     response_json = response.json()
     if response_json["status"] == "OK":
         with get_db() as session:
-            session.add(User(handle=handle))
+            session.add(UserOrm(handle=handle))
             session.commit()
     return RedirectResponse("/etr")
 

@@ -3,12 +3,12 @@ from sqlalchemy import ForeignKey, Integer, String, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from etr.models.base import Base
-from etr.models.problem import Problem
-from etr.models.user import User
-from etr.models.team import Team
+from etr.models.problem import ProblemOrm
+from etr.models.user import UserOrm
+from etr.models.team import TeamOrm
 
 
-class Submission(Base):
+class SubmissionOrm(Base):
     """
     Submission model
     https://codeforces.com/apiHelp/objects#Submission
@@ -21,8 +21,8 @@ class Submission(Base):
     creation_time_seconds: Mapped[int] = mapped_column()
     relative_time_seconds: Mapped[int] = mapped_column()
     problem_id: Mapped[int] = mapped_column(Integer, ForeignKey("problems.id"))
-    problem: Mapped[Problem] = relationship(
-        "Problem",
+    problem: Mapped[ProblemOrm] = relationship(
+        "ProblemOrm",
         back_populates="submissions",
         lazy="selectin"
     )
@@ -32,19 +32,19 @@ class Submission(Base):
         ForeignKey("users.id"),
         nullable=True,
     )
-    author: Mapped[User] = relationship(
-        "User",
+    author: Mapped[UserOrm] = relationship(
+        "UserOrm",
         back_populates="submissions",
         lazy="selectin"
     )
-    team_id: Mapped[Team] = Column(
+    team_id: Mapped[TeamOrm] = Column(
         "team_id",
         Integer,
         ForeignKey("teams.id"),
         nullable=True,
     )
-    team: Mapped[Team] = relationship(
-        "Team",
+    team: Mapped[TeamOrm] = relationship(
+        "TeamOrm",
         back_populates="submissions",
         lazy="selectin"
     )

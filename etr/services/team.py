@@ -2,17 +2,17 @@
 from sqlalchemy.orm.session import Session
 
 from etr.db import get_db
-from etr.models.team import Team
-from etr.models.user import User
+from etr.models.team import TeamOrm
+from etr.models.user import UserOrm
 from etr.schemas.team import TeamSchema
 from etr.services.user import get_user
 from etr.services.user import add_user
 
 
-def __get_teams_db(session: Session, **kwargs) -> list[Team] | None:
+def __get_teams_db(session: Session, **kwargs) -> list[TeamOrm] | None:
     """ get teams from db """
     teams_db = session.query(
-        Team
+        TeamOrm
     ).filter_by(
         **kwargs
     ).all()
@@ -76,9 +76,9 @@ def get_teams_with_handle_member(handle: str) -> list[TeamSchema]:
     return teams
 
 
-def __add_team(session: Session, **kwargs) -> Team | None:
+def __add_team(session: Session, **kwargs) -> TeamOrm | None:
     """ add team to db """
-    team = Team(**kwargs)
+    team = TeamOrm(**kwargs)
 
     session.add(team)
     session.commit()
@@ -110,7 +110,7 @@ def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
         team_dump = team_schema.model_dump()
         for i, member in enumerate(team_dump["users"]):
             # TODO: rewrite without session.query ...
-            team_dump["users"][i] = session.query(User).filter_by(handle=member["handle"]).one()
+            team_dump["users"][i] = session.query(UserOrm).filter_by(handle=member["handle"]).one()
         team_db = __add_team(session, **team_dump)
         team_schema = TeamSchema.model_validate(team_db)
 

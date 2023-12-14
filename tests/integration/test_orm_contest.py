@@ -1,7 +1,7 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from etr.models.contest import Contest
+from etr.models.contest import ContestOrm
 
 
 def test_contest_create(in_memory_db_empty: Engine):
@@ -10,18 +10,18 @@ def test_contest_create(in_memory_db_empty: Engine):
     engine = in_memory_db_empty
 
     with Session(engine) as session:
-        contest = Contest(id=1, name="Test Contest #1")
+        contest = ContestOrm(id=1, name="Test Contest #1")
         session.add(contest)
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
         assert contest.id == 1, "The contest was created incorrectly."
 
-        contest = session.query(Contest).filter(
-            Contest.id == 2
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 2
         ).one_or_none()
         assert contest is None, "ORM found a non-existent contest."
 
@@ -32,7 +32,7 @@ def test_create_contest_all_fields(in_memory_db_empty: Engine):
     engine = in_memory_db_empty
 
     with Session(engine) as session:
-        contest = Contest(
+        contest = ContestOrm(
             id=1,
             name="Test Contest #2",
             type="CF",
@@ -56,8 +56,8 @@ def test_create_contest_all_fields(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
 
         assert contest is not None, "The contest was not created."
@@ -86,13 +86,13 @@ def test_contest_update(in_memory_db_empty: Engine):
     engine = in_memory_db_empty
 
     with Session(engine) as session:
-        contest = Contest(id=1, name="Test Contest #1")
+        contest = ContestOrm(id=1, name="Test Contest #1")
         session.add(contest)
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
         assert contest is not None, "The contest was not created."
 
@@ -101,8 +101,8 @@ def test_contest_update(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
         assert contest.name == "Test Contest #2", "Incorrectly updated name"
 
@@ -113,13 +113,13 @@ def test_contest_delete(in_memory_db_empty: Engine):
     engine = in_memory_db_empty
 
     with Session(engine) as session:
-        contest = Contest(id=1, name="Test Contest #1")
+        contest = ContestOrm(id=1, name="Test Contest #1")
         session.add(contest)
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
         assert contest is not None, "The contest was not created."
 
@@ -127,7 +127,7 @@ def test_contest_delete(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(engine) as session:
-        contest = session.query(Contest).filter(
-            Contest.id == 1
+        contest = session.query(ContestOrm).filter(
+            ContestOrm.id == 1
         ).one_or_none()
         assert contest is None, "The contest was not deleted."

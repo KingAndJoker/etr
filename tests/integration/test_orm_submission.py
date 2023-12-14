@@ -1,18 +1,18 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from etr.models.submission import Submission
-from etr.models.contest import Contest
-from etr.models.problem import Problem
-from etr.models.user import User
-from etr.models.team import Team
+from etr.models.submission import SubmissionOrm
+from etr.models.contest import ContestOrm
+from etr.models.problem import ProblemOrm
+from etr.models.user import UserOrm
+from etr.models.team import TeamOrm
 
 
 def test_create_submission_user(in_memory_db_empty: Engine):
     """Test creating a user submission."""
 
     with Session(in_memory_db_empty) as session:
-        contest = Contest(
+        contest = ContestOrm(
             id=1,
             name="Codeforces Round #123",
             type="CF",
@@ -35,7 +35,7 @@ def test_create_submission_user(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="A",
             name="Two Sum"
@@ -44,20 +44,20 @@ def test_create_submission_user(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        user = User(
+        user = UserOrm(
             handle="cool_proger"
         )
         session.add(user)
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
-        user = session.query(User).one()
+        problem = session.query(ProblemOrm).one()
+        user = session.query(UserOrm).one()
 
         assert problem is not None, "problem is None."
         assert user is not None, "user is None."
 
-        submission = Submission(
+        submission = SubmissionOrm(
             id=1,
             contest_id=1,
             creation_time_seconds=1000,
@@ -76,7 +76,7 @@ def test_create_submission_user(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one()
+        submission = session.query(SubmissionOrm).one()
         assert submission is not None, "submission is None."
         assert submission.id == 1, "submission.id != 1."
         assert submission.contest_id == 1, "submission.contest_id != 1."
@@ -104,7 +104,7 @@ def test_problem_create_team(in_memory_db_empty: Engine):
     """Test creating a team submission."""
 
     with Session(in_memory_db_empty) as session:
-        contest = Contest(
+        contest = ContestOrm(
             id=1,
             name="Codeforces Round #123",
             type="CF",
@@ -127,7 +127,7 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="A",
             name="Two Sum"
@@ -137,10 +137,10 @@ def test_problem_create_team(in_memory_db_empty: Engine):
     
     with Session(in_memory_db_empty) as session:
         users = [
-            User(
+            UserOrm(
                 handle="cool_proger"
             ),
-            User(
+            UserOrm(
                 handle="cool_proger2"
             )
         ]
@@ -148,8 +148,8 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        users = session.query(User).all()
-        team = Team(
+        users = session.query(UserOrm).all()
+        team = TeamOrm(
             id=1,
             team_name="Cool Team",
             users=users
@@ -158,13 +158,13 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
-        team = session.query(Team).one()
+        problem = session.query(ProblemOrm).one()
+        team = session.query(TeamOrm).one()
 
         assert problem is not None, "problem is None."
         assert team is not None, "team is None."
 
-        submission = Submission(
+        submission = SubmissionOrm(
             id=1,
             contest_id=1,
             creation_time_seconds=1000,
@@ -183,7 +183,7 @@ def test_problem_create_team(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one()
+        submission = session.query(SubmissionOrm).one()
         assert submission is not None, "submission is None."
         assert submission.id == 1, "submission.id != 1."
         assert submission.contest_id == 1, "submission.contest_id != 1."
@@ -214,7 +214,7 @@ def test_submission_update(in_memory_db_empty: Engine):
     """Test updating a submission."""
 
     with Session(in_memory_db_empty) as session:
-        contest = Contest(
+        contest = ContestOrm(
             id=1,
             name="Codeforces Round #123",
             type="CF",
@@ -237,7 +237,7 @@ def test_submission_update(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="A",
             name="Two Sum"
@@ -246,20 +246,20 @@ def test_submission_update(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        user = User(
+        user = UserOrm(
             handle="cool_proger"
         )
         session.add(user)
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
-        user = session.query(User).one()
+        problem = session.query(ProblemOrm).one()
+        user = session.query(UserOrm).one()
 
         assert problem is not None, "problem is None."
         assert user is not None, "user is None."
 
-        submission = Submission(
+        submission = SubmissionOrm(
             id=1,
             contest_id=1,
             creation_time_seconds=1000,
@@ -278,13 +278,13 @@ def test_submission_update(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one()
+        submission = session.query(SubmissionOrm).one()
         submission.points = 1000
         session.add(submission)
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one()
+        submission = session.query(SubmissionOrm).one()
         assert submission is not None, "submission is None."
         assert submission.id == 1, "submission.id != 1."
         assert submission.points == 1000, "submission.points != 1000."
@@ -294,7 +294,7 @@ def test_submission_delete(in_memory_db_empty: Engine):
     """Test deleting a submission."""
 
     with Session(in_memory_db_empty) as session:
-        contest = Contest(
+        contest = ContestOrm(
             id=1,
             name="Codeforces Round #123",
             type="CF",
@@ -317,7 +317,7 @@ def test_submission_delete(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="A",
             name="Two Sum"
@@ -326,20 +326,20 @@ def test_submission_delete(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        user = User(
+        user = UserOrm(
             handle="cool_proger"
         )
         session.add(user)
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
-        user = session.query(User).one()
+        problem = session.query(ProblemOrm).one()
+        user = session.query(UserOrm).one()
 
         assert problem is not None, "problem is None."
         assert user is not None, "user is None."
 
-        submission = Submission(
+        submission = SubmissionOrm(
             id=1,
             contest_id=1,
             creation_time_seconds=1000,
@@ -358,10 +358,10 @@ def test_submission_delete(in_memory_db_empty: Engine):
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one()
+        submission = session.query(SubmissionOrm).one()
         session.delete(submission)
         session.commit()
 
     with Session(in_memory_db_empty) as session:
-        submission = session.query(Submission).one_or_none()
+        submission = session.query(SubmissionOrm).one_or_none()
         assert submission is None, "submission is not None."

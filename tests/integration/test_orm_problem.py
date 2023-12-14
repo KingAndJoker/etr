@@ -1,14 +1,14 @@
 from sqlalchemy import Engine
 from sqlalchemy.orm import Session
 
-from etr.models.problem import Problem, Tag
+from etr.models.problem import ProblemOrm, TagOrm
 
 
 def test_problem_create(in_memory_db_empty: Engine):
     """Test creating a problem."""
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="A",
             name="Two Sum"
@@ -17,7 +17,7 @@ def test_problem_create(in_memory_db_empty: Engine):
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
+        problem = session.query(ProblemOrm).one()
         assert problem.contest_id == 1, "contest_id is not equal to 1."
         assert problem.index == "A", "index is not equal to 'A'."
         assert problem.name == "Two Sum", "name is not equal to 'Two Sum'."
@@ -29,7 +29,7 @@ def test_problem_create_all_fields(in_memory_db_empty: Engine):
     """Test creating a problem with all fields."""
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=7,
             index="B",
             name="Ghoul",
@@ -38,16 +38,16 @@ def test_problem_create_all_fields(in_memory_db_empty: Engine):
             points=1000,
             rating=993,
             tags=[
-                Tag(tag="graph"),
-                Tag(tag="bfs"),
-                Tag(tag="dfs")
+                TagOrm(tag="graph"),
+                TagOrm(tag="bfs"),
+                TagOrm(tag="dfs")
             ]
         )
         session.add(problem)
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).filter_by(
+        problem = session.query(ProblemOrm).filter_by(
             contest_id=7,
             index="B"
         ).one_or_none()
@@ -69,7 +69,7 @@ def test_problem_update(in_memory_db_empty: Engine):
     """Test updating a problem."""
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="С",
             name="Two Sum II - Input array is sorted"
@@ -78,15 +78,15 @@ def test_problem_update(in_memory_db_empty: Engine):
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).filter(
-            Problem.contest_id == 1,
-            Problem.index == "С"
+        problem = session.query(ProblemOrm).filter(
+            ProblemOrm.contest_id == 1,
+            ProblemOrm.index == "С"
         ).one_or_none()
         problem.name = "Car Parking System"
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one()
+        problem = session.query(ProblemOrm).one()
         assert problem.name == "Car Parking System", "name is not equal to 'Car Parking System'."
 
 
@@ -94,7 +94,7 @@ def test_problem_delete(in_memory_db_empty: Engine):
     """Test deleting a problem."""
 
     with Session(in_memory_db_empty) as session:
-        problem = Problem(
+        problem = ProblemOrm(
             contest_id=1,
             index="D",
             name="Design Circular Queue"
@@ -103,10 +103,10 @@ def test_problem_delete(in_memory_db_empty: Engine):
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one_or_none()
+        problem = session.query(ProblemOrm).one_or_none()
         session.delete(problem)
         session.commit()
     
     with Session(in_memory_db_empty) as session:
-        problem = session.query(Problem).one_or_none()
+        problem = session.query(ProblemOrm).one_or_none()
         assert problem is None, "problem is not None."

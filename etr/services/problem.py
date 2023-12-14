@@ -4,7 +4,7 @@ from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 from etr.utils.factory import create_problem_model
 from etr.library.codeforces.codeforces_utils import get_problem_with_contest
 from etr.db import get_db
-from etr.models.problem import Problem
+from etr.models.problem import ProblemOrm
 from etr.schemas.problem import ProblemSchema
 from etr.utils.factory import create_problem_model
 
@@ -42,10 +42,10 @@ def add_problems(contest_id: int) -> list[ProblemSchema]:
     return added_problems_schema
 
 
-def _get_problems_db_with_contest_id(contest_id: int) -> Problem:
+def _get_problems_db_with_contest_id(contest_id: int) -> ProblemOrm:
     with get_db() as session:
-        problems = session.query(Problem).filter(
-            Problem.contest_id == contest_id
+        problems = session.query(ProblemOrm).filter(
+            ProblemOrm.contest_id == contest_id
         ).all()
 
         for i, _ in enumerate(problems):
@@ -71,7 +71,7 @@ def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     """ return True if no the task in contest, else False """
 
     with get_db() as session:
-        problem_db = session.query(Problem).filter_by(
+        problem_db = session.query(ProblemOrm).filter_by(
             contest_id=contest_id,
             index=problemSchema.index
         ).one_or_none()
@@ -99,8 +99,8 @@ def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
     return added_problems_schema
 
 
-def __get_problems(session: Session, **kwargs) -> list[Problem]:
-    problems = session.query(Problem).filter_by(**kwargs).all()
+def __get_problems(session: Session, **kwargs) -> list[ProblemOrm]:
+    problems = session.query(ProblemOrm).filter_by(**kwargs).all()
     return problems
 
 

@@ -4,7 +4,7 @@ import copy
 from sqlalchemy.orm import Session
 
 from etr.db import get_db
-from etr.models.submission import Submission
+from etr.models.submission import SubmissionOrm
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.team import TeamSchema
 from etr.schemas.user import UserSchema
@@ -22,10 +22,10 @@ from etr.utils.codeforces.convert import convert_codeforces_submission_schema
 from etr.utils.codeforces.convert import convert_codeforces_team_schema
 
 
-def __get_submissions_db(session: Session, **kwargs) -> list[Submission] | None:
+def __get_submissions_db(session: Session, **kwargs) -> list[SubmissionOrm] | None:
     """ get submissions from db """
     submissions_db = session.query(
-        Submission
+        SubmissionOrm
     ).filter_by(
         **kwargs
     ).all()
@@ -33,10 +33,10 @@ def __get_submissions_db(session: Session, **kwargs) -> list[Submission] | None:
     return submissions_db
 
 
-def __get_submission_db(session: Session, **kwargs) -> Submission | None:
+def __get_submission_db(session: Session, **kwargs) -> SubmissionOrm | None:
     """ get submissions from db """
     submissions_db = session.query(
-        Submission
+        SubmissionOrm
     ).filter_by(
         **kwargs
     ).one_or_none()
@@ -44,7 +44,7 @@ def __get_submission_db(session: Session, **kwargs) -> Submission | None:
     return submissions_db
 
 
-def __add_submission_db(session: Session, **kwargs) -> Submission:
+def __add_submission_db(session: Session, **kwargs) -> SubmissionOrm:
     """ add submission to db """
     try:
         submission_db = create_submission_model(**kwargs)
@@ -57,14 +57,14 @@ def __add_submission_db(session: Session, **kwargs) -> Submission:
     return submission_db
 
 
-def __update_submission_db(session: Session, submission: Submission, **kwargs) -> Submission | None:
+def __update_submission_db(session: Session, submission: SubmissionOrm, **kwargs) -> SubmissionOrm | None:
     """ update submission in db """
     for field, value in kwargs.items():
         setattr(submission, field, value)
     session.add(submission)
     session.commit()
 
-    submission = session.query(Submission).filter_by(
+    submission = session.query(SubmissionOrm).filter_by(
         id=submission.id, **kwargs).one_or_none()
 
     return submission
@@ -285,7 +285,7 @@ def make_params_for_submission(submission: SubmissionSchema) -> dict:
 
 
 def __delete_submissions(session: Session, **kwargs) -> list[SubmissionSchema]:
-    cnt_deleted = session.query(Submission).filter_by(**kwargs).delete()
+    cnt_deleted = session.query(SubmissionOrm).filter_by(**kwargs).delete()
     return cnt_deleted
 
 

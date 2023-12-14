@@ -13,21 +13,21 @@ problems_tags = Table(
 )
 
 
-class Tag(Base):
+class TagOrm(Base):
     """Tag model"""
 
     __tablename__ = "tags"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)
     tag: Mapped[str] = mapped_column(type_=String(255), unique=True)
-    problems: Mapped[list["Problem"]] = relationship(
-        "Problem",
+    problems: Mapped[list["ProblemOrm"]] = relationship(
+        "ProblemOrm",
         secondary=problems_tags,
         back_populates="tags"
     )
 
 
-class Problem(Base):
+class ProblemOrm(Base):
     """problem (aka task) model"""
 
     __tablename__ = "problems"
@@ -40,20 +40,22 @@ class Problem(Base):
         nullable=True
     )
     problemset_name: Mapped[str] = mapped_column(
-        nullable=True, type_=String(255))
+        nullable=True,
+        type_=String(255)
+    )
     index: Mapped[str] = mapped_column(type_=String(255))
     name: Mapped[str] = mapped_column(type_=String(255))
     type: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     points: Mapped[float] = mapped_column(nullable=True)
     rating: Mapped[int] = mapped_column(nullable=True)
-    tags: Mapped[list[Tag]] = relationship(
-        "Tag",
+    tags: Mapped[list[TagOrm]] = relationship(
+        "TagOrm",
         secondary=problems_tags,
         back_populates="problems",
         lazy="selectin"
     )
 
-    submissions: Mapped[list["Submission"]] = relationship(
-        "Submission",
+    submissions: Mapped[list["SubmissionOrm"]] = relationship(
+        "SubmissionOrm",
         back_populates="problem"
     )
