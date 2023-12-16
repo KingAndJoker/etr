@@ -9,7 +9,7 @@ from etr import db
 from etr.models.contest import ContestOrm
 from etr.schemas.contest import ContestSchema
 from etr.events.contest import ParseContestBeforeUpdate
-from etr.handlers import handle
+from etr.handlers import handler
 from etr.utils.services.contest import parse_url
 
 
@@ -31,7 +31,7 @@ def new_contest(request: Request):
 def new_contest(contest_url: Annotated[str, Form()], request: Request):
     url = parse_url(contest_url)
     event = ParseContestBeforeUpdate(url)
-    results = handle(event)
+    results = handler(event)
 
     return RedirectResponse("/etr")
 

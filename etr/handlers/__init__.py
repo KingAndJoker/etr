@@ -22,7 +22,7 @@ HANDLERS: dict[Event, list[Callable[[Event], ResultOfHandleEvent]]] = {
 }
 
 
-def handle(event: Event) -> list:
+def handler(event: Event) -> list:
     results = []
     queue = [event]
     while queue:
