@@ -1,31 +1,25 @@
 """db utils"""
-import os
-from flask import Flask
 from sqlalchemy import create_engine, Engine
-from sqlalchemy.orm import Session, sessionmaker
+from sqlalchemy.orm import sessionmaker
 
+from etr import config
 from etr.models.base import Base
-from etr.models.user import User
-from etr.models.contest import Contest
-from etr.models.submission import Submission
-from etr.models.problem import Problem
-from etr.models.team import Team, teams_users
+from etr.models.contest import ContestOrm
+from etr.models.problem import ProblemOrm, TagOrm, problems_tags
+from etr.models.submission import SubmissionOrm
+from etr.models.team import TeamOrm, teams_users
+from etr.models.user import UserOrm
 
 
-engine = None
-Session_ = None
-
-
-# TODO: rewrite to class
-# TODO: fix bug sqlite:///:memory: not see
-def init_db(database_url: str, echo: bool = False) -> Engine:
-    global engine
-    engine = create_engine(database_url, echo=echo)
+def init_db(engine: Engine) -> None:
     Base.metadata.create_all(engine)
-    global Session_
-    Session_ = sessionmaker(engine)
-    return engine
 
 
-def get_db() -> Session:
-    return Session_()
+SQLALCHEMY_DATABASE_URL = config.DATABASE_URL
+SQLALCHEMY_ECHO = config.SQLALCHEMY_ECHO
+
+engine = create_engine(
+    SQLALCHEMY_DATABASE_URL,
+    echo=SQLALCHEMY_ECHO,
+)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
