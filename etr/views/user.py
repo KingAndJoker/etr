@@ -7,7 +7,7 @@ from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
 from etr.models.user import UserOrm
-from etr.db import get_db
+from etr import db
 
 
 templates = Jinja2Templates(directory="etr/templates")
@@ -26,7 +26,7 @@ def new_user(handle: Annotated[str, Form()]):
     response = requests.get(f"https://codeforces.com/api/user.info?handles={handle}")
     response_json = response.json()
     if response_json["status"] == "OK":
-        with get_db() as session:
+        with db.SessionLocal() as session:
             session.add(UserOrm(handle=handle))
             session.commit()
     return RedirectResponse("/etr")

@@ -5,7 +5,7 @@ from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
 
-from etr.db import get_db
+from etr import db
 from etr.models.contest import ContestOrm
 from etr.schemas.contest import ContestSchema
 from etr.events.contest import ParseContestBeforeUpdate
@@ -38,7 +38,7 @@ def new_contest(contest_url: Annotated[str, Form()], request: Request):
 
 @router.get("/{contest_id}")
 def get_contest(contest_id: int, request: Request):
-    with get_db() as session:
+    with db.SessionLocal() as session:
         contest_db: ContestOrm = (
             session.query(ContestOrm).filter(ContestOrm.id == contest_id).one_or_none()
         )
