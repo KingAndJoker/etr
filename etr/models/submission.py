@@ -2,7 +2,7 @@
 from sqlalchemy import ForeignKey, Integer, String, Column
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
-from etr.db import Base
+from etr.models.base import Base
 from etr.models.problem import ProblemOrm
 from etr.models.user import UserOrm
 from etr.models.team import TeamOrm

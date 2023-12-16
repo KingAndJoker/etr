@@ -1,7 +1,7 @@
 """problem model"""
 from sqlalchemy import Table, Column, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from etr.db import Base
+from etr.models.base import Base
 
 
 # Table of associations between problem and tag
