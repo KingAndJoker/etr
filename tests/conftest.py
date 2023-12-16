@@ -1,24 +1,26 @@
 import pytest
-from flask import Flask
+from fastapi import FastAPI
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, Engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.pool import StaticPool
 
-from etr.models.base import Base
-from etr.models.contest import ContestOrm
-from etr.models.problem import ProblemOrm
-from etr.models.submission import SubmissionOrm
-from etr.models.user import UserOrm
-from etr.models.team import TeamOrm
-from etr.db import init_db
+from etr import db
 from etr import create_app
 from tests.seeding import seeding
 
 
 @pytest.fixture()
 def in_memory_db_empty() -> Engine:
-    # engine = create_engine("sqlite:///:memory:")
-    # Base.metadata.create_all(engine)
-    engine = init_db("sqlite:///:memory:", echo=True)
-    return engine
+    db.engine = create_engine(
+        "sqlite:///:memory:",
+        echo=True,
+        connect_args={"check_same_thread": False},
+        poolclass=StaticPool,
+    )
+    db.SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=db.engine)
+    db.init_db(db.engine)
+    return db.engine
 
 
 @pytest.fixture()
@@ -32,19 +34,10 @@ def in_memory_db(in_memory_db_empty) -> Engine:
 
 @pytest.fixture()
 def app(in_memory_db):
-    app = create_app(in_memory_db)
-    app.config.update({
-        "TESTING": True,
-    })
-
+    app = create_app()
     return app
 
 
 @pytest.fixture()
-def client(app: Flask):
-    return app.test_client()
-
-
-@pytest.fixture()
-def runner(app: Flask):
-    return app.test_cli_runner()
+def client(app: FastAPI):
+    return TestClient(app)
