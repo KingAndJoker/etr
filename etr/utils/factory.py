@@ -9,7 +9,7 @@ from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.user import UserSchema
-from etr.db import get_db
+from etr import db
 
 
 def create_contest_model(**kwargs) -> ContestOrm | None:
@@ -85,7 +85,7 @@ def create_submission_model(**kwargs) -> SubmissionOrm | None:
             if "problem" in kwargs:
                 submission.problem_id = kwargs["problem"].id # get_problem(...)
             else:
-                with get_db() as session:
+                with db.SessionLocal() as session:
                     problem = session.query(ProblemOrm).filter_by(
                         contest_id = submission.contest_id,
                         index = kwargs["problem"]["index"]
@@ -96,7 +96,7 @@ def create_submission_model(**kwargs) -> SubmissionOrm | None:
             if "teamId" in kwargs["author"]:
                 submission.team_id = kwargs["author"]["teamId"]
             else:
-                with get_db() as session:
+                with db.SessionLocal() as session:
                     user = session.query(UserOrm).filter(UserOrm.handle == kwargs["author"]["handle"]).first()
                     submission.author_id = user.id
     except:
