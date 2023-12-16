@@ -1,7 +1,7 @@
 """ Team service """
 from sqlalchemy.orm.session import Session
 
-from etr.db import get_db
+from etr import db
 from etr.models.team import TeamOrm
 from etr.models.user import UserOrm
 from etr.schemas.team import TeamSchema
@@ -22,7 +22,7 @@ def __get_teams_db(session: Session, **kwargs) -> list[TeamOrm] | None:
 
 def _get_teams_with_kwargs(**kwargs) -> list[TeamSchema]:
     """ get teams from db """
-    with get_db() as session:
+    with db.SessionLocal() as session:
         teams_db = __get_teams_db(session, **kwargs)
 
         teams_schema = [
@@ -106,7 +106,7 @@ def _check_members(team_schema: TeamSchema) -> None:
 
 def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
     """ add team to db """
-    with get_db() as session:
+    with db.SessionLocal() as session:
         team_dump = team_schema.model_dump()
         for i, member in enumerate(team_dump["users"]):
             # TODO: rewrite without session.query ...

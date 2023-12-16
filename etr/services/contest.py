@@ -1,7 +1,7 @@
 """ contest services """
 from sqlalchemy.orm import Session
 
-from etr.db import get_db
+from etr import db
 from etr.schemas.contest import ContestSchema
 from etr.models.contest import ContestOrm
 from etr.library.codeforces.codeforces_utils import get_contest as get_contest_with_codeforces
@@ -49,7 +49,7 @@ def __add_contest_db(session: Session, contest_schema: ContestSchema) -> Contest
 
 def _get_contests_schema_with_db(**kwargs) -> list[ContestSchema]:
     """ get contest from db """
-    with get_db() as session:
+    with db.SessionLocal() as session:
         contests_db = __get_contests_db(session, **kwargs)
         for contest_db in contests_db:
             contest_db.problems
@@ -72,7 +72,7 @@ def _get_contest_with_codeforces(contest_id: int) -> ContestSchema | None:
 
 def _add_contest_db(contest_schema: ContestSchema) -> ContestSchema:
     """ add contest to db """
-    with get_db() as session:
+    with db.SessionLocal() as session:
         contest_db = __add_contest_db(session, contest_schema)
         contest_schema_return = ContestSchema.model_validate(contest_db)
 
@@ -81,7 +81,7 @@ def _add_contest_db(contest_schema: ContestSchema) -> ContestSchema:
 
 def _update_contest(contest_schema: ContestSchema, **kwargs) -> ContestSchema:
     """ update contest """
-    with get_db() as session:
+    with db.SessionLocal() as session:
         contest_db = __get_contests_db(session, id=contest_schema.id)[0]
         contest_db = __update_contest_db(session, contest_db, **kwargs)
         contest_schema_return = ContestSchema.model_validate(contest_db)

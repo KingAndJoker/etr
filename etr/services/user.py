@@ -2,7 +2,7 @@ import copy
 
 from sqlalchemy.orm import Session
 
-from etr.db import get_db
+from etr import db
 from etr.models.user import UserOrm
 from etr.schemas.user import UserSchema
 from etr.library.codeforces.codeforces_utils import get_user as get_codeforces_user
@@ -21,7 +21,7 @@ def __get_users_filter_by(session: Session, **kwargs) -> list[UserOrm]:
 
 
 def _get_user_db_with_kwargs(**kwargs) -> UserSchema | None:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         users_db = __get_users_filter_by(session, **kwargs)
 
         if users_db != []:
@@ -31,7 +31,7 @@ def _get_user_db_with_kwargs(**kwargs) -> UserSchema | None:
 
 
 def _get_users_db_with_kwargs(**kwargs) -> list[UserSchema]:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         users_db = __get_users_filter_by(session, **kwargs)
 
         users_schema = list()
@@ -109,7 +109,7 @@ def __add_user_with_kwargs(session, **kwargs) -> UserOrm | None:
 
 
 def _add_new_user_with_schema(user_schema: UserSchema, watch: bool = True) -> UserSchema | None:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         user_db = __add_user_with_kwargs(session, **user_schema.model_dump(), watch=watch)
         users_db = __get_users_filter_by(session, handle=user_schema.handle)
         if users_db == []:
@@ -166,7 +166,7 @@ def __update_user_with_id(session: Session, user_id: int, **kwargs) -> UserOrm |
 
 
 def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         user_db = __update_user_with_id(
             session, user_id=user_schema.id, **kwargs)
         user_schema = UserSchema.model_validate(

@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 from etr.utils.factory import create_problem_model
 from etr.library.codeforces.codeforces_utils import get_problem_with_contest
-from etr.db import get_db
+from etr import db
 from etr.models.problem import ProblemOrm
 from etr.schemas.problem import ProblemSchema
 from etr.utils.factory import create_problem_model
@@ -11,17 +11,13 @@ from etr.utils.factory import create_problem_model
 
 def _add_problem_schema_to_db(problem_schema: ProblemSchema) -> ProblemSchema | None:
     """ add problem schema to db """
+    with db.SessionLocal() as session:
+        problem = create_problem_model(**problem_schema.model_dump())
+        if problem is None:
+            return None
 
-    problem = create_problem_model(**problem_schema.model_dump())
-    if problem is None:
-        return None
-
-    try:
-        with get_db() as session:
-            session.add(problem)
-            session.commit()
-    except:
-        return None
+        session.add(problem)
+        session.commit()
 
     return problem_schema
 
@@ -43,7 +39,7 @@ def add_problems(contest_id: int) -> list[ProblemSchema]:
 
 
 def _get_problems_db_with_contest_id(contest_id: int) -> ProblemOrm:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         problems = session.query(ProblemOrm).filter(
             ProblemOrm.contest_id == contest_id
         ).all()
@@ -70,7 +66,7 @@ def get_problems_with_contest_id(contest_id: int) -> list[ProblemSchema] | None:
 def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     """ return True if no the task in contest, else False """
 
-    with get_db() as session:
+    with db.SessionLocal() as session:
         problem_db = session.query(ProblemOrm).filter_by(
             contest_id=contest_id,
             index=problemSchema.index
@@ -105,7 +101,7 @@ def __get_problems(session: Session, **kwargs) -> list[ProblemOrm]:
 
 
 def _get_problems(**kwargs):
-    with get_db() as session:
+    with db.SessionLocal() as session:
         problems = __get_problems(session, **kwargs)
         for i, _ in enumerate(problems):
             problems[i].tags = [tag.tag for tag in problems[i].tags]

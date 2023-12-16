@@ -3,7 +3,7 @@ import copy
 
 from sqlalchemy.orm import Session
 
-from etr.db import get_db
+from etr import db
 from etr.models.submission import SubmissionOrm
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.team import TeamSchema
@@ -78,7 +78,8 @@ def _check_submission_update(submission_schema: SubmissionSchema, **kwargs) -> b
             setattr(copy_submission_schema, key, value)
 
         check_submission_schema = SubmissionSchema(
-            **copy_submission_schema.model_dump())
+            **copy_submission_schema.model_dump()
+        )
     except:
         return False
 
@@ -91,7 +92,7 @@ def _update_submission_db(submission_schema: SubmissionSchema, **kwargs) -> Subm
     if not _check_submission_update(submission_schema, **kwargs):
         return None
 
-    with get_db() as session:
+    with db.SessionLocal() as session:
         submission_db = __get_submission_db(session, id=submission_schema.id)
 
         if submission_db is None:
@@ -136,7 +137,7 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
         # TODO: raise Exception
         return None
 
-    with get_db() as session:
+    with db.SessionLocal() as session:
         __add_submission_db(session, **params)
         submission_db = __get_submission_db(session, id=params["id"])
         if submission_db is None:
@@ -147,7 +148,7 @@ def _add_submission_with_schema(submission_schema: SubmissionSchema) -> Submissi
 
 
 def _get_submissions_with_kwargs(**kwargs) -> list[SubmissionSchema] | None:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         submissions_db = __get_submissions_db(session, **kwargs)
 
         submissions_schema = [
@@ -159,7 +160,7 @@ def _get_submissions_with_kwargs(**kwargs) -> list[SubmissionSchema] | None:
 
 
 def _get_submission_with_kwargs(**kwargs) -> SubmissionSchema | None:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         submission_db = __get_submission_db(session, **kwargs)
 
         if submission_db is None:
@@ -290,7 +291,7 @@ def __delete_submissions(session: Session, **kwargs) -> list[SubmissionSchema]:
 
 
 def _delete_submissions(**kwargs) -> int:
-    with get_db() as session:
+    with db.SessionLocal() as session:
         cnt = __delete_submissions(session, **kwargs)
         session.commit()
     return cnt
