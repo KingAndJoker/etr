@@ -3,14 +3,15 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
-from .config import config, Config
+from etr import config
+from etr import db
 
 
-def create_app(**kwargs):
+# TODO: https://fastapi.tiangolo.com/advanced/settings/
+def create_app():
     """Create and configure an instance of the FastAPI application."""
 
-    global config
-    config = Config(**kwargs)
+    db.init_db(engine=db.engine)
 
     app = FastAPI(
         openapi_url=config.URL_PREFIX + "/openapi.json",
