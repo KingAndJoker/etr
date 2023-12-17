@@ -8,8 +8,10 @@ from etr.services.user import update_user
 from etr.services.user import (
     update_user_info_from_codeforces as services_update_user_info_from_codeforces,
 )
+from etr.services.user import get_user_contests
 from etr.schemas.user import UserRequestAddCodeforcesSchema
 from etr.schemas.user import UserPatch
+from etr.schemas.contest import ContestSchema
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 
 
@@ -82,3 +84,8 @@ def update_user_from_codeforces(handle: str):
         return {"status": "error"}
 
     return {"status": "ok", "user": user}
+
+
+@router.get("/{handle}/contests")
+def api_get_user_contests(handle: str) -> list[ContestSchema]:
+    return get_user_contests(handle)
