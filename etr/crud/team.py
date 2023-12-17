@@ -5,8 +5,8 @@ from etr import db
 from etr.models.team import TeamOrm
 from etr.models.user import UserOrm
 from etr.schemas.team import TeamSchema
-from etr.services.user import get_user
-from etr.services.user import add_user
+from etr.crud.user import get_user
+from etr.crud.user import add_user
 
 
 def __get_teams_db(session: Session, **kwargs) -> list[TeamOrm] | None:
