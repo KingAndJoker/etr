@@ -1,7 +1,7 @@
 from fastapi import APIRouter
 
-from etr.services.submission import get_submissions
-from etr.services.submission import delete_submissions
+from etr.crud.submission import get_submissions
+from etr.crud.submission import delete_submissions
 from etr.schemas.user import ContestantType
 from etr.utils.api.generate import generate_kwargs
 
