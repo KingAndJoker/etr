@@ -10,10 +10,12 @@ from etr.services.user import (
     update_user_info_from_codeforces as services_update_user_info_from_codeforces,
 )
 from etr.services.user import get_user_contests
+from etr.services.user import services_get_solved_problems
 from etr.schemas.user import UserRequestAddCodeforcesSchema
 from etr.schemas.user import UserPatch
 from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
+from etr.schemas.problem import ProblemSchema
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 
 
@@ -104,3 +106,10 @@ def api_delete_user(user_id: int) -> UserSchema:
     """
     user = services_delete_user(user_id)
     return user
+
+
+@router.get("/{handle}/problems/solved")
+def api_solved_problem(handle: str) -> list[ProblemSchema]:
+    
+    problems = services_get_solved_problems(handle)
+    return problems

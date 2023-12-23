@@ -3,6 +3,7 @@ from fastapi import HTTPException
 from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
 from etr.schemas.team import TeamSchema
+from etr.schemas.problem import ProblemSchema
 from etr.crud.submission import get_submissions
 from etr.crud.team import get_teams
 from etr.crud.contest import get_contests
@@ -100,3 +101,14 @@ def services_delete_user(user_id: int) -> UserSchema:
     if cnt != 1:
         raise HTTPException(500, "Количество удаленных пользователей не равно 1.")
     return user
+
+
+def services_get_solved_problems(handle) -> list[ProblemSchema]:
+    user = get_user(handle)
+    submissions = get_submissions(author_id=user.id, verdict="OK")
+    teams = get_user_teams_by_handle(handle)
+    for team in teams:
+        submissions += get_submissions(team_id=team.id, verdict="OK")
+    
+    problems = [submission.problem for submission in submissions]
+    return problems
