@@ -24,7 +24,7 @@ class ProblemSchema(BaseModel):
     type: str | None = None
     points: float | None = None
     rating: int | None = None
-    tags: list[str] | None = None
+    tags: list[str] | None = Field(None, )
 
     @validator("tags", pre=True)
     def check_tags(cls, tags: list[TagOrm] | list[str]):
@@ -37,3 +37,8 @@ class ProblemSchema(BaseModel):
             tag.tag
             for tag in tags
         ]
+
+
+class ProblemSchemaFrozen(ProblemSchema):
+    model_config = ConfigDict(frozen=True)
+    tags: tuple[str, ...] | None = None

@@ -4,6 +4,7 @@ from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
 from etr.schemas.team import TeamSchema
 from etr.schemas.problem import ProblemSchema
+from etr.schemas.problem import ProblemSchemaFrozen
 from etr.crud.submission import get_submissions
 from etr.crud.team import get_teams
 from etr.crud.contest import get_contests
@@ -21,12 +22,11 @@ def sync_user_with_dl():
     users_schema = get_users()
     for dl_user in sync_users_schema:
         if dl_user.handle in (user_schema.handle for user_schema in users_schema):
-            update_user_schema = get_user(
-                handle=dl_user.handle
-            )
+            update_user_schema = get_user(handle=dl_user.handle)
             params = {
                 key: value
-                for key, value in dl_user.model_dump(exclude=("id")).items() if value is not None
+                for key, value in dl_user.model_dump(exclude=("id")).items()
+                if value is not None
             }
             update_user(update_user_schema.id, **params)
         else:
@@ -34,16 +34,12 @@ def sync_user_with_dl():
 
 
 def add_user_from_codeforces(handle: str, lang: str = "ru") -> UserSchema | None:
-    user_schema = convert_codeforces_user_schema(
-        get_codeforces_user(handle, lang=lang)
-    )
+    user_schema = convert_codeforces_user_schema(get_codeforces_user(handle, lang=lang))
     return add_user(user_schema)
 
 
 def update_user_info_from_codeforces(handle: str) -> UserSchema | None:
-    user_new = convert_codeforces_user_schema(
-        get_codeforces_user(handle, lang="ru")
-    )
+    user_new = convert_codeforces_user_schema(get_codeforces_user(handle, lang="ru"))
     if user_new is None:
         return None
 
@@ -53,7 +49,8 @@ def update_user_info_from_codeforces(handle: str) -> UserSchema | None:
 
     params = {
         key: value
-        for key, value in user_new.model_dump(exclude=("id")).items() if value is not None
+        for key, value in user_new.model_dump(exclude=("id")).items()
+        if value is not None
     }
     return_user = update_user(user_etr.id, **params)
     return return_user
@@ -61,12 +58,7 @@ def update_user_info_from_codeforces(handle: str) -> UserSchema | None:
 
 def get_user_teams_by_handle(handle: str) -> list[TeamSchema]:
     return [
-        team
-        for team in get_teams()
-        if handle in [
-            user.handle
-            for user in team.users
-        ]
+        team for team in get_teams() if handle in [user.handle for user in team.users]
     ]
 
 
@@ -77,18 +69,11 @@ def get_user_contests(handle: str) -> list[ContestSchema]:
 
     for team in teams:
         submissions += get_submissions(team_id=team.id)
-    
-    contests_id = list(
-        set([submission.contest_id for submission in submissions])
-    )
 
-    contests = [
-        contest
-        for contest in get_contests()
-        if contest.id in contests_id
-    ]
+    contests_id = list(set([submission.contest_id for submission in submissions]))
+
+    contests = [contest for contest in get_contests() if contest.id in contests_id]
     return contests
-
 
 
 def services_delete_user(user_id: int) -> UserSchema:
@@ -109,6 +94,13 @@ def services_get_solved_problems(handle) -> list[ProblemSchema]:
     teams = get_user_teams_by_handle(handle)
     for team in teams:
         submissions += get_submissions(team_id=team.id, verdict="OK")
-    
-    problems = [submission.problem for submission in submissions]
+
+    problems = list(
+        set(
+            [
+                ProblemSchemaFrozen(**submission.problem.model_dump())
+                for submission in submissions
+            ]
+        )
+    )
     return problems
