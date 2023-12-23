@@ -1,3 +1,5 @@
+from fastapi import HTTPException
+
 from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
 from etr.schemas.team import TeamSchema
@@ -5,6 +7,7 @@ from etr.crud.submission import get_submissions
 from etr.crud.team import get_teams
 from etr.crud.contest import get_contests
 from etr.crud.user import get_user, get_users, add_user, update_user
+from etr.crud.user import delete_user
 from etr.library.codeforces.codeforces_utils import get_user as get_codeforces_user
 from etr.library.dl_gsu_by_codeforces.parse_students import get_students
 from etr.utils.codeforces.convert import convert_codeforces_user_schema
@@ -84,3 +87,16 @@ def get_user_contests(handle: str) -> list[ContestSchema]:
         if contest.id in contests_id
     ]
     return contests
+
+
+
+def services_delete_user(user_id: int) -> UserSchema:
+    users = get_users(id=user_id)
+    if users == []:
+        raise HTTPException(404, "Пользователь не найден.")
+    user = users[0]
+
+    cnt = delete_user(user_id)
+    if cnt != 1:
+        raise HTTPException(500, "Количество удаленных пользователей не равно 1.")
+    return user

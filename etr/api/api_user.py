@@ -3,7 +3,8 @@
 from fastapi import APIRouter
 
 from etr.services.user import get_users
-from etr.services.user import add_user
+from etr.services.user import add_user_from_codeforces
+from etr.services.user import services_delete_user
 from etr.services.user import update_user
 from etr.services.user import (
     update_user_info_from_codeforces as services_update_user_info_from_codeforces,
@@ -11,6 +12,7 @@ from etr.services.user import (
 from etr.services.user import get_user_contests
 from etr.schemas.user import UserRequestAddCodeforcesSchema
 from etr.schemas.user import UserPatch
+from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 
@@ -57,7 +59,7 @@ def new_user(user: UserRequestAddCodeforcesSchema, lang: str | None = "ru"):
     if handle is None:
         return {"status": "error", "message": "handle is missing"}
 
-    user_schema = add_user(handle, lang)
+    user_schema = add_user_from_codeforces(user.handle)
 
     if user_schema is None:
         return {"status": "error", "message": "user not added"}
@@ -89,3 +91,16 @@ def update_user_from_codeforces(handle: str):
 @router.get("/{handle}/contests")
 def api_get_user_contests(handle: str) -> list[ContestSchema]:
     return get_user_contests(handle)
+
+
+@router.delete("/{user_id}", deprecated=True)
+def api_delete_user(user_id: int) -> UserSchema:
+    """
+    Удаляет пользователя из базы данных.
+
+    Не рекомендуется к использованию т.к. пользователь может быть частью команды и при удалении команда будет не полной.
+
+    Рекомендуется изменить поле watch у пользователя, используя **PATCH** метод.
+    """
+    user = services_delete_user(user_id)
+    return user

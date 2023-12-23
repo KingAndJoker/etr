@@ -127,3 +127,18 @@ def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
             UserSchema.model_validate(user_db) if user_db is not None else None
         )
     return user_schema
+
+
+def __delete_user_with_id(session: Session, user_id: int) -> int:
+    return session.query(UserOrm).filter_by(id=user_id).delete()
+
+
+def _delete_user(user_id: int) -> int:
+    with db.SessionLocal() as session:
+        cnt = __delete_user_with_id(session, user_id)
+        session.commit()
+        return cnt
+
+
+def delete_user(user_id: int) -> int:
+    return _delete_user(user_id)
