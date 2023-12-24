@@ -63,7 +63,7 @@ def get_problems_with_contest_id(contest_id: int) -> list[ProblemSchema] | None:
     return problems
 
 
-def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
+def is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     """ return True if no the task in contest, else False """
 
     with db.SessionLocal() as session:
@@ -73,26 +73,6 @@ def _is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
         ).one_or_none()
 
     return problem_db is None
-
-
-def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
-    """ add missing problem to db. Return list of added problems. """
-
-    problems_schema = convert_codeforces_problems_schema(
-        get_problem_with_contest(contest_id)
-    )
-
-    added_problems_schema: list[ProblemSchema] = list()
-
-    for problem_schema in problems_schema:
-        if _is_missing_problem(problem_schema, contest_id):
-            problem_schema_returned = _add_problem_schema_to_db(problem_schema)
-            if problem_schema_returned is not None:
-                added_problems_schema.append(problem_schema_returned)
-        else:
-            pass
-
-    return added_problems_schema
 
 
 def __get_problems(session: Session, **kwargs) -> list[ProblemOrm]:
@@ -112,3 +92,7 @@ def _get_problems(**kwargs):
 def get_problems(**kwargs) -> list[ProblemSchema]:
     problems = _get_problems(**kwargs)
     return problems
+
+
+def add_problem(problem: ProblemSchema) -> ProblemSchema:
+    return _add_problem_schema_to_db(problem)
