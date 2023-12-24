@@ -6,6 +6,7 @@ from etr.events.contest import ParseCodeforcesGym
 from etr.events.contest import AddContest
 from etr.exceptions.events import EventValueError
 from etr.services.contest import add_contest_with_schema
+from etr.services.problem import add_problem
 from etr.library.codeforces.codeforces_utils import get_contest
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 
@@ -91,6 +92,10 @@ def handle_add_contest(
     result_of_handle_event = ResultOfHandleEvent()
 
     contest = add_contest_with_schema(event.contest)
-    result_of_handle_event.results = [contest]
+    problems = [
+        add_problem(problem)
+        for problem in event.contest.problems
+    ]
+    result_of_handle_event.results = [contest] + problems
 
     return result_of_handle_event
