@@ -1,6 +1,8 @@
 """Codeforces Contest schema"""
 from pydantic import BaseModel, ConfigDict
 
+from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
+
 
 class CodeforcesContestSchema(BaseModel):
     """Codeforces Contest schema"""
@@ -26,3 +28,4 @@ class CodeforcesContestSchema(BaseModel):
     country: str | None = None
     city: str | None = None
     season: str | None = None
+    problems: list[CodeforcesProblemSchema] | None = None

@@ -9,15 +9,17 @@ from etr.library.codeforces.schemas.user import CodeforcesUserSchema
 from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
 
 
-def get_contest(contest_id: int, *,
-                as_manager: bool | None = None,
-                from_: int | None = None,
-                count: int | None = None,
-                handles: list[str] | None = None,
-                room: int | str | None = None,
-                show_unofficial: bool | None = None,
-                lang: str = "en") -> CodeforcesContestSchema | None:
-
+def get_contest(
+    contest_id: int,
+    *,
+    as_manager: bool | None = None,
+    from_: int | None = None,
+    count: int | None = None,
+    handles: list[str] | None = None,
+    room: int | str | None = None,
+    show_unofficial: bool | None = None,
+    lang: str = "en",
+) -> CodeforcesContestSchema | None:
     if handles is not None:
         handles = ";".join(handles)
 
@@ -30,7 +32,7 @@ def get_contest(contest_id: int, *,
         handles=handles,
         room=room,
         showUnofficial=show_unofficial,
-        lang=lang
+        lang=lang,
     )
 
     response = requests.get(contest_url)
@@ -47,8 +49,12 @@ def get_contest(contest_id: int, *,
     contest: CodeforcesContestSchema | None = None
     if response_json["status"] == "OK":
         try:
-            contest = CodeforcesContestSchema(
-                **response_json["result"]["contest"])
+            print(response_json["result"]["problems"])
+            contest = CodeforcesContestSchema(**response_json["result"]["contest"])
+            contest.problems = [
+                CodeforcesProblemSchema(**problem)
+                for problem in response_json["result"]["problems"]
+            ]
         except Exception as exp:
             print(exp)
 
@@ -56,12 +62,14 @@ def get_contest(contest_id: int, *,
 
 
 def get_submission(
-        contestId: int, *,
-        as_manager: bool | None = None,
-        handle: str | None = None,
-        from_: int | None = None,
-        count: int | None = None,
-        lang: str = "en") -> list[CodeforcesSubmissionSchema] | None:
+    contestId: int,
+    *,
+    as_manager: bool | None = None,
+    handle: str | None = None,
+    from_: int | None = None,
+    count: int | None = None,
+    lang: str = "en",
+) -> list[CodeforcesSubmissionSchema] | None:
     submission_url = generate_url(
         "contest.status",
         contestId=contestId,
@@ -69,7 +77,7 @@ def get_submission(
         handle=handle,
         from_=from_,
         count=count,
-        lang=lang
+        lang=lang,
     )
 
     submissions: list[CodeforcesSubmissionSchema] | None = None
@@ -92,7 +100,9 @@ def get_submission(
         print(f"length submissions answer: {len(response_json['result'])}")
 
         for i, submission in enumerate(response_json["result"]):
-            response_json["result"][i]["type_of_member"] = submission["author"]["participantType"]
+            response_json["result"][i]["type_of_member"] = submission["author"][
+                "participantType"
+            ]
             if "teamName" in response_json["result"][i]["author"]:
                 team_users = [
                     CodeforcesUserSchema(handle=user["handle"])
@@ -108,9 +118,7 @@ def get_submission(
                 )
 
         submissions = [
-            CodeforcesSubmissionSchema(
-                **submission
-            )
+            CodeforcesSubmissionSchema(**submission)
             for submission in response_json["result"]
         ]
 
@@ -118,11 +126,7 @@ def get_submission(
 
 
 def get_user(handle: str, lang: str = "en") -> CodeforcesUserSchema | None:
-    user_url = generate_url(
-        "user.info",
-        handles=handle,
-        lang=lang
-    )
+    user_url = generate_url("user.info", handles=handle, lang=lang)
 
     response = requests.get(user_url)
 
@@ -141,26 +145,24 @@ def get_user(handle: str, lang: str = "en") -> CodeforcesUserSchema | None:
     return user
 
 
-def get_users(handles: list[str], lang: str = "en") -> list[CodeforcesUserSchema | None]:
+def get_users(
+    handles: list[str], lang: str = "en"
+) -> list[CodeforcesUserSchema | None]:
     users: list[CodeforcesUserSchema | None] = [
-        get_user(handle, lang=lang)
-        for handle in handles
+        get_user(handle, lang=lang) for handle in handles
     ]
     return users
 
 
-def get_problem_with_contest(contest_id: int, *, lang: str = "en") -> list[CodeforcesProblemSchema] | None:
+def get_problem_with_contest(
+    contest_id: int, *, lang: str = "en"
+) -> list[CodeforcesProblemSchema] | None:
     problem_url = generate_url(
-        "contest.standings",
-        contestId=contest_id,
-        from_=1,
-        count=1,
-        lang=lang
+        "contest.standings", contestId=contest_id, from_=1, count=1, lang=lang
     )
 
     response = requests.get(problem_url)
     if response.status_code != 200:
-        print(1)
         return None
 
     try:
