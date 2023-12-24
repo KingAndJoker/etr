@@ -95,7 +95,9 @@ def get_problems(**kwargs) -> list[ProblemSchema]:
 
 
 def add_problem(problem: ProblemSchema) -> ProblemSchema:
-    return _add_problem_schema_to_db(problem)
+    _add_problem_schema_to_db(problem)
+    problem = get_problems(index=problem.index, contest_id=problem.contest_id)[0]
+    return problem
 
 
 def delete_problems(**kwargs) -> list[ProblemSchema]:
