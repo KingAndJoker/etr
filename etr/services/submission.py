@@ -20,7 +20,7 @@ def update_submissions_with_codeforces(
 ) -> list[SubmissionSchema] | None:
     added_submissions = list()
 
-    handles = [user.handle for user in get_users()]
+    handles = [user.handle.lower() for user in get_users()]
     teams_id = [team.id for team in get_teams()]
 
     cf_subs_json = contest.status_json(contestId=contest_id)

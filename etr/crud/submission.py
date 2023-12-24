@@ -199,7 +199,7 @@ def is_our_submission(
     """
     if "teamId" not in submission["author"]:
         if submission["author"]["members"] != []:
-            return submission["author"]["members"][0]["handle"] in handles
+            return submission["author"]["members"][0]["handle"].lower() in handles
         else:
             return False
     else:

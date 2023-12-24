@@ -6,6 +6,7 @@ from etr.models.team import TeamOrm
 from etr.models.user import UserOrm
 from etr.schemas.team import TeamSchema
 from etr.crud.user import get_user
+from etr.crud.user import get_users
 from etr.crud.user import add_user
 
 
@@ -149,8 +150,9 @@ def is_our_team_json(author: dict) -> bool:
     Returns:
         bool: if user (one or more) is ours then returns True
     """
+    users = get_users()
+    handles = [user.handle.lower() for user in users]
     for member in author["members"]:
-        user = get_user(handle=member["handle"])
-        if user is not None:
+        if member["handle"].lower() in handles:
             return True
     return False
