@@ -33,7 +33,7 @@ def new_contest(contest_url: Annotated[str, Form()], request: Request):
     event = ParseContestBeforeUpdate(url)
     results = handler(event)
 
-    return RedirectResponse("/etr")
+    return RedirectResponse("/etr/", status_code=303)
 
 
 @router.get("/{contest_id}")
