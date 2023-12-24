@@ -165,5 +165,6 @@ def convert_codeforces_contest_schema(codeforces_contest: CodeforcesContestSchem
         city=codeforces_contest.city,
         season=codeforces_contest.season,
     )
+    contest.problems = convert_codeforces_problems_schema(codeforces_contest.problems)
 
     return contest
