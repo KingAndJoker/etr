@@ -96,3 +96,16 @@ def get_problems(**kwargs) -> list[ProblemSchema]:
 
 def add_problem(problem: ProblemSchema) -> ProblemSchema:
     return _add_problem_schema_to_db(problem)
+
+
+def delete_problems(**kwargs) -> list[ProblemSchema]:
+    with db.SessionLocal() as session:
+        problems_orm = session.query(ProblemOrm).filter_by(**kwargs).all()
+        for problem in problems_orm:
+            session.delete(problem)
+        problems = [
+            ProblemSchema.model_validate(problem)
+            for problem in problems_orm
+        ]
+        session.commit()
+    return problems

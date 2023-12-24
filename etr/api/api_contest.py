@@ -1,9 +1,13 @@
 from typing import Any
 
 from fastapi import APIRouter
+from fastapi import HTTPException
 
-from etr.services.contest import get_contests, get_contest_table_rows
+from etr.services.contest import get_contests
+from etr.services.contest import get_contest_table_rows
 from etr.services.contest import update_contest
+from etr.services.contest import delete_contest_and_deps
+from etr.schemas.contest import ContestSchema
 
 
 router = APIRouter(prefix="/contest", tags=["contests"])
@@ -44,3 +48,24 @@ def api_update_contest(contest_id: int, contest_update_fields: dict[str, Any]):
         return {"status": "error"}
 
     return {"status": "ok", "contest": contest}
+
+
+@router.delete("/contest/{contest_id}")
+def api_delete_contest(contest_id: int) -> ContestSchema:
+    """удаляет контест с заданным contest_id
+
+    Args:
+
+        contest_id (int): id контеста
+
+    Raises:
+
+        HTTPException: вызывается с статус кодом 404 если контест не найден.
+
+    Returns:
+        ContestSchema: схема контеста
+    """
+    contest = delete_contest_and_deps(contest_id)
+    if contest is None:
+        raise HTTPException(status_code=404, detail="Contest not found")
+    return contest

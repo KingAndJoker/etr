@@ -10,6 +10,9 @@ from etr.crud.submission import get_submissions
 from etr.crud.contest import get_contests
 from etr.crud.contest import add_contest_with_schema
 from etr.crud.contest import update_contest
+from etr.crud.contest import delete_contest
+from etr.crud.submission import delete_submissions
+from etr.crud.problem import delete_problems
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
 
 
@@ -77,3 +80,10 @@ def get_contest_table_rows(contest_id: int) -> list:
             rows.append({"team": team, "submissions": submissions})
 
     return rows
+
+
+def delete_contest_and_deps(contest_id: int) -> ContestSchema:
+    contest = delete_contest(contest_id)
+    delete_submissions(contest_id=contest_id)
+    delete_problems(contest_id=contest_id)
+    return contest

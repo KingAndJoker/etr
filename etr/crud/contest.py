@@ -3,7 +3,6 @@ from sqlalchemy.orm import Session
 from etr import db
 from etr.models.contest import ContestOrm
 from etr.schemas.contest import ContestSchema
-from etr.crud.problem import add_problems_with_cf
 from etr.utils.factory import create_contest_model
 
 
@@ -85,4 +84,15 @@ def update_contest(contest_id: int, **kwargs):
         return None
     contest = contests[0]
     contest = _update_contest(contest, **kwargs)
+    return contest
+
+
+def delete_contest(contest_id: int) -> ContestSchema | None:
+    with db.SessionLocal() as session:
+        contest_orm = session.query(ContestOrm).filter_by(id=contest_id).one_or_none()
+        if contest_orm is None:
+            return None
+        contest = ContestSchema.model_validate(contest_orm)
+        session.delete(contest_orm)
+        session.commit()
     return contest
