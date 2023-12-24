@@ -82,10 +82,10 @@ def __get_problems(session: Session, **kwargs) -> list[ProblemOrm]:
 
 def _get_problems(**kwargs):
     with db.SessionLocal() as session:
-        problems = __get_problems(session, **kwargs)
-        for i, _ in enumerate(problems):
-            problems[i].tags = [tag.tag for tag in problems[i].tags]
-        problems = [ProblemSchema.model_validate(problem) for problem in problems]
+        problems_orm = __get_problems(session, **kwargs)
+        problems = [ProblemSchema.model_validate(problem) for problem in problems_orm]
+        for i, _ in enumerate(problems_orm):
+            problems[i].tags = [tag.tag for tag in problems_orm[i].tags]
     return problems
 
 
