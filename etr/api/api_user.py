@@ -1,5 +1,4 @@
 """API problem"""
-# from flask import Blueprint, request
 from fastapi import APIRouter
 
 from etr.services.user import get_users
@@ -16,6 +15,7 @@ from etr.schemas.user import UserPatch
 from etr.schemas.user import UserSchema
 from etr.schemas.contest import ContestSchema
 from etr.schemas.problem import ProblemSchema
+from etr.schemas.problem import VerdictType
 from etr.utils.api.api_user import generate_kwargs_for_get_users
 
 
@@ -108,8 +108,24 @@ def api_delete_user(user_id: int) -> UserSchema:
     return user
 
 
-@router.get("/{handle}/problems/solved")
-def api_solved_problem(handle: str) -> list[ProblemSchema]:
-    
-    problems = services_get_solved_problems(handle)
+@router.get("/{user_id}/problems")
+def api_get_problems_by_user(
+    user_id: str, verdict: VerdictType | None = None
+) -> list[ProblemSchema]:
+    """Метод возвращает задачи пользователя
+
+    Args:
+
+        user_id (str): id пользователя
+
+        verdict (VerdictType | None, optional): Тип вердикта. По умолчанию не нужен.
+
+    Returns:
+        list[ProblemSchema]: Возвращает список проблем с которыми взаимодействовал пользователь.
+    """
+    params = {"id": user_id, "verdict": verdict.value}
+    params = {
+        key: value for key, value in params.items() if value is not None and value
+    }
+    problems = services_get_solved_problems(**params)
     return problems

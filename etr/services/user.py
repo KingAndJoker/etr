@@ -88,12 +88,15 @@ def services_delete_user(user_id: int) -> UserSchema:
     return user
 
 
-def services_get_solved_problems(handle) -> list[ProblemSchema]:
-    user = get_user(handle)
-    submissions = get_submissions(author_id=user.id, verdict="OK")
-    teams = get_user_teams_by_handle(handle)
+def services_get_solved_problems(id: int, **kwargs) -> list[ProblemSchema]:
+    users = get_users(id=id)
+    if users == []:
+        return []
+    user = users[0]
+    submissions = get_submissions(author_id=user.id, **kwargs)
+    teams = get_user_teams_by_handle(user.handle)
     for team in teams:
-        submissions += get_submissions(team_id=team.id, verdict="OK")
+        submissions += get_submissions(team_id=team.id, **kwargs)
 
     problems = list(
         set(
