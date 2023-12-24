@@ -13,11 +13,6 @@ from etr.services.problem import get_problems_with_contest_id
 from etr.crud.team import get_teams
 from etr.crud.team import add_team_with_schema
 from etr.crud.user import get_user
-from etr.library.codeforces import contest
-from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
-from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
-from etr.utils.codeforces.convert import convert_codeforces_submission_schema
-from etr.utils.codeforces.convert import convert_codeforces_team_schema
 
 
 def __get_submissions_db(session: Session, **kwargs) -> list[SubmissionOrm] | None:
