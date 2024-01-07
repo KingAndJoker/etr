@@ -6,3 +6,4 @@ python-dotenv
 PyMySQL
 mysql-connector-python
 alembic
+beautifulsoup4
