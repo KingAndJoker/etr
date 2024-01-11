@@ -2,6 +2,7 @@
 from threading import Thread
 
 from fastapi import APIRouter
+from sqlalchemy import text
 
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.problem import add_tag_for_problem
@@ -12,6 +13,7 @@ from etr.services.user import sync_user_with_dl
 from etr.library.codeforces.codeforces_utils import (
     get_contest as get_codeforces_contest,
 )
+from etr import db
 from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 
 
@@ -32,7 +34,8 @@ def update_submission_info(contest_id: int):
     """update submissions with codeforces in db"""
 
     # TODO: write update submissions for specific user
-    Thread(target=update_submissions_with_codeforces, args=(contest_id,)).start()
+    Thread(target=update_submissions_with_codeforces,
+           args=(contest_id,)).start()
 
     return {"status": "ok"}
 
@@ -44,7 +47,8 @@ def update_tag_codeforces():
         if not contest.type_of_source.startswith("codeforces"):
             continue
         codeforces_contest = get_codeforces_contest(contest.id)
-        cf_problems = convert_codeforces_problems_schema(codeforces_contest.problems)
+        cf_problems = convert_codeforces_problems_schema(
+            codeforces_contest.problems)
         for problem in contest.problems:
             [cf_problem] = [
                 cf_problem
@@ -71,3 +75,24 @@ def sync_with_dl():
         raise
 
     return {"status": "ok"}
+
+
+@router.get("/sql_exec/")
+def sql_exec(sql: str) -> list[dict]:
+    """Метод позволяет выполнять SQL запросы для быстрого решение проблем
+
+    Args:
+
+        sql (str): SQL скрипт
+
+    Returns:
+
+        list[dict]: результат выполнения запроса от СУБД
+    """
+    response = []
+    with db.engine.connect() as connection:
+        result = connection.execute(text(sql))
+        if not sql.lower().startswith("delete"):
+            response = result.mappings().all()
+        connection.commit()
+    return response
