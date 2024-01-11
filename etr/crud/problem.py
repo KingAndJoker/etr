@@ -38,15 +38,12 @@ def add_problems_with_cf(contest_id: int) -> list[ProblemSchema]:
     return added_problems_schema
 
 
-def _get_problems_db_with_contest_id(contest_id: int) -> ProblemOrm:
+def _get_problems_db_with_contest_id(contest_id: int) -> list[ProblemSchema]:
+    problems = []
     with db.SessionLocal() as session:
-        problems = session.query(ProblemOrm).filter(
-            ProblemOrm.contest_id == contest_id
-        ).all()
-
-        for i, _ in enumerate(problems):
-            problems[i].tags = [tag.tag for tag in problems[i].tags]
-
+        problems_orm = __get_problems(session, contest_id=contest_id)
+        for problem_orm in problems_orm:
+            problems.append(ProblemSchema.model_validate(problem_orm))
     return problems
 
 
@@ -83,7 +80,8 @@ def __get_problems(session: Session, **kwargs) -> list[ProblemOrm]:
 def _get_problems(**kwargs):
     with db.SessionLocal() as session:
         problems_orm = __get_problems(session, **kwargs)
-        problems = [ProblemSchema.model_validate(problem) for problem in problems_orm]
+        problems = [ProblemSchema.model_validate(
+            problem) for problem in problems_orm]
         for i, _ in enumerate(problems_orm):
             problems[i].tags = [tag.tag for tag in problems_orm[i].tags]
     return problems
@@ -96,7 +94,8 @@ def get_problems(**kwargs) -> list[ProblemSchema]:
 
 def add_problem(problem: ProblemSchema) -> ProblemSchema:
     _add_problem_schema_to_db(problem)
-    problem = get_problems(index=problem.index, contest_id=problem.contest_id)[0]
+    problem = get_problems(index=problem.index,
+                           contest_id=problem.contest_id)[0]
     return problem
 
 
