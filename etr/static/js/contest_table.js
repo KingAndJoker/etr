@@ -237,16 +237,22 @@ const create_table = (contest, rows) => {
                         if (type_of_submisions == "contest" || type_of_submisions == "virtual") {
                             if (row.user != undefined) {
                                 problem.score = get_points_from_codeforces(row.user.handle, submission.problem.index)
-                                table_row.score += problem.score
+                                if (problem.status == 0) {
+                                    table_row.score += problem.score
+                                }
                             }
                             else {
                                 problem.score = get_points_from_codeforces_team(row.team.team_name, submission.problem.index)
-                                table_row.score += problem.score
+                                if (problem.status == 0) {
+                                    table_row.score += problem.score
+                                }
                             }
                         }
                         else {
                             problem.score = submission.problem.points == null ? 1 : submission.problem.points
-                            table_row.score += problem.score
+                            if (problem.status == 0) {
+                                table_row.score += problem.score
+                            }
                         }
                         problem.status = 1
                         return problem
