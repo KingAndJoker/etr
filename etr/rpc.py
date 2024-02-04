@@ -7,6 +7,7 @@ from sqlalchemy import text
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.problem import add_tag_for_problem
 from etr.services.contest import update_contest_with_codeforces
+from etr.services.contest import update_students_cf_submissions
 from etr.services.contest import get_contests
 from etr.services.submission import update_submissions_with_codeforces
 from etr.services.user import sync_user_with_dl
@@ -96,3 +97,9 @@ def sql_exec(sql: str) -> list[dict]:
             response = result.mappings().all()
         connection.commit()
     return response
+
+
+@router.get("/contest/update_cf_student/")
+def update_submissions_of_student_from_cf(handle: str, contest_id: int):
+    submissions = update_students_cf_submissions(handle, contest_id)
+    return submissions
