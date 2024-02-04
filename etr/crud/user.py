@@ -42,7 +42,11 @@ def _get_users_db_with_handles(handles: list[str], **kwargs) -> list[UserSchema]
 
 
 def get_user(handle: str, **kwargs) -> UserSchema | None:
-    return _get_user_db_with_kwargs(handle=handle, **kwargs)
+    users = get_users(**kwargs)
+    for user in users:
+        if handle.lower() == user.handle.lower():
+            return user
+    return None
 
 
 def get_users(lang: str = "ru", **kwargs) -> list[UserSchema] | None:
@@ -122,7 +126,8 @@ def __update_user_with_id(session: Session, user_id: int, **kwargs) -> UserOrm |
 
 def _update_user_with_kwargs(user_schema: UserSchema, **kwargs) -> UserSchema:
     with db.SessionLocal() as session:
-        user_db = __update_user_with_id(session, user_id=user_schema.id, **kwargs)
+        user_db = __update_user_with_id(
+            session, user_id=user_schema.id, **kwargs)
         user_schema = (
             UserSchema.model_validate(user_db) if user_db is not None else None
         )
