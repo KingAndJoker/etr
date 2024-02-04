@@ -48,7 +48,10 @@ def status(contestId: int, *,
 
     submissions = []
     for submission_data in data["result"]:
-        submission = CodeforcesSubmissionSchema(**submission_data)
+        submission = CodeforcesSubmissionSchema(
+            **submission_data,
+            participantType=submission_data["author"]["participantType"]
+        )
         submissions.append(submission)
 
     return submissions

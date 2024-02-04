@@ -35,7 +35,7 @@ class CodeforcesSubmissionSchema(BaseModel):
     timeConsumedMillis: int | None = None
     memoryConsumedBytes: int | None = None
     points: float | None = None
-    type_of_member: str | None = None
+    participantType: str | None = None
 
     @validator("author", pre=True)
     def validate_author(

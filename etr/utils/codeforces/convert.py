@@ -85,7 +85,7 @@ def convert_codeforces_submission_schema(codeforces_submission: CodeforcesSubmis
         time_consumed_millis=codeforces_sub.timeConsumedMillis,
         memory_consumed_bytes=codeforces_sub.memoryConsumedBytes,
         points=codeforces_sub.points,
-        type_of_member=codeforces_sub.type_of_member,
+        type_of_member=codeforces_sub.participantType,
     )
 
     return submission
