@@ -39,3 +39,22 @@ def add_tag_for_problem(problem_id: int, tag: str):
     if get_tag_by_name(tag) is None:
         create_tag(tag)
     update_tag_by_problem(problem_id, tag)
+
+
+def update_tags_in_problem_of_contest(contest_id: int) -> list[ProblemSchema]:
+    cf_problems = convert_codeforces_problems_schema(
+        get_problem_with_contest(contest_id)
+    )
+    problems: list[ProblemSchema] = []
+    for cf_problem in cf_problems:
+        problem = get_problem(**cf_problem.model_dump())
+        if problem is None:
+            continue
+        for tag in cf_problem.tags:
+            if not tag in problem.tags:
+                add_tag_for_problem(problem.id, tag)
+
+        problem = get_problem(**cf_problem.model_dump())
+        problems.append(problem)
+
+    return problems

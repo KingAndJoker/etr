@@ -6,6 +6,7 @@ from sqlalchemy import text
 
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.problem import add_tag_for_problem
+from etr.services.problem import update_tags_in_problem_of_contest
 from etr.services.contest import update_contest_with_codeforces
 from etr.services.contest import update_students_cf_submissions
 from etr.services.contest import get_contests
@@ -103,3 +104,9 @@ def sql_exec(sql: str) -> list[dict]:
 def update_submissions_of_student_from_cf(handle: str, contest_id: int):
     submissions = update_students_cf_submissions(handle, contest_id)
     return submissions
+
+
+@router.get("/problem/update_tag/{contest_id}")
+def update_tags(contest_id: int):
+    problems = update_tags_in_problem_of_contest(contest_id)
+    return problems
