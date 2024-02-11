@@ -155,7 +155,7 @@ def get_users(
 
 
 def get_problem_with_contest(
-    contest_id: int, *, lang: str = "en"
+    contest_id: int, *, lang: str = "ru"
 ) -> list[CodeforcesProblemSchema] | None:
     problem_url = generate_url(
         "contest.standings", contestId=contest_id, from_=1, count=1, lang=lang
