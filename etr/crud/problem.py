@@ -92,6 +92,28 @@ def get_problems(**kwargs) -> list[ProblemSchema]:
     return problems
 
 
+def __get_problem(session: Session, **kwargs) -> ProblemOrm | None:
+    params = kwargs.copy()
+    if "id" in params:
+        params.pop("id")
+    if "tags" in params:
+        params.pop("tags")
+    return session.query(ProblemOrm).filter_by(**params).one_or_none()
+
+
+def _get_problem(**kwargs) -> ProblemSchema | None:
+    with db.SessionLocal() as session:
+        problem_orm = __get_problem(session, **kwargs)
+        if problem_orm is None:
+            return None
+        problem = ProblemSchema.model_validate(problem_orm)
+        return problem
+
+
+def get_problem(**kwargs) -> ProblemSchema | None:
+    return _get_problem(**kwargs)
+
+
 def add_problem(problem: ProblemSchema) -> ProblemSchema:
     _add_problem_schema_to_db(problem)
     problem = get_problems(index=problem.index,
