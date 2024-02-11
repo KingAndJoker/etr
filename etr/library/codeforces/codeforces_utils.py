@@ -49,7 +49,8 @@ def get_contest(
     contest: CodeforcesContestSchema | None = None
     if response_json["status"] == "OK":
         try:
-            contest = CodeforcesContestSchema(**response_json["result"]["contest"])
+            contest = CodeforcesContestSchema(
+                **response_json["result"]["contest"])
             contest.problems = [
                 CodeforcesProblemSchema(**problem)
                 for problem in response_json["result"]["problems"]
