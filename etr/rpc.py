@@ -21,9 +21,7 @@ from etr import db
 from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 
 
-# TODO: https://safjan.com/guide-building-python-rpc-server-using-flask/
 router = APIRouter()
-# bp = Blueprint("rpc", __name__)
 
 
 @router.get("/contest/{contest_id}")
