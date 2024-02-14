@@ -106,6 +106,7 @@ def _add_submission_with_schema(
         params["problem_id"] = problem.id
         params.pop("problem")
 
+    # TODO: убрать обращения к crud user во избежание циклических импортов
     if isinstance(submission_schema.author, TeamSchema):
         teams = get_teams(team_name=submission_schema.author.team_name)
         if teams == []:
