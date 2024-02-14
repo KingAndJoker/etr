@@ -2,8 +2,10 @@
 from threading import Thread
 
 from fastapi import APIRouter
+from fastapi.exceptions import HTTPException
 from sqlalchemy import text
 
+from etr import config
 from etr.services.problem import add_missing_problem_with_contest
 from etr.services.problem import add_tag_for_problem
 from etr.services.problem import update_tags_in_problem_of_contest
@@ -80,7 +82,7 @@ def sync_with_dl():
 
 
 @router.get("/sql_exec/")
-def sql_exec(sql: str) -> list[dict]:
+def sql_exec(sql: str, password: str) -> list[dict]:
     """Метод позволяет выполнять SQL запросы для быстрого решение проблем
 
     Args:
@@ -91,6 +93,8 @@ def sql_exec(sql: str) -> list[dict]:
 
         list[dict]: результат выполнения запроса от СУБД
     """
+    if config.SQL_PASSWORD != password:
+        raise HTTPException(403, "Forbidden. Wrong password.")
     response = []
     with db.engine.connect() as connection:
         result = connection.execute(text(sql))
