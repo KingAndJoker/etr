@@ -1,4 +1,4 @@
-fastapi[all]==0.104.1
+fastapi[all]==0.109.1
 pydantic==2.4.1
 Requests==2.31.0
 SQLAlchemy==2.0.20
