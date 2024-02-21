@@ -42,12 +42,13 @@ def __update_submission_db(
 ) -> SubmissionOrm | None:
     """update submission in db"""
     for field, value in kwargs.items():
-        setattr(submission, field, value)
+        if field != "problem" and field != "author" and field != "team":
+            setattr(submission, field, value)
     session.add(submission)
     session.commit()
 
     submission = (
-        session.query(SubmissionOrm).filter_by(id=submission.id, **kwargs).one_or_none()
+        session.query(SubmissionOrm).filter_by(id=submission.id).one_or_none()
     )
 
     return submission
