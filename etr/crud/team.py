@@ -5,6 +5,7 @@ from etr import db
 from etr.models.team import TeamOrm
 from etr.models.user import UserOrm
 from etr.schemas.team import TeamSchema
+from etr.schemas.user import UserSchema
 from etr.crud.user import get_user
 from etr.crud.user import get_users
 from etr.crud.user import add_user
@@ -87,22 +88,19 @@ def __add_team(session: Session, **kwargs) -> TeamOrm | None:
     return team
 
 
-def _check_members(team_schema: TeamSchema) -> None:
+def _add_missing_members(team_schema: TeamSchema) -> None:
     """
     check members in team
     if user not in db, add him
     """
-    missing_users = []
     members = team_schema.users
     for member in members:
         user_schema = get_user(
             handle=member.handle
         )
         if user_schema is None:
-            missing_users.append(member.handle)
-        user_schema = add_user(
-            handle=member.handle, lang="ru", watch=False
-        )
+            user_schema = UserSchema(handle=member.handle, watch=False)
+            user_schema = add_user(user_schema)
 
 
 def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
@@ -135,7 +133,7 @@ def add_team_with_schema(team: TeamSchema) -> TeamSchema:
     >>> add_team_with_schema(team_schema)
     """
 
-    _check_members(team)
+    _add_missing_members(team)
     team_schema = _add_team_db(team)
 
     return team_schema
