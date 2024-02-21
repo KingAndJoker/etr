@@ -54,7 +54,7 @@ class SubmissionOrm(Base):
     passed_test_count: Mapped[int] = mapped_column(nullable=True)
     time_consumed_millis: Mapped[int] = mapped_column(nullable=True)
     memory_consumed_bytes: Mapped[int] = mapped_column(nullable=True)
-    points: Mapped[int] = mapped_column(nullable=True)
+    points: Mapped[float] = mapped_column(nullable=True)
     type_of_member: Mapped[str] = mapped_column(
         nullable=True,
         type_=String(255),
