@@ -14,11 +14,24 @@ router = APIRouter(prefix="/contest", tags=["contests"])
 
 
 @router.get("/")
-def api_get_contests():
+def api_get_contests(index: int | None = None, count: int | None = None):
     """get contests"""
-    contests_schema = get_contests()
+    params = {
+        key: value
+        for key, value in dict(
+            contest_index=index,
+            contest_count=count,
+        ).items()
+        if value is not None
+    }
+    contests_schema = get_contests(**params)
 
-    return {"status": "ok", "contests": [contest for contest in contests_schema]}
+    contests = [contest for contest in contests_schema]
+    if index is not None:
+        contests = contests[index:]
+    if count is not None:
+        contests = contests[:count]
+    return {"status": "ok", "contests": contests}
 
 
 @router.get("/{contest_id}/table")
