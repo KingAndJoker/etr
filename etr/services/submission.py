@@ -1,6 +1,7 @@
 import time
 
 from etr.schemas.submission import SubmissionSchema
+from etr.crud.user import get_user
 from etr.crud.user import get_users
 from etr.crud.team import get_teams
 from etr.crud.team import add_team_with_schema
@@ -8,10 +9,17 @@ from etr.crud.team import is_our_team_json
 from etr.crud.submission import is_our_submission
 from etr.crud.submission import add_submission_with_schema
 from etr.crud.submission import get_submission
+from etr.crud.submission import update_submission
+from etr.crud.contest import get_contests
+from etr.events.contest import ParseCodeforcesContestByContestId
+from etr.handlers import handler
 from etr.library.codeforces import contest
+from etr.library.codeforces.user import status as user_status
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
+from etr.utils.services.contest import parse_url
 from etr.utils.codeforces.convert import convert_codeforces_submission_schema
+from etr.utils.codeforces.convert import convert_codeforces_submissions_schema
 from etr.utils.codeforces.convert import convert_codeforces_team_schema
 
 
@@ -74,3 +82,29 @@ def make_params_for_submission(submission: SubmissionSchema) -> dict:
         params.pop("author")
 
     return params
+
+
+def update_submissions_for_user_with_codeforces(handle: str, start_with_unix: int = 0):
+    submissions = [
+        submission
+        for submission in convert_codeforces_submissions_schema(user_status(handle))
+        if submission.creation_time_seconds > start_with_unix
+    ]
+    submissions_return: list[SubmissionSchema] = []
+
+    contests = get_contests()
+    contests_id = [contest.id for contest in contests]
+
+    for submission in submissions:
+        if submission.contest_id not in contests_id:
+            event = ParseCodeforcesContestByContestId(submission.contest_id)
+            results = handler(event)
+            contests = get_contests()
+            contests_id = [contest.id for contest in contests]
+
+        sub_db = get_submission(id=submission.id)
+        if sub_db:
+            submissions_return.append(update_submission(submission_id=sub_db.id, **submission.model_dump()))
+        else:
+            submissions_return.append(add_submission_with_schema(submission))
+    return submissions_return
