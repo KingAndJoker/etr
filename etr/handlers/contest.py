@@ -4,12 +4,14 @@ from etr.events.contest import ParseCodeforces
 from etr.events.contest import ParseCodeforcesContest
 from etr.events.contest import ParseCodeforcesGym
 from etr.events.contest import AddContest
+from etr.events.contest import ParseCodeforcesContestByContestId
 from etr.exceptions.events import EventValueError
-from etr.services.contest import add_contest_with_schema
-from etr.services.problem import add_problem
+from etr.crud.contest import add_contest_with_schema
+from etr.crud.problem import add_problem
 from etr.services.problem import add_tag_for_problem
 from etr.library.codeforces.codeforces_utils import get_contest
 from etr.utils.codeforces.convert import convert_codeforces_contest_schema
+from etr.utils.services.contest import parse_url
 
 
 def handle_contest_type(
@@ -71,7 +73,7 @@ def handle_codeforces_gym(
     # TODO: DRY
     if not isinstance(event, ParseCodeforcesGym):
         raise EventValueError
-    
+
     # TODO: DRY with handle_codeforces_contest
     result_of_handle_event = ResultOfHandleEvent()
     contest_id = int(event.contest_url.path.split("/")[2])
@@ -101,10 +103,26 @@ def handle_add_contest(
         [event_problem] = [
             event_problem
             for event_problem in event.contest.problems
-            if event_problem.index==problem.index
+            if event_problem.index == problem.index
         ]
         for tag in event_problem.tags:
             add_tag_for_problem(problem_id=problem.id, tag=tag)
     result_of_handle_event.results = [contest] + problems
+
+    return result_of_handle_event
+
+
+def parse_codeforces_contest_by_id(event: ParseCodeforcesContestByContestId) -> ResultOfHandleEvent:
+    if not isinstance(event, ParseCodeforcesContestByContestId):
+        raise EventValueError
+
+    result_of_handle_event = ResultOfHandleEvent()
+
+    if event.contest_id < 100000:
+        contest_url = f"https://codeforces.com/contest/{event.contest_id}"
+    else:
+        contest_url = f"https://codeforces.com/gym/{event.contest_id}"
+    url = parse_url(contest_url)
+    result_of_handle_event.events.append(ParseContestBeforeUpdate(url))
 
     return result_of_handle_event

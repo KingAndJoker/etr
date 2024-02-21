@@ -6,11 +6,13 @@ from etr.events.contest import ParseCodeforces
 from etr.events.contest import ParseCodeforcesContest
 from etr.events.contest import ParseCodeforcesGym
 from etr.events.contest import AddContest
+from etr.events.contest import ParseCodeforcesContestByContestId
 from etr.handlers.contest import handle_contest_type
 from etr.handlers.contest import handle_codeforces_type_contest
 from etr.handlers.contest import handle_codeforces_contest
 from etr.handlers.contest import handle_codeforces_gym
 from etr.handlers.contest import handle_add_contest
+from etr.handlers.contest import parse_codeforces_contest_by_id
 
 
 HANDLERS: dict[Event, list[Callable[[Event], ResultOfHandleEvent]]] = {
@@ -19,6 +21,7 @@ HANDLERS: dict[Event, list[Callable[[Event], ResultOfHandleEvent]]] = {
     ParseCodeforcesContest: [handle_codeforces_contest],
     ParseCodeforcesGym: [handle_codeforces_gym],
     AddContest: [handle_add_contest],
+    ParseCodeforcesContestByContestId: [parse_codeforces_contest_by_id],
 }
 
 
