@@ -64,11 +64,12 @@ def update_submissions_with_codeforces(
         params = make_params_for_submission(submission)
         sub_is_exist = get_submission(**params)
         if sub_is_exist is not None:
-            continue
-        sub_add = add_submission_with_schema(submission)
-        if sub_add is None:
-            continue
-        added_submissions.append(sub_add)
+            update_submission(sub_is_exist.id, **params)
+        else:
+            sub_add = add_submission_with_schema(submission)
+            if sub_add is None:
+                continue
+            added_submissions.append(sub_add)
 
     return added_submissions
 
