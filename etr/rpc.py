@@ -13,6 +13,7 @@ from etr.services.contest import update_contest_with_codeforces
 from etr.services.contest import update_students_cf_submissions
 from etr.services.contest import get_contests
 from etr.services.submission import update_submissions_with_codeforces
+from etr.services.submission import update_submissions_for_user_with_codeforces
 from etr.services.user import sync_user_with_dl
 from etr.library.codeforces.codeforces_utils import (
     get_contest as get_codeforces_contest,
@@ -35,10 +36,27 @@ def update_contest_info(contest_id: int):
 def update_submission_info(contest_id: int):
     """update submissions with codeforces in db"""
 
-    # TODO: write update submissions for specific user
     Thread(target=update_submissions_with_codeforces,
            args=(contest_id,)).start()
 
+    return {"status": "ok"}
+
+
+@router.get("/submission/user/{handle}")
+def update_submission_for_user(handle: str, start_with_unix: int = 0):
+    """обновить все отправки заданного пользователя
+    
+    Запускает поток в котором выполняется вся необходимая работа
+
+    Args:
+
+        handle (str): хендл пользователя
+
+    Returns:
+
+        _type_: возвращает {status: ok}
+    """
+    Thread(target=update_submissions_for_user_with_codeforces, args=(handle, start_with_unix)).start()
     return {"status": "ok"}
 
 
