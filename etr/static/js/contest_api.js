@@ -41,17 +41,17 @@ async function show_contest_table() {
             ]
             cell.innerHTML = `${month[date.getMonth()]} ${date.getDate()} ${date.getFullYear()}`
 
-            cell = row.insertCell()
-            const show_count_of_participant = async (cell) => {
-                let table_contest_response = await fetch(`/etr/api/contest/${contest["id"]}/table`)
-                if (table_contest_response.ok) {
-                    let table_contest = await table_contest_response.json()
-                    cell.innerHTML = `${table_contest.rows.length}`
-                } else {
-                    cell.innerHTML = `error`
-                }
-            }
-            show_count_of_participant(cell)
+            // cell = row.insertCell()
+            // const show_count_of_participant = async (cell) => {
+            //     let table_contest_response = await fetch(`/etr/api/contest/${contest["id"]}/table`)
+            //     if (table_contest_response.ok) {
+            //         let table_contest = await table_contest_response.json()
+            //         cell.innerHTML = `${table_contest.rows.length}`
+            //     } else {
+            //         cell.innerHTML = `error`
+            //     }
+            // }
+            // show_count_of_participant(cell)
 
             cell = row.insertCell()
             cell.innerHTML = `
