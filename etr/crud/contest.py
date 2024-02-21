@@ -6,16 +6,23 @@ from etr.schemas.contest import ContestSchema
 from etr.utils.factory import create_contest_model
 
 
-def __get_contests_db(session: Session, **kwargs) -> list[ContestOrm] | None:
+def __get_contests_db(
+    session: Session,
+    contest_index: int | None = None,
+    contest_count: int | None = None,
+    **kwargs
+) -> list[ContestOrm] | None:
     """get contest from db"""
     contest_db = (
         session.query(ContestOrm)
         .filter_by(**kwargs)
         .order_by(ContestOrm.start_time_seconds.desc())
-        .all()
     )
-
-    return contest_db
+    if contest_index is not None:
+        contest_db = contest_db.offset(contest_index)
+    if contest_count is not None:
+        contest_db = contest_db.limit(contest_count)
+    return contest_db.all()
 
 
 def __update_contest_db(session: Session, contest: ContestOrm, **kwargs) -> ContestOrm:
