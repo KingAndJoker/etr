@@ -33,5 +33,5 @@ class SubmissionSchema(BaseModel):
     passed_test_count: int | None = None
     time_consumed_millis: int | None = None
     memory_consumed_bytes: int | None = None
-    points: int | None = None
+    points: float | None = None
     type_of_member: str | None = None
