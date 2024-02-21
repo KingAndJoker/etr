@@ -1,17 +1,21 @@
-let type_of_contests = null
+let type_of_contests = "all"
 
 
-async function show_contest_table() {
-    let response = await fetch("/etr/api/contest")
+async function show_contest_table(contest_index, contest_count) {
+    let contest_api_url = `/etr/api/contest?`
+    if (typeof contest_index !== 'undefined') contest_api_url = `${contest_api_url}index=${contest_index}&`
+    if (typeof contest_count !== 'undefined') contest_api_url = `${contest_api_url}count=${contest_count}&`
+    let response = await fetch(contest_api_url)
     let contest_table = document.getElementById("contests-table-body")
     contest_table.innerHTML = ""
 
+    
     let json = await response.json()
     if (json["status"] != "ok") {
         return
     }
 
-    contests = json["contests"]
+    let contests = json["contests"]
     let index = 1
     contests.forEach(async (contest) => {
         if (type_of_contests == "all" || type_of_contests == contest.type_of_source) {
@@ -19,7 +23,6 @@ async function show_contest_table() {
             let cell = row.insertCell()
             cell.innerHTML = `${index}`
             index++
-
             cell = row.insertCell()
             cell.innerHTML = `<a href="/etr/contest/${contest["id"]}">${contest["name"]}</a>`
 
