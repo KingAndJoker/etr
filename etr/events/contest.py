@@ -28,3 +28,8 @@ class ParseCodeforcesGym(Event):
 @dataclass
 class AddContest(Event):
     contest: ContestSchema
+
+
+@dataclass
+class ParseCodeforcesContestByContestId(Event):
+    contest_id: int
