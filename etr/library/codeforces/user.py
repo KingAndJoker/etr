@@ -2,6 +2,7 @@ import requests
 
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.library.codeforces.utils.generate_url import generate_url
+from etr.utils.request import Request
 
 
 def status(handle: str,
@@ -30,7 +31,8 @@ def status(handle: str,
         if value is not None
     }
     url = generate_url("user.status", **params)
-    response = requests.get(url)
+    request = Request()
+    response = request.handle(url, "GET")
     if response.status_code != 200:
         return None
 

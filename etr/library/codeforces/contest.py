@@ -5,6 +5,7 @@ from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.library.codeforces.schemas.ranklist_row import CodeforcesRanklistRowSchema
 from etr.library.codeforces.utils.generate_url import generate_url
+from etr.utils.request import Request
 
 
 def standings(contest_id: int,
@@ -37,7 +38,8 @@ def status(contestId: int, *,
         "contest.status",
         **kwargs
     )
-    response = requests.get(contest_status_url)
+    request = Request()
+    response = request.handle(contest_status_url, "GET")
 
     if response.status_code != 200:
         return None
@@ -76,7 +78,8 @@ def status_json(contestId: int, *,
         "contest.status",
         **kwargs
     )
-    response = requests.get(contest_status_url)
+    request = Request()
+    response = request.handle(contest_status_url, "GET")
 
     if response.status_code != 200:
         return None

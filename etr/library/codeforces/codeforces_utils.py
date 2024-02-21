@@ -7,6 +7,7 @@ from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.library.codeforces.schemas.user import CodeforcesUserSchema
 from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
+from etr.utils.request import Request
 
 
 def get_contest(
@@ -35,7 +36,8 @@ def get_contest(
         lang=lang,
     )
 
-    response = requests.get(contest_url)
+    request = Request()
+    response = request.handle(contest_url, "GET")
 
     if response.status_code != 200:
         return None
@@ -86,7 +88,8 @@ def get_submission(
     print(f"get submission")
     print(f"{submission_url=}")
 
-    response = requests.get(submission_url)
+    request = Request()
+    response = request.handle(submission_url, "GET")
     if response.status_code != 200:
         return None
 
@@ -128,7 +131,8 @@ def get_submission(
 def get_user(handle: str, lang: str = "en") -> CodeforcesUserSchema | None:
     user_url = generate_url("user.info", handles=handle, lang=lang)
 
-    response = requests.get(user_url)
+    request = Request()
+    response = request.handle(user_url, "GET")
 
     if response.status_code != 200:
         return None
@@ -161,7 +165,8 @@ def get_problem_with_contest(
         "contest.standings", contestId=contest_id, from_=1, count=1, lang=lang
     )
 
-    response = requests.get(problem_url)
+    request = Request()
+    response = request.handle(problem_url, "GET")
     if response.status_code != 200:
         return None
 
@@ -172,7 +177,6 @@ def get_problem_with_contest(
         return None
 
     if response_json["status"] != "OK":
-        print(2)
         return None
 
     problems = [
