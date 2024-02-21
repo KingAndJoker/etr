@@ -20,7 +20,7 @@ class ContestOrm(Base):
     relative_time_seconds: Mapped[int] = mapped_column(nullable=True)
     prepared_by: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     website_url: Mapped[str] = mapped_column(nullable=True, type_=String(255))
-    description: Mapped[str] = mapped_column(nullable=True, type_=String(255))
+    description: Mapped[str] = mapped_column(nullable=True, type_=String(1024))
     difficulty: Mapped[int] = mapped_column(nullable=True)
     kind: Mapped[str] = mapped_column(nullable=True, type_=String(255))
     icpc_region: Mapped[str] = mapped_column(nullable=True, type_=String(255))
