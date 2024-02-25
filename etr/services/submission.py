@@ -62,7 +62,7 @@ def update_submissions_with_codeforces(
         if submission is None:
             continue
         params = make_params_for_submission(submission)
-        sub_is_exist = get_submission(**params)
+        sub_is_exist = get_submission(id=submission.id)
         if sub_is_exist is not None:
             update_submission(sub_is_exist.id, **params)
         else:
@@ -81,6 +81,8 @@ def make_params_for_submission(submission: SubmissionSchema) -> dict:
         params.pop("problem")
     if "author" in params:
         params.pop("author")
+    if "team" in params:
+        params.pop("team")
 
     return params
 
