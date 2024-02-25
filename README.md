@@ -65,11 +65,11 @@ In `alembic/env.py` you have to write the code:
 ```python
 ...
 from etr.models.base import Base
-from etr.models.problem import Problem, problems_tags, Tag
-from etr.models.user import User
-from etr.models.team import Team, teams_users
-from etr.models.submission import Submission
-from etr.models.contest import Contest
+from etr.models.problem import ProblemOrm, problems_tags, TagOrm
+from etr.models.user import UserOrm
+from etr.models.team import TeamOrm, teams_users
+from etr.models.submission import SubmissionOrm
+from etr.models.contest import ContestOrm
 target_metadata = Base.metadata
 ...
 ```
