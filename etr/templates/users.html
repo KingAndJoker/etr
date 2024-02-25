@@ -3,6 +3,7 @@
 {% block title %}пользователи{% endblock %}
 {% block imports %}
 <script src="/etr/static/js/user_api.js"></script>
+<script src="/etr/static/js/submission_api.js"></script>
 {% endblock %}
 {% block content %}
 <div class="container">
@@ -12,6 +13,20 @@
     <button type="button" class="btn btn-secondary" onclick="send_request_sync_user_with_codeforces()">
         обновить данные с codeforces
     </button>
+    <br>
+    <br>
+    <div class="form-row">
+        <div class="col-4">
+            <div class="input-group">
+                <input id="handle" type="text" class="form-control" placeholder="handle ученика" name="handle">
+                <div class="input-group-prepend">
+                    <button class="btn btn-outline-secondary" type="button" onclick="send_update_users_submissions(document.getElementById('handle').value)">
+                        обновить отправки
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <br>
 <div id="user-table-div" class="container table-responsive"></div>
