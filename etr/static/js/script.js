@@ -55,3 +55,14 @@ async function update_submission_send_request(contest_id) {
 
     window.location.reload()
 }
+
+
+const update_tag_in_tasks = async (contest_id) => {
+    let response = await fetch(`/etr/rpc/problem/update_tag/${contest_id}`)
+    if (response.ok) {
+        alert("теги обновляются")
+    }
+    else {
+        alert("произошла ошибка, попробуйте повторить запрос позже")
+    }
+}
