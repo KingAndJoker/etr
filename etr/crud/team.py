@@ -154,3 +154,25 @@ def is_our_team_json(author: dict) -> bool:
         if member["handle"].lower() in handles:
             return True
     return False
+
+
+def __update_team(session: Session, team: TeamOrm, **kwargs):
+    for key, value in kwargs.items():
+        setattr(team, key, value)
+    return team
+
+
+def _update_team(id: int, **kwargs):
+    with db.SessionLocal() as session:
+        team_orm = session.query(TeamOrm).filter_by(id=id).one_or_none()
+        if team_orm is None:
+            return None
+        __update_team(session, team_orm, **kwargs)
+        session.add(team_orm)
+        team = TeamSchema.model_validate(team_orm)
+        session.commit()
+    return team
+
+
+def update_team(id: int, **kwargs):
+    return _update_team(id=id, **kwargs)

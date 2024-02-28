@@ -12,6 +12,7 @@ from etr.utils.factory import create_submission_model
 from etr.services.problem import get_problems_with_contest_id
 from etr.crud.team import get_teams
 from etr.crud.team import add_team_with_schema
+from etr.crud.team import update_team
 from etr.crud.user import get_user
 
 
@@ -109,11 +110,14 @@ def _add_submission_with_schema(
 
     # TODO: убрать обращения к crud user во избежание циклических импортов
     if isinstance(submission_schema.author, TeamSchema):
-        teams = get_teams(team_name=submission_schema.author.team_name)
+        teams = get_teams(id=submission_schema.author.id)
         if teams == []:
             team = add_team_with_schema(submission_schema.author)
         else:
-            team = teams[0]
+            team = update_team(
+                id=submission_schema.author.id,
+                team_name=submission_schema.author.team_name
+            )
         params["team_id"] = team.id
         params.pop("author")
     elif isinstance(submission_schema.author, UserSchema):
