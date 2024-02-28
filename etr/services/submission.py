@@ -120,7 +120,6 @@ def update_submissions_for_all_users_with_codeforces():
         return []
     submissions: list[SubmissionSchema] = []
     for user in users:
-        print(f"{user.handle}")
         submissions.extend(
             update_submissions_for_user_with_codeforces(handle=user.handle)
         )
