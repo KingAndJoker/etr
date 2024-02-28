@@ -107,7 +107,21 @@ def update_submissions_for_user_with_codeforces(handle: str, start_with_unix: in
 
         sub_db = get_submission(id=submission.id)
         if sub_db:
-            submissions_return.append(update_submission(submission_id=sub_db.id, **submission.model_dump()))
+            submissions_return.append(update_submission(
+                submission_id=sub_db.id, **submission.model_dump()))
         else:
             submissions_return.append(add_submission_with_schema(submission))
     return submissions_return
+
+
+def update_submissions_for_all_users_with_codeforces():
+    users = get_users(watch=True)
+    if users is None:
+        return []
+    submissions: list[SubmissionSchema] = []
+    for user in users:
+        print(f"{user.handle}")
+        submissions.extend(
+            update_submissions_for_user_with_codeforces(handle=user.handle)
+        )
+    return submissions
