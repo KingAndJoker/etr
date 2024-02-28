@@ -1,10 +1,20 @@
 """run file"""
+import time
+from threading import Thread
+
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
 
 from etr import config
 from etr import db
+from etr.services.submission import update_submissions_for_all_users_with_codeforces
+
+
+def update_submissions_users():
+    while True:
+        update_submissions_for_all_users_with_codeforces()
+        time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
 
 
 # TODO: https://fastapi.tiangolo.com/advanced/settings/
@@ -64,6 +74,11 @@ def create_app():
     app.include_router(index_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(user_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(problem_view.router, prefix=f"{config.URL_PREFIX}")
+
+    if not config.DEBUG:
+        Thread(
+            target=update_submissions_users,
+        ).start()
 
     return app
 
