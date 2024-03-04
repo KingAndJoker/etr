@@ -88,9 +88,12 @@ def make_params_for_submission(submission: SubmissionSchema) -> dict:
 
 
 def update_submissions_for_user_with_codeforces(handle: str, start_with_unix: int = 0):
+    codeforces_submissions = user_status(handle)
+    if codeforces_submissions is None:
+        return []
     submissions = [
         submission
-        for submission in convert_codeforces_submissions_schema(user_status(handle))
+        for submission in convert_codeforces_submissions_schema(codeforces_submissions)
         if submission.creation_time_seconds > start_with_unix
     ]
     submissions_return: list[SubmissionSchema] = []
@@ -99,6 +102,8 @@ def update_submissions_for_user_with_codeforces(handle: str, start_with_unix: in
     contests_id = [contest.id for contest in contests]
 
     for submission in submissions:
+        if submission.contest_id is None:
+            break
         if submission.contest_id not in contests_id:
             event = ParseCodeforcesContestByContestId(submission.contest_id)
             results = handler(event)
