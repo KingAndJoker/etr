@@ -117,7 +117,9 @@ def parse_codeforces_contest_by_id(event: ParseCodeforcesContestByContestId) -> 
         raise EventValueError
 
     result_of_handle_event = ResultOfHandleEvent()
-
+    if event.contest_id is None:
+        # TODO: problemsetName, contestId can be missing
+        return result_of_handle_event
     if event.contest_id < 100000:
         contest_url = f"https://codeforces.com/contest/{event.contest_id}"
     else:
