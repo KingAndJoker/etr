@@ -21,14 +21,17 @@ def sync_user_with_dl():
 
     users_schema = get_users()
     for dl_user in sync_users_schema:
-        if dl_user.handle in (user_schema.handle for user_schema in users_schema):
+        if dl_user.handle.lower() in (user_schema.handle.lower() for user_schema in users_schema):
             update_user_schema = get_user(handle=dl_user.handle)
             params = {
                 key: value
                 for key, value in dl_user.model_dump(exclude=("id")).items()
                 if value is not None
             }
-            update_user(update_user_schema.id, **params)
+            try:
+                update_user(update_user_schema.id, **params)
+            except Exception as err:
+                print(err)
         else:
             add_user(dl_user)
 
