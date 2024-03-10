@@ -125,7 +125,10 @@ def update_submissions_for_all_users_with_codeforces():
         return []
     submissions: list[SubmissionSchema] = []
     for user in users:
-        submissions.extend(
-            update_submissions_for_user_with_codeforces(handle=user.handle)
-        )
+        submissions_of_user = []
+        try:
+            submissions_of_user.extend(update_submissions_for_user_with_codeforces(handle=user.handle))
+        except Exception as err: # если возникнут проблемы с обновлением одного пользователя
+            print(err)
+        submissions.extend(submissions_of_user)
     return submissions
