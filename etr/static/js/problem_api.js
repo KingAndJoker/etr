@@ -1,6 +1,12 @@
 const create_table = async () => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const rating = urlParams.get('rating')
     let table = document.getElementById("problems-table")
-    let response = await fetch("/etr/api/problem")
+    let url = "/etr/api/problem?"
+    if (rating != null) {
+        url += `rating=${rating}`
+    }
+    let response = await fetch(url)
     if (!response.ok) {
         table.innerHTML = "<h1>Возникла проблема, попробуй позже.</h1>"
         return
