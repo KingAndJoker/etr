@@ -13,7 +13,10 @@ from etr.services.submission import update_submissions_for_all_users_with_codefo
 
 def update_submissions_users():
     while True:
-        update_submissions_for_all_users_with_codeforces()
+        try:
+            update_submissions_for_all_users_with_codeforces()
+        except Exception as exp:
+            print(exp)
         time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
 
 
