@@ -34,6 +34,7 @@ class UserSchema(BaseModel):
     title_photo: str | None = None
     grade: int | None = None
     dl_id: str | None = None
+    watch: bool | None = None
 
 
 class UserRequestAddCodeforcesSchema(BaseModel):
