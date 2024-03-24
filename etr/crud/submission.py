@@ -166,6 +166,8 @@ def _get_submission_with_kwargs(**kwargs) -> SubmissionSchema | None:
 def get_submissions(**kwargs) -> list[SubmissionSchema]:
     """get submissions from db"""
     submissions_schema = _get_submissions_with_kwargs(**kwargs)
+    if submissions_schema is None:
+        return []
 
     return submissions_schema
 
