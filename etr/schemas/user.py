@@ -61,6 +61,7 @@ class UserPatch(BaseModel):
     avatar: str | None = None
     title_photo: str | None = None
     grade: int | None = None
+    watch: bool | None = None
 
 
 class ContestantType(str, Enum):
