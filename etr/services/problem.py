@@ -1,6 +1,7 @@
 from etr.crud.problem import *
 from etr.crud.tag import get_tag_by_name
 from etr.crud.tag import create_tag
+from etr.crud.contest import get_contests
 from etr.models.problem import TagOrm
 
 
@@ -39,6 +40,15 @@ def add_tag_for_problem(problem_id: int, tag: str):
     if get_tag_by_name(tag) is None:
         create_tag(tag)
     update_tag_by_problem(problem_id, tag)
+
+
+def update_missing_tags_for_problems():
+    contests = get_contests()
+    for contest in contests:
+        for problem in contest.problems:
+            if problem.tags == []:
+                update_tags_in_problem_of_contest(contest.id)
+                break
 
 
 def update_tags_in_problem_of_contest(contest_id: int) -> list[ProblemSchema]:

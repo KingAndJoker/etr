@@ -9,12 +9,14 @@ from fastapi.middleware.cors import CORSMiddleware
 from etr import config
 from etr import db
 from etr.services.submission import update_submissions_for_all_users_with_codeforces
+from etr.services.problem import update_missing_tags_for_problems
 
 
-def update_submissions_users():
+def autoupdate_info():
     while True:
         try:
             update_submissions_for_all_users_with_codeforces()
+            update_missing_tags_for_problems()
         except Exception as exp:
             print(exp)
         time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
@@ -80,7 +82,7 @@ def create_app():
 
     if not config.DEBUG:
         Thread(
-            target=update_submissions_users,
+            target=autoupdate_info,
         ).start()
 
     return app
