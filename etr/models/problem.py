@@ -54,6 +54,7 @@ class ProblemOrm(Base):
         back_populates="problems",
         lazy="selectin"
     )
+    solved_count: Mapped[int] = mapped_column(default=0)
 
     submissions: Mapped[list["SubmissionOrm"]] = relationship(
         "SubmissionOrm",
