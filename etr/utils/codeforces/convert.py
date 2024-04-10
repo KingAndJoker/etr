@@ -3,11 +3,13 @@ from etr.library.codeforces.schemas.user import CodeforcesUserSchema
 from etr.library.codeforces.schemas.team import CodeforcesTeamSchema
 from etr.library.codeforces.schemas.submission import CodeforcesSubmissionSchema
 from etr.library.codeforces.schemas.problem import CodeforcesProblemSchema
+from etr.library.codeforces.schemas.problem import CodeforcesProblemStatistics
 from etr.library.codeforces.schemas.contest import CodeforcesContestSchema
 from etr.schemas.user import UserSchema
 from etr.schemas.team import TeamSchema
 from etr.schemas.submission import SubmissionSchema
 from etr.schemas.problem import ProblemSchema
+from etr.schemas.problem import ProblemStatistics
 from etr.schemas.contest import ContestSchema
 
 
@@ -168,3 +170,14 @@ def convert_codeforces_contest_schema(codeforces_contest: CodeforcesContestSchem
     contest.problems = convert_codeforces_problems_schema(codeforces_contest.problems)
 
     return contest
+
+
+def convert_codeforces_problems_statistics(codeforces_problems_statistics: list[CodeforcesProblemStatistics]):
+    problems_statistics: list[ProblemStatistics] = []
+    for codeforces_problem_stat in codeforces_problems_statistics:
+        problems_statistics.append(ProblemStatistics(
+            contest_id=codeforces_problem_stat.contestId,
+            index=codeforces_problem_stat.index,
+            solved_count=codeforces_problem_stat.solvedCount
+        ))
+    return problems_statistics

@@ -10,6 +10,7 @@ from etr import config
 from etr import db
 from etr.services.submission import update_submissions_for_all_users_with_codeforces
 from etr.services.problem import update_missing_tags_for_problems
+from etr.services.problem import update_solved_count
 
 
 def autoupdate_info():
@@ -17,6 +18,7 @@ def autoupdate_info():
         try:
             update_submissions_for_all_users_with_codeforces()
             update_missing_tags_for_problems()
+            update_solved_count()
         except Exception as exp:
             print(exp)
         time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)

@@ -27,6 +27,7 @@ class ProblemSchema(BaseModel):
     points: float | None = None
     rating: int | None = None
     tags: list[str] = []
+    solved_count: int | None = None
 
     @validator("tags", pre=True)
     def check_tags(cls, tags: list[TagOrm] | list[str]):
@@ -64,3 +65,14 @@ class VerdictType(str, Enum):
     SKIPPED = "SKIPPED"
     TESTING = "TESTING"
     REJECTED = "REJECTED"
+
+
+class ProblemStatistics(BaseModel):
+    model_config = ConfigDict(
+        from_attributes=True,
+        populate_by_name=True
+    )
+    
+    contest_id: int | None = None
+    index: str
+    solved_count: int
