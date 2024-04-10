@@ -35,5 +35,8 @@ const create_table = async () => {
 
         cell = row.insertCell()
         cell.innerHTML = `${problem.rating != null ? problem.rating : ""}`
+
+        cell = row.insertCell()
+        cell.innerHTML = `${problem.solved_count != null ? problem.solved_count : ""}`
     })
 }
