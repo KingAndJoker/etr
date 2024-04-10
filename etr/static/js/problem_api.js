@@ -1,10 +1,14 @@
 const create_table = async () => {
     const urlParams = new URLSearchParams(window.location.search)
     const rating = urlParams.get('rating')
+    const tags = urlParams.get('tags')
     let table = document.getElementById("problems-table")
     let url = "/etr/api/problem?"
     if (rating != null) {
         url += `rating=${rating}`
+    }
+    if (tags != null) {
+        url += `tags=${tags}`
     }
     let response = await fetch(url)
     if (!response.ok) {

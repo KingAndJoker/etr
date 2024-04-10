@@ -21,22 +21,25 @@ def api_get_problems(
     index: str | None = None,
     rating: str | None = None,
     points: str | None = None,
+    tags: str | None = None
 ):
     """метод для получения списка задач
 
     Args:
-    
+
         id_ (int | None, optional): Id задачи. Defaults to None.
-        
+
         contest_id (int | None, optional): получить задачи с определенным contest_id. Defaults to None.
-        
+
         problemset_name (str | None, optional): получить задачи из определенного архива. Defaults to None.
-        
+
         index (str | None, optional): индекс задачи. Defaults to None.
-        
+
         rating (str | None, optional): рейтинг задачи. Принимает целое число или строку 'none', 'null'. Defaults to None.
-        
+
         points (str | None, optional): баллы за задачу. Принимает число с плавающей запятой или строку 'none', 'null'. Defaults to None.
+
+        tags (str | None, optional): теги, перечисленные через ';'. Вернуться задачи с заданными тегами. Defaults to None.
 
     Returns:
         _type_: список задач с заданными параметрами
@@ -46,6 +49,7 @@ def api_get_problems(
         "contest_id": contest_id,
         "problemset_name": problemset_name,
         "index": index,
+        "tags": [tag for tag in tags.split(";") if tag] if tags else None,
     }
     params = {key: value for key, value in params.items() if value is not None}
     try:

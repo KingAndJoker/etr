@@ -87,8 +87,21 @@ def _get_problems(**kwargs):
     return problems
 
 
-def get_problems(**kwargs) -> list[ProblemSchema]:
+def _fiter_by_tags(tags: list[str], problem: ProblemSchema) -> bool:
+    for tag in tags:
+        if tag not in problem.tags:
+            return False
+    return True
+
+
+def get_problems(tags: list[str] | None = None, **kwargs) -> list[ProblemSchema]:
     problems = _get_problems(**kwargs)
+    if tags:
+        problems = [
+            problem
+            for problem in problems
+            if _fiter_by_tags(tags=tags, problem=problem)
+        ]
     return problems
 
 
