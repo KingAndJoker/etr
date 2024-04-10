@@ -1,7 +1,6 @@
 FROM python:3.12-slim-bookworm
 
 RUN apt-get update && apt-get install -y nano && apt-get clean && rm -rf /var/lib/apt/lists/*
-RUN apt-get update && apt-get install -y sqlite && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 VOLUME /volume
 LABEL maintainer="a12345678.87654321@yandex.ru"
