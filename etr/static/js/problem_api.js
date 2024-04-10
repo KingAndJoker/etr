@@ -4,12 +4,15 @@ const create_table = async () => {
     const tags = urlParams.get('tags')
     let table = document.getElementById("problems-table")
     let url = "/etr/api/problem?"
+    let params = []
     if (rating != null) {
-        url += `rating=${rating}`
+        params.push(`rating=${rating}`)
     }
     if (tags != null) {
-        url += `tags=${tags}`
+        params.push(`tags=${tags}`)
     }
+    url += params.join("&")
+
     let response = await fetch(url)
     if (!response.ok) {
         table.innerHTML = "<h1>Возникла проблема, попробуй позже.</h1>"
