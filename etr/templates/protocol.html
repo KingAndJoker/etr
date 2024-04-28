@@ -1,0 +1,21 @@
+{% extends "./base.html" %}
+
+{% block title %}Protocol{% endblock %}
+{% block imports %}
+<script src="/etr/static/js/protocol.js"></script>
+{% endblock %}
+{% block content %}
+<input id="min-creation-time-seconds" type="datetime-local">
+<input id="max-creation-time-seconds" type="datetime-local">
+<script>init_datetime_field()</script>
+<button type="button" class="btn btn-dark" onclick="view_protocol()">показать</button>
+<br>
+<br>
+<div id="result-protocol" class="table-responsive">
+</div>
+{% endblock %}
+{% block footer %}
+<script>
+    view_protocol()
+</script>
+{% endblock%}

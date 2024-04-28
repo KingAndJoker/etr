@@ -21,7 +21,7 @@ def autoupdate_info():
             update_solved_count()
         except Exception as exp:
             print(exp)
-        time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
+        # time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
 
 
 # TODO: https://fastapi.tiangolo.com/advanced/settings/
@@ -76,11 +76,13 @@ def create_app():
     from etr.views import index as index_view
     from etr.views import contest as contest_view
     from etr.views import problem as problem_view
+    from etr.views import protocol as protocol_view
 
     app.include_router(contest_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(index_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(user_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(problem_view.router, prefix=f"{config.URL_PREFIX}")
+    app.include_router(protocol_view.router, prefix=f"{config.URL_PREFIX}")
 
     if not config.DEBUG:
         Thread(
