@@ -45,5 +45,10 @@ const create_table = async () => {
 
         cell = row.insertCell()
         cell.innerHTML = `${problem.solved_count != null ? problem.solved_count : ""}`
+
+        cell = row.insertCell()
+        cell.innerHTML = problem.tags.map((tag) => {
+            return `<mark class="border" style="margin: 5px">${tag}</mark>`
+        }).join("")
     })
 }
