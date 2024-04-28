@@ -14,9 +14,15 @@ def api_get_submissions(
     handle: str | None = None,
     contest_id: int | None = None,
     problem_index: str | None = None,
+    min_creation_time_seconds: int | None = None,
+    max_creation_time_seconds: int | None = None
 ):
     kwargs = generate_kwargs(
-        handle=handle, contest_id=contest_id, problem_index=problem_index
+        handle=handle,
+        contest_id=contest_id,
+        problem_index=problem_index,
+        min_creation_time_seconds=min_creation_time_seconds,
+        max_creation_time_seconds=max_creation_time_seconds
     )
     submissions = get_submissions(**kwargs)
 

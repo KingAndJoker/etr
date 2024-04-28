@@ -16,9 +16,18 @@ from etr.crud.team import update_team
 from etr.crud.user import get_user
 
 
-def __get_submissions_db(session: Session, **kwargs) -> list[SubmissionOrm] | None:
+def __get_submissions_db(session: Session,
+                         min_creation_time_seconds: int | None = None,
+                         max_creation_time_seconds: int | None = None,
+                         **kwargs) -> list[SubmissionOrm] | None:
     """get submissions from db"""
-    return session.query(SubmissionOrm).filter_by(**kwargs).all()
+    result = session.query(SubmissionOrm).filter_by(**kwargs)
+    if min_creation_time_seconds:
+        result = result.filter(SubmissionOrm.creation_time_seconds >= min_creation_time_seconds)
+    if max_creation_time_seconds:
+        result = result.filter(SubmissionOrm.creation_time_seconds <= max_creation_time_seconds)
+
+    return result.all()
 
 
 def __get_submission_db(session: Session, **kwargs) -> SubmissionOrm | None:
@@ -85,10 +94,12 @@ def _update_submission_db(
         if submission_db is None:
             return None
 
-        submission_db = __update_submission_db(session, submission_db, **kwargs)
+        submission_db = __update_submission_db(
+            session, submission_db, **kwargs)
 
         submission_db = __get_submission_db(session, id=submission_schema.id)
-        submission_return_schema = SubmissionSchema.model_validate(submission_db)
+        submission_return_schema = SubmissionSchema.model_validate(
+            submission_db)
 
     return submission_return_schema
 
