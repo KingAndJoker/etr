@@ -63,14 +63,14 @@ def update_tags_in_problem_of_contest(contest_id: int) -> list[ProblemSchema]:
     )
     problems: list[ProblemSchema] = []
     for cf_problem in cf_problems:
-        problem = get_problem(**cf_problem.model_dump())
+        problem = get_problem(index=cf_problem.index, contest_id=contest_id)
         if problem is None:
             continue
         for tag in cf_problem.tags:
             if not tag in problem.tags:
                 add_tag_for_problem(problem.id, tag)
 
-        problem = get_problem(**cf_problem.model_dump())
+        problem = get_problem(index=cf_problem.index, contest_id=contest_id)
         problems.append(problem)
 
     return problems
