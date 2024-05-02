@@ -16,3 +16,9 @@ def get_tag_by_name(tag: str) -> str | None:
         if tag_orm is None:
             return None
         return tag_orm.tag
+
+
+def get_tags() -> list[str]:
+    with db.SessionLocal() as session:
+        tags = session.query(TagOrm).all()
+        return [tag.tag for tag in tags]
