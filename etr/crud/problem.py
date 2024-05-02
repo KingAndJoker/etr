@@ -145,3 +145,15 @@ def delete_problems(**kwargs) -> list[ProblemSchema]:
         ]
         session.commit()
     return problems
+
+
+def get_problems_group_by_rating():
+    problems = get_problems()
+    group_by_rating: dict[int, list[ProblemSchema]] = dict()
+    
+    for problem in problems:
+        if problem.rating not in group_by_rating:
+            group_by_rating[problem.rating] = []
+        group_by_rating[problem.rating].append(problem)
+
+    return group_by_rating
