@@ -1,0 +1,20 @@
+{% extends "./base.html" %}
+
+{% block title %}Recommedation list{% endblock %}
+{% block imports %}
+<script src="/etr/static/js/recommendation.js"></script>
+{% endblock %}
+{% block content %}
+<div class="row g-3">
+    <div class="col-auto">
+        <input type="text" id="handle-input" class="form-control" placeholder="handle codeforces">
+    </div>
+    <div class="col-auto">
+        <button onclick="render_recommendations()" class="btn btn-dark">показать</button>
+    </div>
+</div>
+<br>
+<div id="div-recommendations"></div>
+{% endblock %}
+{% block footer %}
+{% endblock%}

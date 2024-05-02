@@ -11,6 +11,7 @@ from etr import db
 from etr.services.submission import update_submissions_for_all_users_with_codeforces
 from etr.services.problem import update_missing_tags_for_problems
 from etr.services.problem import update_solved_count
+from etr.services.recommendation import create_recommendations
 
 
 def autoupdate_info():
@@ -19,6 +20,7 @@ def autoupdate_info():
             update_submissions_for_all_users_with_codeforces()
             update_missing_tags_for_problems()
             update_solved_count()
+            create_recommendations()
         except Exception as exp:
             print(exp)
         # time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
@@ -52,6 +54,7 @@ def create_app():
     from etr.api import api_submission
     from etr.api import api_problem
     from etr.api import api_contest
+    from etr.api import api_recommendation
 
     app.include_router(api_user.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"])
     app.include_router(
@@ -62,6 +65,9 @@ def create_app():
     )
     app.include_router(
         api_contest.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"]
+    )
+    app.include_router(
+        api_recommendation.router, prefix=f"{config.URL_PREFIX}/api", tags=["api"]
     )
 
     from etr import rpc
@@ -77,12 +83,14 @@ def create_app():
     from etr.views import contest as contest_view
     from etr.views import problem as problem_view
     from etr.views import protocol as protocol_view
+    from etr.views import recommendation as recommendation_view
 
     app.include_router(contest_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(index_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(user_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(problem_view.router, prefix=f"{config.URL_PREFIX}")
     app.include_router(protocol_view.router, prefix=f"{config.URL_PREFIX}")
+    app.include_router(recommendation_view.router, prefix=f"{config.URL_PREFIX}")
 
     if not config.DEBUG:
         Thread(

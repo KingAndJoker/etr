@@ -71,6 +71,7 @@ from etr.models.user import UserOrm
 from etr.models.team import TeamOrm, teams_users
 from etr.models.submission import SubmissionOrm
 from etr.models.contest import ContestOrm
+from etr.models.recommendation import RecommendationOrm
 target_metadata = Base.metadata
 ...
 ```
