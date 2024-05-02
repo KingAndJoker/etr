@@ -111,7 +111,7 @@ def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
             # TODO: rewrite without session.query ...
             team_dump["users"][i] = session.query(UserOrm).filter_by(handle=member["handle"]).one_or_none()
             if team_dump["users"][i] is None:
-                team_dump["users"][i] = UserOrm(handle=mamber["handle"], watch=False)
+                team_dump["users"][i] = UserOrm(handle=member["handle"], watch=False)
         team_db = __add_team(session, **team_dump)
         team_schema = TeamSchema.model_validate(team_db)
 
