@@ -19,12 +19,7 @@ class RecommendationOrm(Base):
         backref="recommendations",
         lazy="selectin"
     )
-    user_id: Mapped[int] = Column(
-        "author_id",
-        Integer,
-        ForeignKey("users.id"),
-        nullable=True,
-    )
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))
     user: Mapped[UserOrm] = relationship(
         "UserOrm",
         backref="recommendations",

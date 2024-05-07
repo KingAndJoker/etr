@@ -9,6 +9,7 @@ from etr.models.problem import ProblemOrm, TagOrm, problems_tags
 from etr.models.submission import SubmissionOrm
 from etr.models.team import TeamOrm, teams_users
 from etr.models.user import UserOrm
+from etr.models.recommendation import RecommendationOrm
 
 
 def init_db(engine: Engine) -> None:

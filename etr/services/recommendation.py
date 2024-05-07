@@ -105,7 +105,7 @@ def create_recommendations():
             session.add(
                 RecommendationOrm(
                     problem_id=recommendation.id,
-                    author_id=user.id
+                    user_id=user.id
                 )
             )
 
