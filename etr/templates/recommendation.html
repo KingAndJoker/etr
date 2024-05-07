@@ -14,6 +14,28 @@
     </div>
 </div>
 <br>
+<div id="about-tech">
+    <!-- <button class="btn btn-link" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true"
+        aria-controls="collapseOne">
+        Collapsible Group Item #1
+    </button> -->
+    <script>
+        const collapse = () => {
+            let style = document.getElementById("collapse-about").style.display
+            document.getElementById("collapse-about").style.display = (style == "none" ? "contents" : "none")
+        }
+    </script>
+    <a href="#" onclick="collapse()">о технологии</a>
+    <br>
+    <legend id="collapse-about" style="display: none;">
+        На основе активности составляется список рекомендованных задач.<br>
+        Считается количество задач по каждому тегу. Те теги, которые были решены меньше всего или вовсе не решены будут предложены в списке каждому индивидуально.<br>
+        Также, при составлении списка задач учитывается средняя сложность решенных задач за всё время. В большинстве будут показываться задачи с 0, +100, +200 рейтинга.<br>
+        На данный момент так составляется этот список задач.<br>
+        Так можно будет выйти из зоны комфорта.<br>
+        Каждый может предложить, как улучшить эту технологию и попробовать лучше реализовать рекомендательную систему.<br>
+    </legend>
+</div>
 <div id="div-recommendations"></div>
 {% endblock %}
 {% block footer %}
