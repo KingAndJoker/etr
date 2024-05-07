@@ -40,7 +40,6 @@ def choice_task(*,
 
 
 def create_recommendations():
-    print("старт рекомендаций")
     users = get_users(watch=True)
     problem_by_rating = get_problems_group_by_rating()
 
