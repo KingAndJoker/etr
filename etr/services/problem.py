@@ -1,3 +1,5 @@
+from loguru import logger
+
 from etr import db
 from etr.crud.problem import *
 from etr.crud.tag import get_tag_by_name
@@ -9,9 +11,17 @@ from etr.utils.codeforces.convert import convert_codeforces_problems_schema
 from etr.utils.codeforces.convert import convert_codeforces_problems_statistics
 
 
+@logger.catch(reraise=True)
 def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
-    """ add missing problem to db. Return list of added problems. """
+    """функция добавляет отсутствующие задачи
 
+    Args:
+        contest_id (int): id соревнования
+
+    Returns:
+        list[ProblemSchema]: список добавленных задач
+    """
+    logger.info(f"добавляю отсутствующие задачи для {contest_id=}")
     problems_schema = convert_codeforces_problems_schema(
         get_problem_with_contest(contest_id)
     )
@@ -29,7 +39,14 @@ def add_missing_problem_with_contest(contest_id: int) -> list[ProblemSchema]:
     return added_problems_schema
 
 
+@logger.catch(reraise=True)
 def update_tag_by_problem(problem_id: int, tag: str):
+    """процедура обновляет теги у задач
+
+    Args:
+        problem_id (int): id задачи из базы данных
+        tag (str): новый тег
+    """
     with db.SessionLocal() as session:
         problem_orm = session.query(ProblemOrm).filter_by(
             id=problem_id
@@ -42,13 +59,23 @@ def update_tag_by_problem(problem_id: int, tag: str):
         session.commit()
 
 
+@logger.catch(reraise=True)
 def add_tag_for_problem(problem_id: int, tag: str):
+    """функция создает новый тег (если его нету) и добавляет к задаче
+
+    Args:
+        problem_id (int): _description_
+        tag (str): _description_
+    """
     if get_tag_by_name(tag) is None:
         create_tag(tag)
     update_tag_by_problem(problem_id, tag)
 
 
+@logger.catch(reraise=True)
 def update_missing_tags_for_problems():
+    """функция добавляет отсутствующие теги у задач
+    """
     contests = get_contests()
     for contest in contests:
         for problem in contest.problems:
@@ -57,7 +84,17 @@ def update_missing_tags_for_problems():
                 break
 
 
+@logger.catch(reraise=True)
 def update_tags_in_problem_of_contest(contest_id: int) -> list[ProblemSchema]:
+    """обновляет теги для соревнования
+
+    Args:
+        contest_id (int): id соревнования
+
+    Returns:
+        list[ProblemSchema]: список задач с новыми тегами
+    """
+    logger.info(f"хочу обновить теги задач из {contest_id=}")
     cf_problems = convert_codeforces_problems_schema(
         get_problem_with_contest(contest_id)
     )
@@ -76,7 +113,10 @@ def update_tags_in_problem_of_contest(contest_id: int) -> list[ProblemSchema]:
     return problems
 
 
+@logger.catch(reraise=True)
 def update_solved_count():
+    """функция обновляет статистику решений с сайта codeforces по каждой задаче
+    """
     _, problems_statistics_codeforces = problemset.problems()
     problems_statistics = convert_codeforces_problems_statistics(
         problems_statistics_codeforces

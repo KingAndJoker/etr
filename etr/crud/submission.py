@@ -1,6 +1,7 @@
 import time
 import copy
 
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from etr import db
@@ -174,35 +175,44 @@ def _get_submission_with_kwargs(**kwargs) -> SubmissionSchema | None:
     return submission_schema
 
 
+@logger.catch(reraise=True)
 def get_submissions(**kwargs) -> list[SubmissionSchema]:
     """get submissions from db"""
+    logger.info("пытаюсь получить данные о всех посылках с заданными параметрами")
     submissions_schema = _get_submissions_with_kwargs(**kwargs)
     if submissions_schema is None:
         return []
 
+    logger.success(f"возвращаю {len(submissions_schema)=} посылок")
     return submissions_schema
 
 
+@logger.catch(reraise=True)
 def get_submission(**kwargs) -> SubmissionSchema | None:
     """get submission from db"""
+    logger.info(f"пытаемся получить одну посылку с заданными параметрами")
     submission_schema = _get_submission_with_kwargs(**kwargs)
 
     return submission_schema
 
 
+@logger.catch(reraise=True)
 def update_submission(submission_id: int, **kwargs) -> SubmissionSchema | None:
     """update submission in db"""
-
+    logger.info(f"хотим обновить данные о посылке {submission_id=}")
     submission_schema = get_submission(id=submission_id)
 
     if submission_schema is None:
+        logger.warning(f"посылки с {submission_id=} не существует")
         return None
 
     submission_schema = _update_submission_db(submission_schema, **kwargs)
 
+    logger.success(f"данные о посылке {submission_id=} обновлены")
     return submission_schema
 
 
+@logger.catch(reraise=True)
 def is_our_submission(
     submission: dict, handles: list[str], teams_id: list[int]
 ) -> bool:
@@ -216,6 +226,7 @@ def is_our_submission(
     Returns:
         bool: True if the submission contains user or team from the database
     """
+    logger.info(f"пытаемся понять наша посылка?")
     if "teamId" not in submission["author"]:
         if submission["author"]["members"] != []:
             return submission["author"]["members"][0]["handle"].lower() in handles
@@ -237,6 +248,7 @@ def _delete_submissions(**kwargs) -> int:
     return cnt
 
 
+@logger.catch(reraise=True)
 def delete_submissions(**kwargs) -> int:
     """delete submissions from db
 
@@ -252,9 +264,13 @@ def delete_submissions(**kwargs) -> int:
     Returns:
         int: count of deleted submissions
     """
+    logger.info("удаляю посылки с заданными параметрами")
     cnt_deleted_submissions = _delete_submissions(**kwargs)
+    logger.success(f"удалил {cnt_deleted_submissions=} посылок")
     return cnt_deleted_submissions
 
 
+@logger.catch(reraise=True)
 def add_submission_with_schema(submission: SubmissionSchema) -> SubmissionSchema:
+    logger.info("добавляем новую посылку")
     return _add_submission_with_schema(submission)

@@ -1,5 +1,6 @@
 import copy
 
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from etr import db
@@ -41,28 +42,39 @@ def _get_users_db_with_handles(handles: list[str], **kwargs) -> list[UserSchema]
     return users_schema
 
 
+@logger.catch(reraise=True)
 def get_user(handle: str, **kwargs) -> UserSchema | None:
+    logger.info(f"crud хочу получить {handle=}")
     users = get_users(**kwargs)
     for user in users:
         if handle.lower() == user.handle.lower():
+            logger.success(f"возвращаю пользователя {handle=}")
             return user
+    logger.warning(f"не нашли пользователя с заданным {handle} или он не подошел под параметры kwargs")
     return None
 
 
+@logger.catch(reraise=True)
 def get_users(lang: str = "ru", **kwargs) -> list[UserSchema] | None:
+    logger.info(f"хочу получить всех пользователей")
     if "handles" in kwargs:
         users_schema = _get_users_db_with_handles(**kwargs)
     else:
         users_schema = _get_users_db_with_kwargs(**kwargs)
+    logger.success(f"возвращаю {len(users_schema)=} пользователей")
     return users_schema
 
 
+@logger.catch(reraise=True)
 def add_user(user_schema: UserSchema) -> UserSchema | None:
+    logger.info(f"хочу добавить нового пользователя")
     user_db = _get_user_db_with_kwargs(handle=user_schema.handle)
 
     if user_db is not None:
+        logger.warning(f"пользователь {user_schema.handle=} уже существует")
         return None
 
+    logger.success(f"добавляем нового пользователя с {user_schema.handle=}")
     return _add_new_user_with_schema(user_schema)
 
 
@@ -89,13 +101,19 @@ def _add_new_user_with_schema(user_schema: UserSchema) -> UserSchema | None:
     return user_schema
 
 
+@logger.catch(reraise=True)
 def update_user(id: int, **kwargs) -> UserSchema | None:
+    logger.info(f"хочу обновить данные у пользователя {id=}")
     user_schema = _get_user_db_with_kwargs(id=id)
     if user_schema is None:
+        logger.error(f"пользователя с {id=} нету в базе данных")
         return None
 
     if _check_patch_with_kwargs(user_schema, **kwargs):
+        logger.success(f"обновляем данные")
         user_schema_update = _update_user_with_kwargs(user_schema, **kwargs)
+    else:
+        logger.warning(f"параметры для {id=} оказались некорректными")
 
     return UserSchema.model_validate(_get_user_db_with_kwargs(id=id))
 
@@ -145,5 +163,7 @@ def _delete_user(user_id: int) -> int:
         return cnt
 
 
+@logger.catch(reraise=True)
 def delete_user(user_id: int) -> int:
+    logger.info(f"хочу удалить пользователя {user_id=}")
     return _delete_user(user_id)

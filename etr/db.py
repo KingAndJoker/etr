@@ -1,4 +1,5 @@
 """db utils"""
+from loguru import logger
 from sqlalchemy import create_engine, Engine
 from sqlalchemy.orm import sessionmaker
 
@@ -12,7 +13,9 @@ from etr.models.user import UserOrm
 from etr.models.recommendation import RecommendationOrm
 
 
+@logger.catch(reraise=True)
 def init_db(engine: Engine) -> None:
+    logger.info("инициализация базы данных")
     Base.metadata.create_all(engine)
 
 

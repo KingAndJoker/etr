@@ -1,3 +1,4 @@
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from etr import db
@@ -72,29 +73,40 @@ def _update_contest(contest_schema: ContestSchema, **kwargs) -> ContestSchema:
     return contest_schema_return
 
 
+@logger.catch(reraise=True)
 def get_contests(**kwargs) -> list[ContestSchema]:
     """get contests"""
+    logger.info("получаю информацию о соревнованиях")
     contests_schema = _get_contests_schema_with_db(**kwargs)
 
     return contests_schema
 
 
+@logger.catch(reraise=True)
 def add_contest_with_schema(contest: ContestSchema) -> ContestSchema:
+    logger.info("добавляю новый контест")
     contest_schema = _add_contest_db(contest)
 
+    logger.success("добавил контест")
     return contest_schema
 
 
+@logger.catch(reraise=True)
 def update_contest(contest_id: int, **kwargs):
+    logger.info(f"обновляю данные о контесте {contest_id}")
     contests = get_contests(id=contest_id)
     if contests == []:
+        logger.warning(f"соревнования с {contest_id=} нету в базе данных")
         return None
     contest = contests[0]
     contest = _update_contest(contest, **kwargs)
+    logger.success(f"обновили данные о {contest_id=}")
     return contest
 
 
+@logger.catch(reraise=True)
 def delete_contest(contest_id: int) -> ContestSchema | None:
+    logger.info(f"удаляю контест {contest_id}")
     with db.SessionLocal() as session:
         contest_orm = session.query(ContestOrm).filter_by(id=contest_id).one_or_none()
         if contest_orm is None:
@@ -102,4 +114,5 @@ def delete_contest(contest_id: int) -> ContestSchema | None:
         contest = ContestSchema.model_validate(contest_orm)
         session.delete(contest_orm)
         session.commit()
+    logger.success(f"удалили контест {contest_id=}")
     return contest

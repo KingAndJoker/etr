@@ -1,3 +1,4 @@
+from loguru import logger
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
@@ -7,6 +8,7 @@ router = APIRouter(prefix="/problem")
 
 
 @router.get("/")
+@logger.catch(reraise=True)
 def problems(request: Request):
     """return problems.html template"""
     return templates.TemplateResponse("problems.html", context={"request": request})

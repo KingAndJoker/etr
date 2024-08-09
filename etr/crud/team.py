@@ -1,4 +1,5 @@
 """ Team crud """
+from loguru import logger
 from sqlalchemy.orm.session import Session
 
 from etr import db
@@ -35,6 +36,7 @@ def _get_teams_with_kwargs(**kwargs) -> list[TeamSchema]:
     return teams_schema
 
 
+@logger.catch(reraise=True)
 def get_teams(**kwargs) -> list[TeamSchema]:
     """
     etr.services.team.get_teams
@@ -51,11 +53,14 @@ def get_teams(**kwargs) -> list[TeamSchema]:
     >>> get_teams(team_name="team_name")
     """
 
+    logger.info(f"пытаемся получить данные о командах")
     teams_schema = _get_teams_with_kwargs(**kwargs)
 
+    logger.success("получили команды с заданными параметрами")
     return teams_schema
 
 
+@logger.catch(reraise=True)
 def get_teams_with_handle_member(handle: str) -> list[TeamSchema]:
     """
     get_teams_with_handle_member
@@ -70,11 +75,13 @@ def get_teams_with_handle_member(handle: str) -> list[TeamSchema]:
     =====
     >>> get_teams_with_handle_member("tourist")
     """
+    logger.info(f"пытаемя получить команды пользователя с {handle=}")
     teams = []
     for team in get_teams():
         if handle in (user.handle for user in team.users):
             teams.append(team)
 
+    logger.success(f"нашли {len(teams)=} команд")
     return teams
 
 
@@ -118,6 +125,7 @@ def _add_team_db(team_schema: TeamSchema) -> TeamSchema | None:
         return team_schema
 
 
+@logger.catch(reraise=True)
 def add_team_with_schema(team: TeamSchema) -> TeamSchema:
     """
     etr.services.team.add_team_with_schema
@@ -134,13 +142,15 @@ def add_team_with_schema(team: TeamSchema) -> TeamSchema:
     =====
     >>> add_team_with_schema(team_schema)
     """
-
+    logger.info(f"пытаемся добавить команду")
     _add_missing_members(team)
     team_schema = _add_team_db(team)
 
+    logger.info(f"добавили команду")
     return team_schema
 
 
+@logger.catch(reraise=True)
 def is_our_team_json(author: dict) -> bool:
     """check team is our
 
@@ -150,6 +160,8 @@ def is_our_team_json(author: dict) -> bool:
     Returns:
         bool: if user (one or more) is ours then returns True
     """
+    # TODO: переместить в слой services
+    logger.info("проверяем наша ли команда")
     users = get_users()
     handles = [user.handle.lower() for user in users]
     for member in author["members"]:
@@ -176,5 +188,7 @@ def _update_team(id: int, **kwargs):
     return team
 
 
+@logger.catch(reraise=True)
 def update_team(id: int, **kwargs):
+    logger.info(f"обновляем данные о команде {id=}")
     return _update_team(id=id, **kwargs)

@@ -1,6 +1,7 @@
 """contest views"""
 from typing import Annotated
 
+from loguru import logger
 from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -18,17 +19,21 @@ router = APIRouter(prefix="/contest")
 
 
 @router.get("/")
+@logger.catch(reraise=True)
 def get_contests(request: Request):
     return templates.TemplateResponse("contests.html", context={"request": request})
 
 
 @router.get("/new")
+@logger.catch(reraise=True)
 def new_contest(request: Request):
     return templates.TemplateResponse("new_contest.html", context={"request": request})
 
 
 @router.post("/new")
+@logger.catch(reraise=True)
 def new_contest(contest_url: Annotated[str, Form()], request: Request):
+    logger.info(f"event добавляю новый контест {contest_url=}")
     url = parse_url(contest_url)
     event = ParseContestBeforeUpdate(url)
     results = handler(event)
@@ -37,6 +42,7 @@ def new_contest(contest_url: Annotated[str, Form()], request: Request):
 
 
 @router.get("/{contest_id}")
+@logger.catch(reraise=True)
 def get_contest(contest_id: int, request: Request):
     with db.SessionLocal() as session:
         contest_db: ContestOrm = (

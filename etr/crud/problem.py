@@ -1,3 +1,4 @@
+from loguru import logger
 from sqlalchemy.orm import Session
 
 from etr import db
@@ -22,8 +23,11 @@ def _add_problem_schema_to_db(problem_schema: ProblemSchema) -> ProblemSchema | 
     return problem_schema
 
 
+@logger.catch(reraise=True)
 def add_problems_with_cf(contest_id: int) -> list[ProblemSchema]:
     """ add contest problems to db """
+    logger.info(f"пытаюсь добавить данные о задачах для соревнования {contest_id=}")
+    # TODO: надо перенести эту функцию куда нибудь в services
     problems_schema = convert_codeforces_problems_schema(
         get_problem_with_contest(contest_id)
     )
@@ -35,6 +39,7 @@ def add_problems_with_cf(contest_id: int) -> list[ProblemSchema]:
         if problem_schema_returned is not None:
             added_problems_schema.append(problem_schema_returned)
 
+    logger.success(f"добавил {len(added_problems_schema)=} задач")
     return added_problems_schema
 
 
@@ -47,9 +52,10 @@ def _get_problems_db_with_contest_id(contest_id: int) -> list[ProblemSchema]:
     return problems
 
 
+@logger.catch(reraise=True)
 def get_problems_with_contest_id(contest_id: int) -> list[ProblemSchema] | None:
     """ get problems with contest id """
-
+    logger.info(f"хочу получить задачи соревнования {contest_id=}")
     problems_db = _get_problems_db_with_contest_id(contest_id)
 
     problems = [
@@ -57,12 +63,14 @@ def get_problems_with_contest_id(contest_id: int) -> list[ProblemSchema] | None:
         for problem_db in problems_db
     ]
 
+    logger.success(f"возвращаю {len(problems)=} задач")
     return problems
 
 
+@logger.catch(reraise=True)
 def is_missing_problem(problemSchema: ProblemSchema, contest_id: int) -> bool:
     """ return True if no the task in contest, else False """
-
+    logger.info(f"проверяю задачу {problemSchema.contest_id}{problemSchema.index} в соревновании {contest_id}")
     with db.SessionLocal() as session:
         problem_db = session.query(ProblemOrm).filter_by(
             contest_id=contest_id,
@@ -94,7 +102,9 @@ def _fiter_by_tags(tags: list[str], problem: ProblemSchema) -> bool:
     return True
 
 
+@logger.catch(reraise=True)
 def get_problems(tags: list[str] | None = None, **kwargs) -> list[ProblemSchema]:
+    logger.info(f"пытаюсь получить задачи с тегами {tags=}")
     problems = _get_problems(**kwargs)
     if tags:
         problems = [
@@ -102,6 +112,7 @@ def get_problems(tags: list[str] | None = None, **kwargs) -> list[ProblemSchema]
             for problem in problems
             if _fiter_by_tags(tags=tags, problem=problem)
         ]
+    logger.success(f"возвращаю {len(problems)=} задач")
     return problems
 
 
@@ -123,18 +134,24 @@ def _get_problem(**kwargs) -> ProblemSchema | None:
         return problem
 
 
+@logger.catch(reraise=True)
 def get_problem(**kwargs) -> ProblemSchema | None:
+    logger.info("хочу получить одну задачу с заданными фильтрами")
     return _get_problem(**kwargs)
 
 
+@logger.catch(reraise=True)
 def add_problem(problem: ProblemSchema) -> ProblemSchema:
+    logger.info(f"добавляем задачу {problem.contest_id}{problem.index}")
     _add_problem_schema_to_db(problem)
     problem = get_problems(index=problem.index,
                            contest_id=problem.contest_id)[0]
     return problem
 
 
+@logger.catch(reraise=True)
 def delete_problems(**kwargs) -> list[ProblemSchema]:
+    logger.info("хочу удалить задачи")
     with db.SessionLocal() as session:
         problems_orm = session.query(ProblemOrm).filter_by(**kwargs).all()
         for problem in problems_orm:
@@ -144,10 +161,13 @@ def delete_problems(**kwargs) -> list[ProblemSchema]:
             for problem in problems_orm
         ]
         session.commit()
+    logger.success(f"удалил {len(problems)=} задач")
     return problems
 
 
+@logger.catch(reraise=True)
 def get_problems_group_by_rating():
+    logger.info("получаю список задач, сгруппированный по рейтингу")
     problems = get_problems()
     group_by_rating: dict[int, list[ProblemSchema]] = dict()
     

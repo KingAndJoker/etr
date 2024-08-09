@@ -1,4 +1,5 @@
 """views file"""
+from loguru import logger
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
 
@@ -8,5 +9,6 @@ router = APIRouter(prefix="/protocol")
 
 
 @router.get("/")
+@logger.catch(reraise=True)
 def get_protocol(request: Request):
     return templates.TemplateResponse("protocol.html", context={"request": request})

@@ -2,6 +2,7 @@
 from typing import Annotated
 
 import requests
+from loguru import logger
 from fastapi import APIRouter, Request, Form
 from fastapi.templating import Jinja2Templates
 from fastapi.responses import RedirectResponse
@@ -15,12 +16,15 @@ router = APIRouter(prefix="/user")
 
 
 @router.get("/new")
+@logger.catch(reraise=True)
 def new_user(request: Request):
     return templates.TemplateResponse("new_user.html", context={"request": request})
 
 
 @router.post("/new")
+@logger.catch(reraise=True)
 def new_user(handle: Annotated[str, Form()]):
+    logger.info(f"хочу добавить нового пользователя {handle=}")
     if handle is None:
         return RedirectResponse("/etr")
     response = requests.get(f"https://codeforces.com/api/user.info?handles={handle}")
@@ -33,5 +37,6 @@ def new_user(handle: Annotated[str, Form()]):
 
 
 @router.get("/")
+@logger.catch(reraise=True)
 def get_users(request: Request):
     return templates.TemplateResponse("users.html", context={"request": request})

@@ -1,5 +1,7 @@
 """API problem"""
 from enum import Enum
+
+from loguru import logger
 from fastapi import APIRouter
 
 from etr.services.problem import get_problems_with_contest_id, get_problems
@@ -14,6 +16,7 @@ class NONES(Enum):
 
 
 @router.get("/")
+@logger.catch(reraise=True)
 def api_get_problems(
     id_: int | None = None,
     contest_id: int | None = None,
@@ -44,6 +47,7 @@ def api_get_problems(
     Returns:
         _type_: список задач с заданными параметрами
     """
+    logger.info(f"API получаем задачи")
     params = {
         "id": id_,
         "contest_id": contest_id,
@@ -58,26 +62,29 @@ def api_get_problems(
         else:
             params["rating"] = int(rating)
     except:
-        pass
+        logger.exception(f"{rating=} либо отсутсвует, либо не приводим к числу")
     try:
         if points.lower() == "null" or points.lower() == "none":
             params["points"] = None
         else:
-            params["points"] = float(rating)
+            params["points"] = float(points)
     except:
-        pass
+        logger.exception(f"{points=} либо отсутсвует, либо не приводим к числу")
 
     problems = get_problems(**params)
 
+    logger.success(f"API возвращаю {len(problems)=} задач")
     return {
         "status": "ok",
-        "problems": [problem.model_dump() for problem in problems]
+        "problems": problems
     }
 
 
 @router.get("/{contest_id}")
+@logger.catch(reraise=True)
 def get_problem_with_contest(contest_id: int):
     """Get problem with contest"""
-
+    logger.info(f"API получаю список задач для контеста {contest_id=}")
     problems_schema = get_problems_with_contest_id(contest_id)
+    logger.success(f"API для контеста {contest_id=} возвращаю {len(problems_schema)=} задач")
     return {"status": "ok", "problems": problems_schema}

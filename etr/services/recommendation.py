@@ -1,5 +1,7 @@
 import random
 
+from loguru import logger
+
 from etr import db
 from etr.crud.user import get_users
 from etr.crud.tag import get_tags
@@ -9,6 +11,7 @@ from etr.schemas.problem import ProblemSchema
 from etr.models.recommendation import RecommendationOrm
 
 
+@logger.catch(reraise=True)
 def choice_task(*,
     rating: int,
     count: int,
@@ -16,7 +19,22 @@ def choice_task(*,
     problem_by_rating: dict[int, list[ProblemSchema]],
     solved_problem: list[ProblemSchema]
 ) -> list[ProblemSchema]:
+    """функция возвращает задачи, подходящие под критерии параметров
+
+    Args:
+        rating (int): медианный рейтинг интересующих задач
+        count (int): количество задач на выходе
+        tags (dict[str, float]): словарь с тегами и их шансом выпадения
+        problem_by_rating (dict[int, list[ProblemSchema]]): словарь с ключем рейтинга и значением спискок задач
+        solved_problem (list[ProblemSchema]): список уже успешно решенных задач
+
+    Returns:
+        list[ProblemSchema]: список задач, рекомендованных к решению
+    """
+    logger.info(f"подбираю задачи в рекомендации")
     candidates = problem_by_rating.get(rating, [])
+    logger.debug(f"{len(candidates)=} кандидатов")
+
     str_solved_tasks = [
         str(problem.contest_id) + problem.index
         for problem in solved_problem
@@ -26,7 +44,10 @@ def choice_task(*,
         for candidate in candidates
         if str(candidate.contest_id) + candidate.index not in str_solved_tasks
     ]
+    logger.debug(f"после подчистки осталось {len(candidates)=}")
+
     if candidates == []:
+        logger.warning(f"молодец, решил все задачи из базы данных")
         return []
     candidates = random.choices(
         candidates,
@@ -36,17 +57,24 @@ def choice_task(*,
         ],
         k=min(count, len(candidates))
     )
+    logger.success(f"нашел {len(candidates)=} задач")
     return candidates
 
 
+@logger.catch(reraise=True)
 def create_recommendations():
+    """процедура перезаписывает все рекомендованные задачи для всех пользователей
+    """
     users = get_users(watch=True)
+    logger.info(f"составляю новые рекомендации для {len(users)=} пользователей")
     problem_by_rating = get_problems_group_by_rating()
 
     session = db.SessionLocal()
     session.query(RecommendationOrm).filter().delete()
+    logger.debug("в сессию добавил delete в балицу 'recommendations'")
 
     for user in users:
+        logger.info(f"составляю рекомендации для {user.handle=}")
         middle_rating = 0
         cnt_task_has_rating = 1  # избегаем проблему деления на 0
         submissions = get_submissions(author_id=user.id, verdict="OK")
@@ -75,6 +103,7 @@ def create_recommendations():
             for key, value in tags.items()
         }
 
+        logger.info("создаю список рекомендаций")
         recommended_tasks: list[ProblemSchema] = []
         recommended_tasks += choice_task(
             rating=middle_rating - 200, count=5, tags=tags, problem_by_rating=problem_by_rating, solved_problem=solved_problem

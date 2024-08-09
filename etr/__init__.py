@@ -1,7 +1,9 @@
 """run file"""
 import time
+import logging
 from threading import Thread
 
+from loguru import logger
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.middleware.cors import CORSMiddleware
@@ -14,24 +16,56 @@ from etr.services.problem import update_solved_count
 from etr.services.recommendation import create_recommendations
 
 
+logger.add(
+    "logs/debug.log",
+    format="{time} {level} {process} {thread} {function} {message}",
+    level="DEBUG",
+    catch=True,
+    backtrace=True,
+    rotation="1 week"
+)
+logger.add(
+    "logs/debug.json",
+    format="{time} {level} {process} {thread} {function} {message}",
+    level="DEBUG",
+    serialize=True,
+    catch=True,
+    rotation="1 week"
+)
+
+class InterceptHandler(logging.Handler):
+    def emit(self, record):
+        loguru_logger = logger.opt(depth=0, exception=record.exc_info)
+        loguru_logger.log(record.levelname, record.getMessage())
+
+
+logging.basicConfig(handlers=[InterceptHandler()], level=0)
+
+
+@logger.catch(reraise=True)
 def autoupdate_info():
     while True:
         try:
+            logger.info("circle of samsara: start auto update info")
             update_submissions_for_all_users_with_codeforces()
             update_missing_tags_for_problems()
             update_solved_count()
             create_recommendations()
+            logger.info("circle of samsara: end")
         except Exception as exp:
             print(exp)
-        # time.sleep(config.DELAY_SYNC_SUBMISSIONS_USERS)
+            logger.exception("circle of samsara: exception")
 
 
 # TODO: https://fastapi.tiangolo.com/advanced/settings/
+@logger.catch(reraise=True)
 def create_app():
     """Create and configure an instance of the FastAPI application."""
 
+    logger.debug("инициализируем базу данных")
     db.init_db(engine=db.engine)
 
+    logger.debug("создаем экземпляр приложения")
     app = FastAPI(
         openapi_url=config.URL_PREFIX + "/openapi.json",
         docs_url=config.URL_PREFIX + "/docs",
@@ -50,6 +84,7 @@ def create_app():
         allow_headers=["*"],
     )
 
+    logger.debug("импортируем и подключаем все router")
     from etr.api import api_user
     from etr.api import api_submission
     from etr.api import api_problem
@@ -93,6 +128,7 @@ def create_app():
     app.include_router(recommendation_view.router, prefix=f"{config.URL_PREFIX}")
 
     if not config.DEBUG:
+        logger.debug("создаем поток для авто подгрузки данных")
         Thread(
             target=autoupdate_info,
         ).start()
