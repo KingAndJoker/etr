@@ -7,3 +7,4 @@ PyMySQL
 mysql-connector-python
 alembic
 beautifulsoup4
+loguru
