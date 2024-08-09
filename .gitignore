@@ -168,3 +168,7 @@ users.db
 # Alembic
 alembic.ini
 alembic/
+.alembic/
+
+# Logs
+logs/
