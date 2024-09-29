@@ -131,6 +131,8 @@ def create_app():
         logger.debug("создаем поток для авто подгрузки данных")
         Thread(
             target=autoupdate_info,
+            name="circle of samsara",
+            daemon=True
         ).start()
 
     return app
